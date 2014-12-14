@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "graph.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,8 +25,11 @@ private slots:
     void on_widthBox_valueChanged(int value);
     void on_percentageBox_valueChanged(int value);
 
+    void on_createGraphButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+    graph g;
 };
 
 #endif // MAINWINDOW_H

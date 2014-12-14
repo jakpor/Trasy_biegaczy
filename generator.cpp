@@ -7,104 +7,66 @@
 #include <ctime>
 #include <math.h>
 #include <vector>
+#include "graph.h"
 
 using namespace std;
 
 #define NIESKONCZONOSC 0
-#define HEIGHT         4
-#define WIDTH          5
 #define MAX_ODLEGLOSC  100
 #define MAX_WIDTH      800
 #define MAX_HEIGHT     600
 
-generator::generator()
+generator::generator(string filename, int height, int width, int margX, int margY,
+                     int oknoX, int oknoY, bool kwadrat, int rozn,
+                     bool pion, bool poz, bool sk1, bool sk2):
+    outFileName(filename), h(height), w(width), marginesX(margX), marginesY(margY),wysokosc_okna(oknoY), szerokosc_okna(oknoX),
+    czy_kwadrat(kwadrat), roznorodnosc(rozn), pionowo(pion), poziomo(poz), skos1(sk1), skos2(sk2)
 {
-    ofstream outFile;
-
-    //string outFileName;
-
-    outFileName="out.txt";
-
-    outFile.open(outFileName.c_str());
-
-    h = HEIGHT;
-    w = WIDTH;
+    ofstream out;
+    string name;
 
     //etykietki wierzcholkow
-    macierz_wierzcholkow = new int *[h];
-    for (int i = 0; i<h; i++){
-        macierz_wierzcholkow[i] = new int [w];
-    }
-
-    int numer_wierzcholka = 0;
-    for (int i=0 ; i<h; i++){
-        for(int j =0; j<w; j++){
-            macierz_wierzcholkow[i][j] = numer_wierzcholka;
-            numer_wierzcholka++;
-        }
-    }
-
+    macierz_wierzcholkow = etykietki_wierzcholkow(h,w,0);
 
     // wypisz etykietki wierzcholkow
-    for (int i=0 ; i<h; i++){
-        for(int j =0; j<w; j++){
-            //printf("%4d", macierz_wierzcholkow[i][j]);
-            cout.width(4);
-            cout << macierz_wierzcholkow[i][j];
-        }
-        cout<< endl;
-    }
-
-    //wypisz_macierz(w,h,&macierz_wierzcholkow[0][0]);
+    //wypisz_macierz(w,h,macierz_wierzcholkow, 4);
 
     //wspolrzedne wierzcholkow
+    /*
+    marginesX = 50;
+    marginesY = 20;
+    wysokosc_okna = 600;
+    szerokosc_okna = 800;
+    roznorodnosc = 100;
+    czy_kwadrat = true;
+    */
 
-    srand(time(NULL));
-
-    //wspolrzedneX = new int [h][w];
-    //wspolrzedneY = new int [h][w];
-
-    //poczatek ukladu wspolrzendych
-    int x0 =0;
-    int y0 = 0;
-    wspolrzedneX[0][0] = x0;
-    wspolrzedneY[0][0] = y0;
-
-    //krawedzie prostokata
-    for (int i=1 ; i<h; i++){
-        wspolrzedneX[i][0] = wspolrzedneX[i-1][0];       // X zostaje taki sam
-        wspolrzedneY[i][0] = wspolrzedneY[i-1][0] + rand() % MAX_ODLEGLOSC +1;    //do Y sie cos dodaje
-    }
-
-    for (int j=1 ; j<w; j++){
-        wspolrzedneY[0][j] = wspolrzedneY[0][j-1]; //Y bez zmian
-        wspolrzedneX[0][j] = wspolrzedneX[0][j-1] + rand() % MAX_ODLEGLOSC +1; // X rosnie
-    }
-
-    for (int i=1 ; i<h; i++){
-        for(int j =1; j<w; j++){
-            wspolrzedneX[i][j] = wspolrzedneX[0][j];
-            wspolrzedneY[i][j] = wspolrzedneY[i][0];
-        }
-    }
+    //funkcja generująca współrzedne
+    wspolrzedne(marginesX,marginesY,wysokosc_okna, szerokosc_okna, roznorodnosc, czy_kwadrat);
 
     cout<< "X"<< endl;
-    for (int i=0 ; i<h; i++){
-        for(int j =0; j<w; j++){
-            cout.width(4);
-            cout << wspolrzedneX[i][j];
-        }
-        cout<< endl;
-    }
+    //wypisz_macierz(w,h,wspolrzedneX, 4);
 
     cout<< "Y"<< endl;
+    //wypisz_macierz(w,h,wspolrzedneY, 4);
+
+    // zapisanie współrzednych do pliku
+    name = outFileName+".xy";
+    out.open(name.c_str());
+    out.width(4);
+    out << h*w<<endl;
+
     for (int i=0 ; i<h; i++){
         for(int j =0; j<w; j++){
-            cout.width(4);
-            cout << wspolrzedneY[i][j];
+            out.width(4);
+            out << wspolrzedneX[i][j];
+            out.width(4);
+            out << wspolrzedneY[i][j];
+            out<< endl;
         }
-        cout<< endl;
     }
+
+    out.close();
 
     // macierz przyleglosci
     /* wierzcholek moze laczyc sie tylko z wierzcholkami sasiednimi, czyli majac polozenie x, y kandydatami sa:
@@ -126,15 +88,19 @@ generator::generator()
      wartosci - rzeczywiste odleglosci miedzy punktami (zeby cos sie dzialo)
     */
 
-    //macierz_przyleglosci = new unsigned int[h*w][h*w];
+    //macierz_przyleglosci
 
-
+    macierz_przyleglosci = new unsigned int *[h*w];
+    for (int i = 0; i<(h*w); i++){
+        macierz_przyleglosci[i] = new unsigned int [w*h];
+    }
     //zerowanie - ona w calosci idzie do pliku pozniej
     for (int i=0 ; i<(h*w); i++){
         for(int j =0; j<(h*w); j++){
             macierz_przyleglosci[i][j] = 0;
         }
     }
+
 
     for (int i=0 ; i<h; i++){
         for(int j=0; j<w; j++){
@@ -145,26 +111,34 @@ generator::generator()
                 switch (ktora){
                     case 0:
                         // jeden w prawo
-                        if((((i)*w+j+1)<(w*h))&&((j+1)<w)){
-                            macierz_przyleglosci[i*w+j][i*w+(j+1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i][j+1], wspolrzedneY[i][j+1]);
+                        if(poziomo){
+                            if((((i)*w+j+1)<(w*h))&&((j+1)<w)){
+                                macierz_przyleglosci[i*w+j][i*w+(j+1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i][j+1], wspolrzedneY[i][j+1]);
+                            }
                         }
                         break;
                     case 1:
                         //jeden w dol
-                        if((((i+1)*w+j)<(w*h))&&((i+1)<h)){
-                            macierz_przyleglosci[i*w+j][(i+1)*w+(j)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j], wspolrzedneY[i+1][j]);
+                        if(pionowo){
+                            if((((i+1)*w+j)<(w*h))&&((i+1)<h)){
+                                macierz_przyleglosci[i*w+j][(i+1)*w+(j)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j], wspolrzedneY[i+1][j]);
+                            }
                         }
                         break;
                     case 2:
                         //przekatna na +
-                        if((((i+1)*w+j+1)<(w*h))&&((j+1)<w)&&((i+1)<h)){
-                            macierz_przyleglosci[i*w+j][(i+1)*w+ (j+1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j+1], wspolrzedneY[i+1][j+1]);
+                        if(skos1){
+                            if((((i+1)*w+j+1)<(w*h))&&((j+1)<w)&&((i+1)<h)){
+                                macierz_przyleglosci[i*w+j][(i+1)*w+ (j+1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j+1], wspolrzedneY[i+1][j+1]);
+                            }
                         }
                         break;
                     case 3:
                         //przekatna na -
-                        if(((i*w+j+1)%w!=1)&&((i+1)*w+ (j-1)<h*w)){
-                            macierz_przyleglosci[i*w+j][(i+1)*w+ (j-1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j-1], wspolrzedneY[i+1][j-1]);
+                        if (skos2){
+                            if(((i*w+j+1)%w!=1)&&((i+1)*w+ (j-1)<h*w)){
+                                macierz_przyleglosci[i*w+j][(i+1)*w+ (j-1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j-1], wspolrzedneY[i+1][j-1]);
+                            }
                         }
                         break;
                     default:
@@ -176,96 +150,75 @@ generator::generator()
 
     }
 
+    //Symetryczność macierzy!!!
+    for (int i = 0;i<h*w;i++){
+        for(int j=0; j<i; j++){
+            macierz_przyleglosci[i][j] =  macierz_przyleglosci[j][i];
+        }
+    }
+
     cout<< "Macierz przyleglosci"<< endl;
-    for (int i=0 ; i<(h*w); i++){
-        cout.width(5);
-        cout<< i+1;
-        for(int j =0; j<(h*w); j++){
-            cout.width(5);
-            cout << macierz_przyleglosci[i][j];
+    //wypisz_macierz(w*h,h*w,(int **)macierz_przyleglosci, 4);
+
+    //zapis macierzy przyległości do pliku
+    name = outFileName+".txt";
+    out.open(name.c_str());
+
+    for (int i=0 ; i<h*w; i++){
+        for(int j =0; j<h*w; j++){
+            out.width(4);
+            out << macierz_przyleglosci[i][j];
         }
-        cout<< endl;
+        out<< endl;
     }
 
-    //plik
-    outFile<< h*w<< endl;
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =0; j<(h*w); j++){
-            outFile.width(5);
-            outFile << macierz_przyleglosci[i][j];
-        }
-        outFile<< endl;
-    }
+    out.close();
 
-    outFile.close();
+
 
     //lista krawedzi
 
     cout<< "Lista krawedzi"<< endl;
-    //opis :)
-    cout<<" X1  Y1  X2  Y2  WAGA NR1 NR2";
-    cout<< endl;
+    //cout<<" X1  Y1  X2  Y2  WAGA NR1 NR2";
+    //cout<< endl;
 
+    name = outFileName+".kr";
+    out.open(name.c_str());
+
+    int licznik_krawedzi = 0;
 
     for (int i=0 ; i<(h*w); i++){
-        for(int j =0; j<(h*w); j++){
+        for(int j =i; j<(h*w); j++){
+            if(macierz_przyleglosci[i][j]!=0){
+                licznik_krawedzi++;
+            }
+        }
+    }
+    out<<licznik_krawedzi<<endl; //pierwsza linijka pliku
+
+    for (int i=0 ; i<(h*w); i++){
+        for(int j =i; j<(h*w); j++){
             if(macierz_przyleglosci[i][j]!=0){
                 //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
-                cout.width(4);
-                cout<<wspolrzedneX[(i -(i%w))/w][i%w];
-                cout.width(4);
-                cout<<wspolrzedneY[(i -(i%w))/w][i%w];
-                cout.width(4);
-                cout<<wspolrzedneX[(j -(j%w))/w][j%w];
-                cout.width(4);
-                cout<<wspolrzedneY[(j -(j%w))/w][j%w];
-                cout.width(4);
-                cout<<macierz_przyleglosci[i][j];    //waga
-                cout.width(4);
-                cout<<i;                           //numer i tego w
-                cout.width(4);
-                cout<<j; //numer polaczonego do niego
-                cout<< endl;
+                out.width(4);
+                out<<wspolrzedneX[(i -(i%w))/w][i%w];
+                out.width(4);
+                out<<wspolrzedneY[(i -(i%w))/w][i%w];
+                out.width(4);
+                out<<wspolrzedneX[(j -(j%w))/w][j%w];
+                out.width(4);
+                out<<wspolrzedneY[(j -(j%w))/w][j%w];
+                //out.width(4);
+                //cout<<macierz_przyleglosci[i][j];    //waga
+                //cout.width(4);
+                //cout<<i;                           //numer i tego w
+                //cout.width(4);
+                //cout<<j; //numer polaczonego do niego
+                out<< endl;
             }
         }
         //cout<< endl;
     }
-
-
-
-    // droga w grafie
-
-    int start = 0;
-    int meta = 5;
-
-    if (start>meta){
-        int temp = start;
-        start = meta;
-        meta = temp;
-    }
-
-    vector <int> trasa;
-    trasa.push_back(start);
-
-    while(trasa[trasa.size()-1]!=meta){
-        for (int i=(h*w) ; i>0; i--){
-            if(macierz_przyleglosci[trasa[trasa.size()-1]][i]!=0){
-                if(i<=meta){
-                    trasa.push_back(i);
-                    //cout<<trasa[trasa.size()-1];
-                    i = 0;
-
-                }
-            }
-        }
-    }
-
-    //wypisz trase
-        for(unsigned int i = 0; i < trasa.size(); i++ )
-        {
-            cout.width(4);
-            cout << trasa[ i ];
-        }
 
     /*
     int i =0;
@@ -296,19 +249,163 @@ generator::~generator()
 
 }
 
-//zapomnia�� jak pisa� funkcje na strumieniach
- void generator::wypisz_macierz(int w, int h, int *macierz){
+ void generator::wypisz_macierz(int w, int h, int **macierz, int size){
     //ostream out;
     for (int i=0 ; i<h; i++){
         for(int j =0; j<w; j++){
             //printf("%4d", macierz_wierzcholkow[i][j]);
-            cout.width(4);
-            cout << macierz[i*w + j];
+            cout.width(size);
+            cout << macierz[i][j];
         }
         cout<< endl;
     }
+
+}
+
+ void generator::wypisz_macierz_do_pliku(int w, int h, int **macierz, int size, string name){
+    ofstream out;
+    out.open(name.c_str());
+
+    for (int i=0 ; i<h; i++){
+        for(int j =0; j<w; j++){
+            //printf("%4d", macierz_wierzcholkow[i][j]);
+            out.width(size);
+            out << macierz[i][j];
+        }
+        out<< endl;
+    }
+
+    out.close();
+
 }
 
 unsigned int generator :: distance(int ax,int ay,int bx,int by){
     return (unsigned int)(sqrt((ax-bx)*(ax-bx) + (ay-by)*(ay-by)));
+}
+
+int** generator ::etykietki_wierzcholkow(int h, int w, int start){
+    int ** etwierz = new int *[h];
+    for (int i = 0; i<h; i++){
+        etwierz[i] = new int [w];
+    }
+
+    int numer_wierzcholka = start;
+    for (int i=0 ; i<h; i++){
+        for(int j =0; j<w; j++){
+            etwierz[i][j] = numer_wierzcholka;
+            numer_wierzcholka++;
+        }
+    }
+    return etwierz;
+}
+void generator::wspolrzedne(int x0, int y0, int wysokosc, int szerokosc, int max_odleglosc, bool stale_odleglosci){
+    srand(time(NULL));
+
+    wspolrzedneX = new int *[h];
+    for (int i = 0; i<h; i++){
+        wspolrzedneX[i] = new int [w];
+    }
+    wspolrzedneY = new int *[h];
+    for (int i = 0; i<h; i++){
+        wspolrzedneY[i] = new int [w];
+    }
+
+    //poczatek ukladu wspolrzendych
+
+    wspolrzedneX[0][0] = x0;
+    wspolrzedneY[0][0] = y0;
+
+    if(!stale_odleglosci){
+        //krawedzie prostokata
+        for (int i=1 ; i<h; i++){
+            wspolrzedneX[i][0] = wspolrzedneX[i-1][0];       // X zostaje taki sam
+            wspolrzedneY[i][0] = wspolrzedneY[i-1][0] + rand() % max_odleglosc +1;    //do Y sie cos dodaje
+        }
+        for (int j=1 ; j<w; j++){
+            wspolrzedneY[0][j] = wspolrzedneY[0][j-1]; //Y bez zmian
+            wspolrzedneX[0][j] = wspolrzedneX[0][j-1] + rand() % max_odleglosc +1; // X rosnie
+        }
+        //skalowanie
+        for (int i=1 ; i<h; i++){
+            wspolrzedneY[i][0] = y0 + (wspolrzedneY[i][0]-y0) * (wysokosc-2*y0) / wspolrzedneY[h-1][0] ;    //do Y sie cos dodaje
+        }
+        for (int j=1 ; j<w; j++){
+            wspolrzedneX[0][j] = x0+ (wspolrzedneX[0][j]-x0)* (szerokosc-2*x0) / wspolrzedneX[0][w-1] ; // X rosnie
+        }
+
+    }
+    else{
+        //kwadrat - pseudo kwadrat...
+        for (int i=1 ; i<h; i++){
+            wspolrzedneX[i][0] = wspolrzedneX[i-1][0];       // X zostaje taki sam
+            wspolrzedneY[i][0] = wspolrzedneY[i-1][0] + (wysokosc-2*y0)/h;    //do Y sie cos dodaje
+        }
+        for (int j=1 ; j<w; j++){
+            wspolrzedneY[0][j] = wspolrzedneY[0][j-1]; //Y bez zmian
+            wspolrzedneX[0][j] = wspolrzedneX[0][j-1] + (szerokosc-2*y0)/w; // X rosnie
+        }
+    }
+
+
+
+    for (int i=1 ; i<h; i++){
+        for(int j =1; j<w; j++){
+            wspolrzedneX[i][j] = wspolrzedneX[0][j];
+            wspolrzedneY[i][j] = wspolrzedneY[i][0];
+        }
+    }
+}
+
+
+graph generator::create_graph(){
+    graph a;
+    a.macierz_przyleglosci = this->macierz_przyleglosci;
+
+    //lista krawedzi
+    int licznik_krawedzi = 0;
+
+    for (int i=0 ; i<(h*w); i++){
+        for(int j =i; j<(h*w); j++){
+            if(macierz_przyleglosci[i][j]!=0){
+                licznik_krawedzi++;
+            }
+        }
+    }
+
+    int **lista = new int*[licznik_krawedzi];
+    for (int i = 0; i<licznik_krawedzi; i++){
+        lista[i] = new int [4];
+    }
+
+    int u = 0;
+    for (int i=0 ; i<(h*w); i++){
+        for(int j =i; j<(h*w); j++){
+            if(macierz_przyleglosci[i][j]!=0){
+                //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
+                lista[u][0] = wspolrzedneX[(i -(i%w))/w][i%w];
+                lista[u][1] = wspolrzedneY[(i -(i%w))/w][i%w];
+                lista[u][2] = wspolrzedneX[(j -(j%w))/w][j%w];
+                lista[u][3] = wspolrzedneY[(j -(j%w))/w][j%w];
+                u++;
+            }
+        }
+    }
+    a.lista_krawedzi = lista;
+
+    //lista wierzchołków
+    int **wierz = new int*[h*w];
+    for (int i = 0; i<h*w; i++){
+        wierz[i] = new int [2];
+    }
+    u = 0;
+    for (int i=0 ; i<h; i++){
+        for(int j =0; j<w; j++){
+            wierz[u][0] = wspolrzedneX[i][j];
+            wierz[u][1] = wspolrzedneY[i][j];
+            u++;
+        }
+    }
+    a.lista_wierzcholkow = wierz;
+
+    return a;
 }
