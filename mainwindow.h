@@ -3,9 +3,10 @@
 
 #include <QMainWindow>
 #include "graph.h"
+#include "graphview.h"
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -15,6 +16,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 
 private slots:
     void on_heightSlider_valueChanged(int value);
@@ -29,7 +31,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    graph g;
+    GraphView graphview;
+    Graph g;
 };
 
 #endif // MAINWINDOW_H

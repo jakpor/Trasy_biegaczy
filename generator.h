@@ -47,7 +47,7 @@ public:
                int oknoX, int oknoY, bool kwadrat, int rozn,
                bool pion, bool poz, bool sk1, bool sk2);
     ~generator();
-    graph create_graph();
+    Graph create_graph();
 };
 
 #endif // GENERATOR_H

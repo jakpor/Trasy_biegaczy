@@ -10,7 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    g = graph();
+    g = Graph();
+    graphview.show();
 }
 
 MainWindow::~MainWindow()
@@ -51,5 +52,9 @@ void MainWindow::on_createGraphButton_clicked()
     generator a = generator(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
               ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
               ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked());
-    g = a.create_graph();
+    delete &g;
+    g = a.create_graph(); //wersja do algorytmu (z założenia)...
+    graphview.gr = g.copy_graph(); //wersja do rysowania
+    graphview.repaint();
+    cout<<graphview.gr.liczba_krawedzi;
 }

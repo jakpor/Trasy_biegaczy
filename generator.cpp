@@ -8,13 +8,14 @@
 #include <math.h>
 #include <vector>
 #include "graph.h"
+#include <QtGui>
 
 using namespace std;
 
 #define NIESKONCZONOSC 0
-#define MAX_ODLEGLOSC  100
-#define MAX_WIDTH      800
-#define MAX_HEIGHT     600
+//#define MAX_ODLEGLOSC  100
+//#define MAX_WIDTH      800
+//#define MAX_HEIGHT     600
 
 generator::generator(string filename, int height, int width, int margX, int margY,
                      int oknoX, int oknoY, bool kwadrat, int rozn,
@@ -220,33 +221,28 @@ generator::generator(string filename, int height, int width, int margX, int marg
         //cout<< endl;
     }
 
-    /*
-    int i =0;
-    string dane;
-    while (inFile){
-        inFile>>dane;
-        if ((dane[0] == '2')||!(dane.find(':') == std::string::npos)){
-             dane = "";
-        }
-        if (!(dane.find('/n') == std::string::npos)){
-            outFile<<dane<<endl;
-        }
-        else
-            outFile<<dane<<' ';
-
-        i++;
-        dane = "";
-    }
-
-    outFile.close();
-    */
-
 
 }
 
 generator::~generator()
 {
+    for (int i = 0; i<(h*w); i++){
+        delete macierz_przyleglosci[i];
+    }
+    delete macierz_przyleglosci;
 
+    for (int i = 0; i<(h); i++){
+        delete wspolrzedneX[i];
+    }
+    delete wspolrzedneX;
+    for (int i = 0; i<(h); i++){
+        delete wspolrzedneY[i];
+    }
+    delete wspolrzedneY;
+    for (int i = 0; i<(h); i++){
+        delete macierz_wierzcholkow[i];
+    }
+    delete macierz_wierzcholkow;
 }
 
  void generator::wypisz_macierz(int w, int h, int **macierz, int size){
@@ -357,9 +353,21 @@ void generator::wspolrzedne(int x0, int y0, int wysokosc, int szerokosc, int max
 }
 
 
-graph generator::create_graph(){
-    graph a;
-    a.macierz_przyleglosci = this->macierz_przyleglosci;
+Graph generator::create_graph(){
+    Graph a;
+
+    unsigned int** macierz;
+    macierz = new unsigned int *[h*w];
+    for (int i = 0; i<(h*w); i++){
+        macierz[i] = new unsigned int [w*h];
+    }
+    for (int i=0 ; i<(h*w); i++){
+        for(int j =0; j<(h*w); j++){
+            macierz[i][j] = macierz_przyleglosci[i][j];
+        }
+    }
+
+    a.macierz_przyleglosci = macierz;
 
     //lista krawedzi
     int licznik_krawedzi = 0;
@@ -372,20 +380,19 @@ graph generator::create_graph(){
         }
     }
 
-    int **lista = new int*[licznik_krawedzi];
-    for (int i = 0; i<licznik_krawedzi; i++){
-        lista[i] = new int [4];
-    }
+    a.liczba_krawedzi = licznik_krawedzi;
+    a.liczba_wierzcholkow = h*w;
+    a.szerokosc_grafu = w;
+    a.wysokosc_grafu = h;
+
+    QLine *lista = new QLine[a.liczba_krawedzi];
 
     int u = 0;
     for (int i=0 ; i<(h*w); i++){
         for(int j =i; j<(h*w); j++){
             if(macierz_przyleglosci[i][j]!=0){
                 //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
-                lista[u][0] = wspolrzedneX[(i -(i%w))/w][i%w];
-                lista[u][1] = wspolrzedneY[(i -(i%w))/w][i%w];
-                lista[u][2] = wspolrzedneX[(j -(j%w))/w][j%w];
-                lista[u][3] = wspolrzedneY[(j -(j%w))/w][j%w];
+                lista[u] = QLine(wspolrzedneX[(i -(i%w))/w][i%w],wspolrzedneY[(i -(i%w))/w][i%w],wspolrzedneX[(j -(j%w))/w][j%w],wspolrzedneY[(j -(j%w))/w][j%w]);
                 u++;
             }
         }
@@ -393,15 +400,12 @@ graph generator::create_graph(){
     a.lista_krawedzi = lista;
 
     //lista wierzchołków
-    int **wierz = new int*[h*w];
-    for (int i = 0; i<h*w; i++){
-        wierz[i] = new int [2];
-    }
+    QPoint *wierz = new QPoint[h*w];
+
     u = 0;
     for (int i=0 ; i<h; i++){
         for(int j =0; j<w; j++){
-            wierz[u][0] = wspolrzedneX[i][j];
-            wierz[u][1] = wspolrzedneY[i][j];
+            wierz[u] = QPoint(wspolrzedneX[i][j],wspolrzedneY[i][j]);
             u++;
         }
     }

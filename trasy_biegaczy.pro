@@ -16,11 +16,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     generator.cpp \
     readgraph.cpp \
-    graph.cpp
+    graph.cpp \
+    graphview.cpp
 
 HEADERS  += mainwindow.h \
     generator.h \
     readgraph.h \
-    graph.h
+    graph.h \
+    graphview.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui\
+        graphview.ui \
+    graphview.ui

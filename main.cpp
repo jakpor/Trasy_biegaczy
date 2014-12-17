@@ -1,6 +1,7 @@
 #include "mainwindow.h"
+#include "graphview.h"
 #include <QApplication>
-#include "generator.h"
+#include "graph.h"
 
 int main(int argc, char *argv[])
 {
