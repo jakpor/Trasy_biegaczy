@@ -17,6 +17,7 @@ private:
     string outFileName;
     int h; //ile wierzcholkow w pionie
     int w;  //ile wierzcholkow poziomo
+    int l_wierzcholkow; //ile wszystkich
 
     int** macierz_wierzcholkow;
     int** wspolrzedneX;

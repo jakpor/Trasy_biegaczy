@@ -17,6 +17,8 @@ using namespace std;
 //#define MAX_WIDTH      800
 //#define MAX_HEIGHT     600
 
+
+//można by stworzyć jakąś strukturę by skrócić ta linijkę (ale szkoda poprawiać kod pewnie)
 generator::generator(string filename, int height, int width, int margX, int margY,
                      int oknoX, int oknoY, bool kwadrat, int rozn,
                      bool pion, bool poz, bool sk1, bool sk2):
@@ -55,7 +57,8 @@ generator::generator(string filename, int height, int width, int margX, int marg
     name = outFileName+".xy";
     out.open(name.c_str());
     out.width(4);
-    out << h*w<<endl;
+    l_wierzcholkow = w*h;
+    out << l_wierzcholkow <<endl;
 
     for (int i=0 ; i<h; i++){
         for(int j =0; j<w; j++){
@@ -85,19 +88,19 @@ generator::generator(string filename, int height, int width, int margX, int marg
       10  11  12
 
 
-     macierz ma wymiar (h*x) x (h*w) - calkiem spora sie robi, ale wypelniamy tylko g�rna pol�wk�
+     macierz ma wymiar (h*x) x (l_wierzcholkow) - calkiem spora sie robi, ale wypelniamy tylko g�rna pol�wk�
      wartosci - rzeczywiste odleglosci miedzy punktami (zeby cos sie dzialo)
     */
 
     //macierz_przyleglosci
 
-    macierz_przyleglosci = new unsigned int *[h*w];
-    for (int i = 0; i<(h*w); i++){
-        macierz_przyleglosci[i] = new unsigned int [w*h];
+    macierz_przyleglosci = new unsigned int *[l_wierzcholkow];
+    for (int i = 0; i< l_wierzcholkow; i++){
+        macierz_przyleglosci[i] = new unsigned int [l_wierzcholkow];
     }
     //zerowanie - ona w calosci idzie do pliku pozniej
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =0; j<(h*w); j++){
+    for (int i=0 ; i< l_wierzcholkow; i++){
+        for(int j =0; j< l_wierzcholkow; j++){
             macierz_przyleglosci[i][j] = 0;
         }
     }
@@ -113,7 +116,7 @@ generator::generator(string filename, int height, int width, int margX, int marg
                     case 0:
                         // jeden w prawo
                         if(poziomo){
-                            if((((i)*w+j+1)<(w*h))&&((j+1)<w)){
+                            if((((i)*w+j+1)< l_wierzcholkow)&&((j+1)<w)){
                                 macierz_przyleglosci[i*w+j][i*w+(j+1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i][j+1], wspolrzedneY[i][j+1]);
                             }
                         }
@@ -121,7 +124,7 @@ generator::generator(string filename, int height, int width, int margX, int marg
                     case 1:
                         //jeden w dol
                         if(pionowo){
-                            if((((i+1)*w+j)<(w*h))&&((i+1)<h)){
+                            if((((i+1)*w+j)< l_wierzcholkow)&&((i+1)<h)){
                                 macierz_przyleglosci[i*w+j][(i+1)*w+(j)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j], wspolrzedneY[i+1][j]);
                             }
                         }
@@ -129,7 +132,7 @@ generator::generator(string filename, int height, int width, int margX, int marg
                     case 2:
                         //przekatna na +
                         if(skos1){
-                            if((((i+1)*w+j+1)<(w*h))&&((j+1)<w)&&((i+1)<h)){
+                            if((((i+1)*w+j+1)<l_wierzcholkow)&&((j+1)<w)&&((i+1)<h)){
                                 macierz_przyleglosci[i*w+j][(i+1)*w+ (j+1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j+1], wspolrzedneY[i+1][j+1]);
                             }
                         }
@@ -137,7 +140,7 @@ generator::generator(string filename, int height, int width, int margX, int marg
                     case 3:
                         //przekatna na -
                         if (skos2){
-                            if(((i*w+j+1)%w!=1)&&((i+1)*w+ (j-1)<h*w)){
+                            if(((i*w+j+1)%w!=1)&&((i+1)*w+ (j-1)<l_wierzcholkow)){
                                 macierz_przyleglosci[i*w+j][(i+1)*w+ (j-1)] = this->distance(wspolrzedneX[i][j],wspolrzedneY[i][j],wspolrzedneX[i+1][j-1], wspolrzedneY[i+1][j-1]);
                             }
                         }
@@ -152,21 +155,21 @@ generator::generator(string filename, int height, int width, int margX, int marg
     }
 
     //Symetryczność macierzy!!!
-    for (int i = 0;i<h*w;i++){
+    for (int i = 0;i<l_wierzcholkow;i++){
         for(int j=0; j<i; j++){
             macierz_przyleglosci[i][j] =  macierz_przyleglosci[j][i];
         }
     }
 
     cout<< "Macierz przyleglosci"<< endl;
-    //wypisz_macierz(w*h,h*w,(int **)macierz_przyleglosci, 4);
+    //wypisz_macierz(l_wierzcholkow,l_wierzcholkow,(int **)macierz_przyleglosci, 4);
 
     //zapis macierzy przyległości do pliku
     name = outFileName+".txt";
     out.open(name.c_str());
 
-    for (int i=0 ; i<h*w; i++){
-        for(int j =0; j<h*w; j++){
+    for (int i=0 ; i<l_wierzcholkow; i++){
+        for(int j =0; j<l_wierzcholkow; j++){
             out.width(4);
             out << macierz_przyleglosci[i][j];
         }
@@ -188,8 +191,8 @@ generator::generator(string filename, int height, int width, int margX, int marg
 
     int licznik_krawedzi = 0;
 
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =i; j<(h*w); j++){
+    for (int i=0 ; i< l_wierzcholkow; i++){
+        for(int j =i; j< l_wierzcholkow; j++){
             if(macierz_przyleglosci[i][j]!=0){
                 licznik_krawedzi++;
             }
@@ -197,8 +200,8 @@ generator::generator(string filename, int height, int width, int margX, int marg
     }
     out<<licznik_krawedzi<<endl; //pierwsza linijka pliku
 
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =i; j<(h*w); j++){
+    for (int i=0 ; i< l_wierzcholkow; i++){
+        for(int j =i; j< l_wierzcholkow; j++){
             if(macierz_przyleglosci[i][j]!=0){
                 //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
                 out.width(4);
@@ -226,7 +229,7 @@ generator::generator(string filename, int height, int width, int margX, int marg
 
 generator::~generator()
 {
-    for (int i = 0; i<(h*w); i++){
+    for (int i = 0; i<l_wierzcholkow; i++){
         delete macierz_przyleglosci[i];
     }
     delete macierz_przyleglosci;
@@ -357,12 +360,12 @@ Graph generator::create_graph(){
     Graph a;
 
     unsigned int** macierz;
-    macierz = new unsigned int *[h*w];
-    for (int i = 0; i<(h*w); i++){
-        macierz[i] = new unsigned int [w*h];
+    macierz = new unsigned int *[l_wierzcholkow];
+    for (int i = 0; i<(l_wierzcholkow); i++){
+        macierz[i] = new unsigned int [l_wierzcholkow];
     }
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =0; j<(h*w); j++){
+    for (int i=0 ; i<(l_wierzcholkow); i++){
+        for(int j =0; j<(l_wierzcholkow); j++){
             macierz[i][j] = macierz_przyleglosci[i][j];
         }
     }
@@ -372,8 +375,8 @@ Graph generator::create_graph(){
     //lista krawedzi
     int licznik_krawedzi = 0;
 
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =i; j<(h*w); j++){
+    for (int i=0 ; i<(l_wierzcholkow); i++){
+        for(int j =i; j<(l_wierzcholkow); j++){
             if(macierz_przyleglosci[i][j]!=0){
                 licznik_krawedzi++;
             }
@@ -381,15 +384,15 @@ Graph generator::create_graph(){
     }
 
     a.liczba_krawedzi = licznik_krawedzi;
-    a.liczba_wierzcholkow = h*w;
+    a.liczba_wierzcholkow = l_wierzcholkow;
     a.szerokosc_grafu = w;
     a.wysokosc_grafu = h;
 
     QLine *lista = new QLine[a.liczba_krawedzi];
 
     int u = 0;
-    for (int i=0 ; i<(h*w); i++){
-        for(int j =i; j<(h*w); j++){
+    for (int i=0 ; i<(l_wierzcholkow); i++){
+        for(int j =i; j<(l_wierzcholkow); j++){
             if(macierz_przyleglosci[i][j]!=0){
                 //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
                 lista[u] = QLine(wspolrzedneX[(i -(i%w))/w][i%w],wspolrzedneY[(i -(i%w))/w][i%w],wspolrzedneX[(j -(j%w))/w][j%w],wspolrzedneY[(j -(j%w))/w][j%w]);
@@ -400,7 +403,7 @@ Graph generator::create_graph(){
     a.lista_krawedzi = lista;
 
     //lista wierzchołków
-    QPoint *wierz = new QPoint[h*w];
+    QPoint *wierz = new QPoint[l_wierzcholkow];
 
     u = 0;
     for (int i=0 ; i<h; i++){
