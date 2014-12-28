@@ -4,7 +4,9 @@
 #include <QtGui>
 #include <fstream>
 #include <string>
+#include <iostream>
 
+using namespace std;
 class Graph
 {
 public:
@@ -18,7 +20,8 @@ public:
     int szerokosc_grafu;
     int wysokosc_grafu;
     Graph copy_graph();
-    Graph load_graph(String filename);
+
+    Graph load_graph(string filename);
 };
 
 #endif // GRAPH_H

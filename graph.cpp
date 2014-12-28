@@ -1,7 +1,6 @@
 #include "graph.h"
-#include "string"
+#include <string>
 
-using namespace std;
 Graph::Graph()
 {
     lista_wierzcholkow = NULL ;
@@ -23,6 +22,14 @@ Graph::~Graph()
     delete macierz_przyleglosci;
 
     delete lista_krawedzi;
+    //ustawiam wszystkie wartości w razie gdyby destrutor był wywoływany ręcznie
+    lista_wierzcholkow = NULL ;
+    macierz_przyleglosci = NULL ;
+    lista_krawedzi = NULL ;
+    liczba_wierzcholkow = 0;
+    liczba_krawedzi = 0;
+    szerokosc_grafu = 0;
+    wysokosc_grafu = 0;
 
 }
 
@@ -65,30 +72,32 @@ Graph Graph::copy_graph(){
 }
 
 
-Graph Graph::load_graph(String filename){
+Graph Graph::load_graph(string filename){
     Graph a;
     ifstream in;
-    String name;
+    string name;
 
     //macierz przyleglosci
-    name = filename +'.txt';
-    in.open(name.c_str());
 
-    inFile>>a.liczba_wierzcholkow;
+    name = filename +".txt";
+    in.open(name.c_str());
+    in>>a.liczba_wierzcholkow;
 
     unsigned int ** macierz = new unsigned int * [a.liczba_wierzcholkow];
     for (int i=0 ; i<a.liczba_wierzcholkow; i++){
         macierz[i] = new unsigned int [(a.liczba_wierzcholkow)];
     }
 
+
+    // Trzeba uwzględnić spacje i znaki nowej linii
     for (int i=0 ; i<a.liczba_wierzcholkow; i++){
         for (int j=0 ; j<a.liczba_wierzcholkow; j++){
-            inFile>>macierz[i][j];
+            in>>macierz[i][j];
         }
     }
     a.macierz_przyleglosci = macierz;
 
-    outFile.close();
+    in.close();
 
     //wierzcholki
     /*
