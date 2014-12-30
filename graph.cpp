@@ -420,7 +420,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
 
 
     switch(profil){
-    case 1: //góra
+    case 1: //góra - nie działa
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
@@ -429,11 +429,20 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             }
         }
         break;
-    case 2: //dolina
+    case 2: //dolina -nie działa
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
                 this->lista_wysokosci[u] = (i-h/2)*(j-w/2);
+                u++; //u to po prostu iterator
+            }
+        }
+        break;
+    case 3: //przelęcz
+        u = 0;
+        for (int i=0 ; i<h; i++){
+            for(int j =0; j<w; j++){
+                this->lista_wysokosci[u] = -1*(i-h/2)*(j-w/2);
                 u++; //u to po prostu iterator
             }
         }
@@ -453,11 +462,20 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     out.width(4);
 
     out << this->liczba_wierzcholkow <<endl;
+    this->max_wysokosc = -1000;
+    this->min_wysokosc = 1000;
 
     for(int i=0; i<(this->liczba_wierzcholkow); i++){
         out.width(4);
         out<< (this->lista_wysokosci[i]);
         out<< endl;
+
+        if((this->lista_wysokosci[i])>this->max_wysokosc){
+            this->max_wysokosc = this->lista_wysokosci[i];
+        }
+        if((this->lista_wysokosci[i])<this->min_wysokosc){
+            this->min_wysokosc = this->lista_wysokosci[i];
+        }
     }
     out.close();
     cout<<"Lista wysokosci";
@@ -496,7 +514,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
 
 
 //betonowość
-    this->lista_betonu = new bool [this->liczba_krawedzi];
+    this->lista_betonu = new int [this->liczba_krawedzi];
 
     switch(betonowosc){
     case 1: //pion i poziom
@@ -504,12 +522,12 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         for (int i=0 ; i< (this->liczba_wierzcholkow); i++){
             for(int j =i; j< (this->liczba_wierzcholkow); j++){
                 if(this->macierz_przyleglosci[i][j]!=0){
-                    this->lista_betonu[u] = false;
+                    this->lista_betonu[u] = 0;
                     if(i == (j+1)){
-                        this->lista_betonu[u] = true;
+                        this->lista_betonu[u] = 1;
                     }
                     if((i+1) == (j+1)){
-                        this->lista_betonu[u] = true;
+                        this->lista_betonu[u] = 1;
                     }
                     u++;
                 }
@@ -518,19 +536,19 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
 
     case 0: //losowo
         for (int i=0 ; i< (this->liczba_krawedzi); i++){
-            this->lista_betonu [i] = (bool) rand() %1;
+            this->lista_betonu [i] = rand() %2;
         }
         break;
     case 2: //brak
     default: //brak betonu
         for (int i=0 ; i< (this->liczba_krawedzi); i++){
-            this->lista_betonu [i] = false;
+            this->lista_betonu [i] = 0;
         }
         break;
     }
 
 
-    // zapisanie macierzy wysokości do pliku
+    // zapisanie listy betonu do pliku
     name = outFileName+".bet";
     out.open(name.c_str());
 
@@ -541,7 +559,43 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         out<<endl;
     }
     out.close();
-    cout<<"Beton"<<endl;
+    //cout<<"Beton"<<endl;
+
+    //macierz betonu
+
+    this->macierz_betonu = new int *[this->liczba_wierzcholkow];
+    for (int i = 0; i< this->liczba_wierzcholkow; i++){
+        this->macierz_betonu[i] = new int [this->liczba_wierzcholkow];
+    }
+    //zerowanie - ona w calosci idzie do pliku pozniej
+    for (int i=0 ; i< this->liczba_wierzcholkow; i++){
+        for(int j =0; j< this->liczba_wierzcholkow; j++){
+            this->macierz_betonu[i][j] = 0;
+        }
+    }
+
+    u = 0;
+    for (int i=0 ; i< (this->liczba_wierzcholkow); i++){
+        for(int j =i; j< (this->liczba_wierzcholkow); j++){
+            if(this->macierz_przyleglosci[i][j]!=0){
+                this->macierz_betonu[i][j] = this->lista_betonu[u];
+                u++;
+            }
+        }
+    }
+    // zapisanie macierzy betonu do pliku
+    name = outFileName+".mbet";
+    out.open(name.c_str());
+
+    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+        for(int j =0; j<this->liczba_wierzcholkow; j++){
+            out.width(4);
+            out << this->macierz_betonu[i][j];
+        }
+        out<< endl;
+    }
+
+    out.close();
 
     //od teraz tworzymy Graph
 

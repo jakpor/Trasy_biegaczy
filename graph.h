@@ -13,10 +13,12 @@ public:
     Graph();
     ~Graph();
     unsigned int** macierz_przyleglosci;
-    unsigned int** macierz_betonu;
-    bool * lista_betonu; //1-beton, 0 - nie beton
+    int** macierz_betonu;
+    int * lista_betonu; //1-beton, 0 - nie beton
     int** macierz_wysokosci;
     int * lista_wysokosci;
+    int max_wysokosc;
+    int min_wysokosc;
     QPoint * lista_wierzcholkow;
     QLine * lista_krawedzi;
     int liczba_wierzcholkow;
