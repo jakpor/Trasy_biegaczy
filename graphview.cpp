@@ -55,7 +55,7 @@ void GraphView::paintEvent(QPaintEvent *event)
     painter.setBrush(Qt::green);
     painter.setPen( pen );
         for(int i = 0; i<(gr.liczba_wierzcholkow); i++){
-            painter.setBrush(QColor::fromHsv((i*2),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+            painter.setBrush(QColor::fromHsv((i*360/(gr.liczba_wierzcholkow)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
             painter.drawEllipse(gr.lista_wierzcholkow[i],r,r);
             painter.drawText(QPoint(gr.lista_wierzcholkow[i].x()-r/2, gr.lista_wierzcholkow[i].y()+r/2),QString::number(i)); //cyferki
         }

@@ -430,6 +430,11 @@
           <string>Losowo</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Brak betonu</string>
+         </property>
+        </item>
        </widget>
        <widget class="QLabel" name="label_6">
         <property name="geometry">
