@@ -392,10 +392,10 @@ Graph generator::create_graph(){
 
     int u = 0;
     for (int i=0 ; i<(l_wierzcholkow); i++){
-        for(int j =i; j<(l_wierzcholkow); j++){
+        for(int j = i; j<(l_wierzcholkow); j++){
             if(macierz_przyleglosci[i][j]!=0){
                 //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
-                lista[u] = QLine(wspolrzedneX[(i -(i%w))/w][i%w],wspolrzedneY[(i -(i%w))/w][i%w],wspolrzedneX[(j -(j%w))/w][j%w],wspolrzedneY[(j -(j%w))/w][j%w]);
+                lista[u] = QLine((int)wspolrzedneX[(i -(i%w))/w][i%w],(int)wspolrzedneY[(i -(i%w))/w][i%w],(int)wspolrzedneX[(j -(j%w))/w][j%w],(int)wspolrzedneY[(j -(j%w))/w][j%w]);
                 u++;
             }
         }

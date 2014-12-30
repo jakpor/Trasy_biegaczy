@@ -29,10 +29,11 @@ private slots:
 
     void on_createGraphButton_clicked();
 
+    void on_closeButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     GraphView graphview;
-    Graph g;
 };
 
 #endif // MAINWINDOW_H
