@@ -32,6 +32,7 @@ public:
     unsigned int distance(int ax,int ay,int bx,int by);
 
     Graph load_graph(string filename);
+    void save_graph(string name);
 };
 
 #endif // GRAPH_H

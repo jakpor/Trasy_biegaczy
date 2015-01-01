@@ -73,7 +73,33 @@ Graph Graph::copy_graph(){
     return a;
 
 }
+void Graph::save_graph(string name){
+    ofstream out;
+    string long_name;
+    long_name = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\testy\\"+ name +".txt";
+    //long_name = "\\testy\\"+ name +".txt";
+    cout<< long_name << endl;
+    out.open(long_name.c_str(), ios_base::out);
 
+    if(out.is_open()){
+        //out.width(4);
+        out << liczba_wierzcholkow <<endl;
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for(int j =0; j<this->liczba_wierzcholkow; j++){
+                //out.width(4);
+                out << this->macierz_przyleglosci[i][j] << ' ';
+            }
+            out<< endl;
+        }
+
+        out.close();
+    }
+    else
+    {
+        cout << "Nie otwarto pliku" <<endl;
+    }
+
+}
 
 Graph Graph::load_graph(string filename){
     Graph a;
@@ -141,6 +167,8 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     int** wspolrzedneX;
     int** wspolrzedneY;
     //unsigned int** macierz_przyleglosci;
+
+    int u; //iterator
 
     //etykietki wierzcholkow
     //macierz_wierzcholkow = etykietki_wierzcholkow(h,w,0);
@@ -222,28 +250,41 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     //wypisz_macierz(w,h,wspolrzedneY, 4);
 
     // zapisanie współrzednych do pliku
+
     name = outFileName+".xy";
-    out.open(name.c_str());
-    out.width(4);
+    //name = "muminki.xy";
+    out.open(name.c_str(), ios::out);
+    if(out.good())
+    {
+        out.width(4);
 
-    this->lista_wierzcholkow = new QPoint[this->liczba_wierzcholkow];//do klasy Graph
-    int u = 0;
+        this->lista_wierzcholkow = new QPoint[this->liczba_wierzcholkow];//do klasy Graph
+        u = 0;
 
-    out << this->liczba_wierzcholkow <<endl;
-
-    for (int i=0 ; i<h; i++){
-        for(int j =0; j<w; j++){
-            out.width(4);
-            out << wspolrzedneX[i][j];
-            out.width(4);
-            out << wspolrzedneY[i][j];
-            out<< endl;
-            this->lista_wierzcholkow[u] = QPoint(wspolrzedneX[i][j],wspolrzedneY[i][j]);
-            u++; //u to po prostu iterator
+        out << this->liczba_wierzcholkow <<endl;
+        //cout<< endl << this->liczba_wierzcholkow <<endl;
+        //cout<< name <<endl;
+        //cout << outFileName <<endl;
+        for (int i=0 ; i<h; i++){
+            for(int j =0; j<w; j++){
+                out.width(4);
+                out << wspolrzedneX[i][j];
+                //cout << wspolrzedneX[i][j] <<' ';
+                out.width(4);
+                out << wspolrzedneY[i][j];
+                //cout << wspolrzedneY[i][j];
+                out<< endl;
+                //cout<< endl;
+                this->lista_wierzcholkow[u] = QPoint(wspolrzedneX[i][j],wspolrzedneY[i][j]);
+                u++; //u to po prostu iterator
+            }
         }
-    }
 
-    out.close();
+        out.close();
+    }
+    else
+        cout << "nie otwarto pliku" << endl;
+
 
 
 
@@ -478,7 +519,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         }
     }
     out.close();
-    cout<<"Lista wysokosci";
+    //cout<<"Lista wysokosci";
 
     //macierz wysokości
 

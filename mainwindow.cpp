@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "generator.h"
 #include "QString"
+#include "trasa.h"
 
 using namespace std;
 
@@ -62,9 +63,13 @@ void MainWindow::on_createGraphButton_clicked()
     graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
                    ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil); //wersja do algorytmu (z założenia)...
+    graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
+    Trasa a;
+    cout<<a.dijkstra(1,15,graphview.gr,distances)<< endl;
     //graphview.gr = g.copy_graph(); //wersja do rysowania
     graphview.repaint();
-    cout<<graphview.gr.liczba_krawedzi;
+    //cout<<graphview.gr.liczba_krawedzi;
+
 }
 
 //przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
