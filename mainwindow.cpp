@@ -58,7 +58,8 @@ void MainWindow::on_createGraphButton_clicked()
     int betonowosc=ui->betonBox->currentIndex(); //0-losowo, 1-pion+poziom
     int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina
 
-    graphview.gr=graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
+
+    graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
                    ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil); //wersja do algorytmu (z założenia)...
     //graphview.gr = g.copy_graph(); //wersja do rysowania

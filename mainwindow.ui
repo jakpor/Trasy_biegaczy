@@ -218,6 +218,11 @@
           <string>Dolina w centrum</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Miasto na przełęczy</string>
+         </property>
+        </item>
        </widget>
        <widget class="QLabel" name="label_2">
         <property name="geometry">
@@ -428,6 +433,11 @@
         <item>
          <property name="text">
           <string>Losowo</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Brak betonu</string>
          </property>
         </item>
        </widget>
