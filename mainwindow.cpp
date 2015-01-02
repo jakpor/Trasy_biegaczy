@@ -65,7 +65,7 @@ void MainWindow::on_createGraphButton_clicked()
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil); //wersja do algorytmu (z założenia)...
     graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
     Trasa a;
-    cout<<a.dijkstra(1,15,graphview.gr,distances)<< endl;
+    cout<<a.dijkstra(2,15,graphview.gr,distances)<< endl;
     //graphview.gr = g.copy_graph(); //wersja do rysowania
     graphview.repaint();
     //cout<<graphview.gr.liczba_krawedzi;

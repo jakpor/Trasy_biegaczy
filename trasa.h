@@ -47,6 +47,7 @@ int dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph graf, kr
 // uzywana w kontruktorze
  vector<int> nastepniki(int x, unsigned int** A, int n);
  int minimum(unsigned int * temp,unsigned int * perm, int size);
+ vector<int> build_result(int * history, int start, int end);
      //wyznaczenie nastepnikow wierzcholka x, n -rozmiar macierzy A
 
 

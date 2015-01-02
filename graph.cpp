@@ -86,7 +86,7 @@ void Graph::save_graph(string name){
         out << liczba_wierzcholkow <<endl;
         for (int i=0 ; i<this->liczba_wierzcholkow; i++){
             for(int j =0; j<this->liczba_wierzcholkow; j++){
-                //out.width(4);
+                out.width(5);
                 out << this->macierz_przyleglosci[i][j] << ' ';
             }
             out<< endl;
