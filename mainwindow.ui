@@ -99,7 +99,7 @@
          <number>200</number>
         </property>
         <property name="value">
-         <number>8</number>
+         <number>4</number>
         </property>
        </widget>
        <widget class="QLabel" name="label_4">
@@ -131,7 +131,7 @@
          <number>200</number>
         </property>
         <property name="value">
-         <number>9</number>
+         <number>4</number>
         </property>
        </widget>
        <widget class="QSlider" name="heightSlider">
@@ -153,7 +153,7 @@
          <number>31</number>
         </property>
         <property name="value">
-         <number>7</number>
+         <number>4</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -175,7 +175,7 @@
          <number>31</number>
         </property>
         <property name="value">
-         <number>8</number>
+         <number>4</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -553,6 +553,102 @@
         <width>800</width>
         <height>600</height>
        </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Szukanie trasy</string>
+     </attribute>
+     <widget class="QLineEdit" name="start">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>30</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Wierzchołek początkowy:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="end">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>70</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>70</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Wierzchołek końcowy:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="result">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>150</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>150</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Długość trasy minimalnej:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="countButton">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>100</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Oblicz</string>
       </property>
      </widget>
     </widget>

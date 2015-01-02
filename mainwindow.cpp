@@ -64,12 +64,23 @@ void MainWindow::on_createGraphButton_clicked()
                    ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil); //wersja do algorytmu (z założenia)...
     graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
-    Trasa a;
-    cout<<a.dijkstra(2,15,graphview.gr,distances)<< endl;
+
+
     //graphview.gr = g.copy_graph(); //wersja do rysowania
     graphview.repaint();
     //cout<<graphview.gr.liczba_krawedzi;
 
+}
+
+void MainWindow::on_countButton_clicked(){
+    Trasa a;
+    int r;
+//    cout<<a.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances)<<endl;
+    r=a.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances);
+    cout<<r<<endl;
+    QString answear = QString::number(r);
+
+    ui->result->setText(answear);
 }
 
 //przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka

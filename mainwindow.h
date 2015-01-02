@@ -30,6 +30,7 @@ private slots:
     void on_createGraphButton_clicked();
 
     void on_closeButton_clicked();
+    void on_countButton_clicked();
 
 private:
     Ui::MainWindow *ui;

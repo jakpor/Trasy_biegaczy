@@ -23,6 +23,8 @@ Trasa::~Trasa(){
 
 int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph graf, kryterium type){
     unsigned int** Matrix;
+    if(wierzcholek_poczatkowy<0 || wierzcholek_koncowy >= graf.liczba_wierzcholkow || wierzcholek_poczatkowy==wierzcholek_koncowy)
+        return 0;
 //to nie dziala!!
     switch(type){
         case distances:
