@@ -10,8 +10,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->graphviewLayout->addWidget(&graphview);
-    graphview.show();
+    ui->graphViewLayout->addWidget(&graphview);
+    ui->pathViewLayout->addWidget(&pathview);
+    //graphview.show();
+
+    //widoczna karta to generowanie grafu
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -47,7 +51,7 @@ void MainWindow::on_widthBox_valueChanged(int value)
     ui->widthSlider->setValue(value);
 }
 
-/** Przycisk "Generuj Graf" **/
+/** Przycisk "Wygeneruj Graf" **/
 void MainWindow::on_createGraphButton_clicked()
 {
     int betonowosc=ui->betonBox->currentIndex(); //0-losowo, 1-pion+poziom
@@ -59,8 +63,10 @@ void MainWindow::on_createGraphButton_clicked()
     graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
 
 
-    //graphview.gr = g.copy_graph(); //wersja do rysowania
+    pathview.graph = graphview.gr.copy_graph(); //wersja do rysowania trasy
+    pathview.repaint();
     graphview.repaint();
+    ui->tabWidget->setCurrentIndex(1);
 
 }
 
