@@ -73,14 +73,12 @@ void MainWindow::on_createGraphButton_clicked()
 
 /** Przycisk "Oblicz" w zakładce 2 **/
 void MainWindow::on_countButton_clicked(){
-    Trasa a;
     int r;
 //    cout<<a.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances)<<endl;
-    r=a.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances);
+    r=pathview.trasa.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances);
     cout<<r<<endl;
-    QString answear = QString::number(r);
 
-    ui->result->setText(answear);
+    ui->result->setText(QString::number(r));
 }
 
 /** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
@@ -102,4 +100,11 @@ void MainWindow::on_drawFromFileButton_clicked()
     //pathview.repaint();
     graphview.repaint();
     ui->tabWidget->setCurrentIndex(1);
+}
+
+/** Przycisk "Przerysuj grafy" **/
+void MainWindow::on_pushButton_clicked()
+{
+    pathview.repaint();
+    graphview.repaint();
 }
