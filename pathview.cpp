@@ -1,5 +1,6 @@
 #include "pathview.h"
 #include "ui_pathview.h"
+#include "trasa.h"
 
 PathView::PathView(QWidget *parent) :
     QWidget(parent),
@@ -40,9 +41,9 @@ void PathView::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::red);
     pen.setWidth(5);
     painter.setPen(pen);
-    for(int i = 0; i<(graph.sciezka.size()-1); i++){
+    for(int i = 0; i<(trasa.path_best.size()-1); i++){
         //używam funkcji at, bo jest szybsza i read only
-        painter.drawLine(graph.lista_wierzcholkow[graph.sciezka.at(i)],graph.lista_wierzcholkow[graph.sciezka.at(i+1)]);
+        painter.drawLine(graph.lista_wierzcholkow[trasa.path_best.at(i)],graph.lista_wierzcholkow[trasa.path_best.at(i+1)]);
     }
 
     /** dobór promienia kółek **/

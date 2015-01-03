@@ -5,6 +5,7 @@
 #include "graph.h"
 #include "graphview.h"
 #include "pathview.h"
+#include "trasa.h"
 
 namespace Ui {
     class MainWindow;
@@ -34,6 +35,8 @@ private slots:
     void on_countButton_clicked();
 
     void on_drawFromFileButton_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
