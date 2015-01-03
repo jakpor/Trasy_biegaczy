@@ -554,7 +554,7 @@
         <height>601</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="graphviewLayout"/>
+      <layout class="QVBoxLayout" name="graphViewLayout"/>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_3">
@@ -666,7 +666,7 @@
         <height>601</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout"/>
+      <layout class="QVBoxLayout" name="pathViewLayout"/>
      </widget>
     </widget>
    </widget>

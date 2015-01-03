@@ -41,15 +41,15 @@ void GraphView::paintEvent(QPaintEvent *event)
         painter.drawLine(gr.lista_krawedzi[i]);
     }
 
-    /** aktualna trasa **/
-    pen.setStyle(Qt::SolidLine);
-    pen.setColor(Qt::red);
-    pen.setWidth(5);
-    painter.setPen(pen);
-    for(int i = 0; i<(gr.sciezka.size()-1); i++){
-        //używam funkcji at, bo jest szybsza i read only
-        painter.drawLine(gr.lista_wierzcholkow[gr.sciezka.at(i)],gr.lista_wierzcholkow[gr.sciezka.at(i+1)]);
-    }
+//    /** aktualna trasa **/
+//    pen.setStyle(Qt::SolidLine);
+//    pen.setColor(Qt::red);
+//    pen.setWidth(5);
+//    painter.setPen(pen);
+//    for(int i = 0; i<(gr.sciezka.size()-1); i++){
+//        //używam funkcji at, bo jest szybsza i read only
+//        painter.drawLine(gr.lista_wierzcholkow[gr.sciezka.at(i)],gr.lista_wierzcholkow[gr.sciezka.at(i+1)]);
+//    }
 
     /** dobór promienia kółek **/
     int r = 5;

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "graph.h"
 #include "graphview.h"
+#include "pathview.h"
 
 namespace Ui {
     class MainWindow;
@@ -35,6 +36,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     GraphView graphview;
+    PathView pathview;
 };
 
 #endif // MAINWINDOW_H
