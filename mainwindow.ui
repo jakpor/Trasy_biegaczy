@@ -33,19 +33,6 @@
      <attribute name="title">
       <string>Wybór parametrów trasy</string>
      </attribute>
-     <widget class="QPushButton" name="closeButton">
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>30</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Close</string>
-      </property>
-     </widget>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
@@ -669,6 +656,19 @@
       <layout class="QVBoxLayout" name="pathViewLayout"/>
      </widget>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="closeButton">
+    <property name="geometry">
+     <rect>
+      <x>850</x>
+      <y>20</y>
+      <width>75</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Close</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

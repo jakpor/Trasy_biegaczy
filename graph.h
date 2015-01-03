@@ -33,8 +33,10 @@ public:
                          bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil);
     unsigned int distance(int ax,int ay,int bx,int by);
 
-    Graph load_graph(string filename);
+    void load_graph(string filename);
     void save_graph(string name);
+    void debug();
+    void destroy(); //bo zwykłe destruktory są często niejawnie wywoływane
 };
 
 #endif // GRAPH_H

@@ -59,9 +59,10 @@ void MainWindow::on_createGraphButton_clicked()
 
     graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
                    ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
-                   ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil); //wersja do algorytmu (z założenia)...
-    graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
+                   ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil);
 
+
+    //graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
 
     pathview.graph = graphview.gr.copy_graph(); //wersja do rysowania trasy
     pathview.repaint();
@@ -70,8 +71,7 @@ void MainWindow::on_createGraphButton_clicked()
 
 }
 
-
-/** Przycisk "Oblicz" najkrotsza trase **/
+/** Przycisk "Oblicz" w zakładce 2 **/
 void MainWindow::on_countButton_clicked(){
     Trasa a;
     int r;
@@ -83,8 +83,23 @@ void MainWindow::on_countButton_clicked(){
     ui->result->setText(answear);
 }
 
-//przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
+/** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
+ * */
 void MainWindow::on_closeButton_clicked()
 {
     graphview.close();
+}
+
+/** Przycisk "Wczytaj Graf" **/
+void MainWindow::on_drawFromFileButton_clicked()
+{
+    graphview.gr.load_graph(ui->filenameInEdit->text().toStdString());
+    //cerr<<graphview.gr.liczba_krawedzi<<endl;
+    //cerr<<graphview.gr.liczba_wierzcholkow<<endl;
+
+    graphview.gr.debug();
+    //pathview.graph = graphview.gr.copy_graph();
+    //pathview.repaint();
+    graphview.repaint();
+    ui->tabWidget->setCurrentIndex(1);
 }

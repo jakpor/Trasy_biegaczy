@@ -150,68 +150,151 @@ void Graph::save_graph(string name){
 
 }
 
-Graph Graph::load_graph(string filename){
+void Graph::load_graph(string filename){
     //13 zmiennych
-    Graph a;
     ifstream in;
     string name;
 
-    /** macierz przyleglosci **/
+    this->destroy();
 
+    /** macierz przyleglosci **/
     name = filename +".txt";
     in.open(name.c_str());
     if(in.good()){
-    in>>a.liczba_wierzcholkow;
-
-    unsigned int ** macierz = new unsigned int * [a.liczba_wierzcholkow];
-    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
-        macierz[i] = new unsigned int [(a.liczba_wierzcholkow)];
-    }
-
-
-    // Trzeba uwzględnić spacje i znaki nowej linii
-    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
-        for (int j=0 ; j<a.liczba_wierzcholkow; j++){
-            in>>macierz[i][j];
+        in>>this->liczba_wierzcholkow;
+        //cout<<"wierz1: "<<this->liczba_wierzcholkow<<endl;
+        (this->macierz_przyleglosci)  = new unsigned int * [this->liczba_wierzcholkow];
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            this->macierz_przyleglosci [i] = new unsigned int [(this->liczba_wierzcholkow)];
         }
-    }
-    a.macierz_przyleglosci = macierz;
-
-    in.close();
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for (int j=0 ; j<this->liczba_wierzcholkow; j++){
+                in>>this->macierz_przyleglosci [i][j];
+            }
+        }
+        in.close();
     }
     else{
-        cout << "Nie udało się otworzyc pliku z marzerza przyleglosci: "<< name << endl;
+        cerr << "Nie udało się otworzyc pliku z macierza przyleglosci: "<< name << endl;
     }
 
-    //wierzcholki
-    /*
-    name = filename +'.xy';
+    /** macierz betonu **/
+    name = filename +".mbet";
     in.open(name.c_str());
-
-    unsigned int ** macierz = new unsigned int * [a.liczba_wierzcholkow];
-    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
-        macierz[i] = new unsigned int [(a.liczba_wierzcholkow)];
-    }
-
-    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
-        for (int j=0 ; j<a.liczba_wierzcholkow; j++){
-            inFile>>macierz[i][j];
+    if(in.good()){
+        in>>this->liczba_wierzcholkow;
+        //cout<<"wierz2: "<<this->liczba_wierzcholkow<<endl;
+        this->macierz_betonu = new int * [this->liczba_wierzcholkow];
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            this->macierz_betonu[i] = new int [(this->liczba_wierzcholkow)];
         }
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for (int j=0 ; j<this->liczba_wierzcholkow; j++){
+                in>>this->macierz_betonu[i][j];
+            }
+        }
+        in.close();
     }
-    a.macierz_przyleglosci = macierz;
+    else{
+        cerr << "Nie udało się otworzyc pliku z macierza betonu: "<< name << endl;
+    }
 
-    outFile.close();
-    */
+    /** macierz wysokosci **/
+    name = filename +".mwys";
+    in.open(name.c_str());
+    if(in.good()){
+        in>>this->liczba_wierzcholkow;
+        //cout<<"wierz3: "<<this->liczba_wierzcholkow<<endl;
+        this->macierz_wysokosci = new int * [this->liczba_wierzcholkow];
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            this->macierz_wysokosci[i] = new int [(this->liczba_wierzcholkow)];
+        }
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for (int j=0 ; j<this->liczba_wierzcholkow; j++){
+                in>>this->macierz_wysokosci[i][j];
+            }
+        }
+        in.close();
+    }
+    else{
+        cerr << "Nie udało się otworzyc pliku z macierza wysokosci: "<< name << endl;
+    }
 
+    /** lista wierzcholkow **/
+    name = filename + ".xy";
+    in.open(name.c_str());
+    int x = 0, y = 0; //zmienne tymczasowe;
+    this->lista_wierzcholkow = new QPoint[this->liczba_wierzcholkow];
+    if(in.good()){
+        in>> this->szerokosc_grafu;
+        in>> this->wysokosc_grafu;
+        //cout<<"szer: "<<this->szerokosc_grafu<<"wys: "<< this->wysokosc_grafu<<endl;
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            in>>x>>y;
+            this->lista_wierzcholkow[i] = QPoint(x,y);
+        }
+        in.close();
+    }
+    else{
+         cerr << "Nie udało się otworzyc pliku z wierzcholkami: "<< name << endl;
+    }
 
+    /** lista wysokosci **/
+    name = filename +".wys";
+    in.open(name.c_str());
+    this->lista_wysokosci = new int [this->liczba_wierzcholkow];
+    if(in.good()){
+        in>>this->min_wysokosc>>this->max_wysokosc;
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            in>>this->lista_wysokosci[i];
+        }
+        in.close();
+    }
+    else{
+         cerr << "Nie udało się otworzyc pliku z listą wysokości : "<< name << endl;
+    }
 
-    return a;
+    /** lista betonu **/
+    name = filename +".bet";
+    in.open(name.c_str());
+    this->lista_betonu = new int [this->liczba_krawedzi];
+    if(in.good()){
+        in>>this->liczba_krawedzi;
+        //cout<<"kraw1: "<<this->liczba_krawedzi<<endl;
+        for (int i=0 ; i<this->liczba_krawedzi; i++){
+            in>>this->lista_betonu[i];
+        }
+        in.close();
+    }
+    else{
+         cerr << "Nie udało się otworzyc pliku z listą betonu : "<< name << endl;
+    }
+
+    /** lista krawedzi **/
+    name = filename +".kr";
+    in.open(name.c_str());
+    if(in.good()){
+        in>>this->liczba_krawedzi;
+        //cout<<"kraw2: "<<this->liczba_krawedzi<<endl;
+        this->lista_krawedzi = new QLine [this->liczba_krawedzi];
+        int x1,y1,x2,y2;
+        for (int i=0 ; i<(this->liczba_krawedzi); i++){
+            in>>x1>>y1>>x2>>y2;
+            this->lista_krawedzi[i] = QLine(x1,y1,x2,y2);
+        }
+        in.close();
+    }
+    else{
+         cerr << "Nie udało się otworzyc pliku z listą krawędzi : "<< name << endl;
+    }
 }
 
 void Graph::create_graph(string outFileName, int h, int w, int marginesX, int marginesY,
                      int szerokosc, int wysokosc, bool czy_kwadrat, int roznorodnosc,
                      bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil)
 {
+    this->destroy();
+
     //13 zmiennych
     ofstream out;
     string name;
@@ -291,7 +374,11 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         out.width(4);
         this->lista_wierzcholkow = new QPoint[this->liczba_wierzcholkow];//do klasy Graph
         u = 0;
-        out << this->liczba_wierzcholkow <<endl;
+        //pierwsza linijka - w h
+        out.width(4);
+        out << this->szerokosc_grafu;
+        out.width(4);
+        out << this->wysokosc_grafu<<endl;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
                 out.width(4);
@@ -389,6 +476,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     name = outFileName+".txt";
     out.open(name.c_str());
     if(out.good()){
+        out<<this->liczba_wierzcholkow<<endl;
         for (int i=0 ; i<this->liczba_wierzcholkow; i++){
             for(int j =0; j<this->liczba_wierzcholkow; j++){
                 out.width(4);
@@ -495,28 +583,35 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         }
         break;
     }
+    //min i max wysokość
+    this->max_wysokosc = (this->lista_wysokosci[0]);
+    this->min_wysokosc = this->lista_wysokosci[0];
+
+    for(int i=1; i<(this->liczba_wierzcholkow); i++){
+        if((this->lista_wysokosci[i])>this->max_wysokosc){
+            this->max_wysokosc = this->lista_wysokosci[i];
+        }
+        if((this->lista_wysokosci[i])<this->min_wysokosc){
+            this->min_wysokosc = this->lista_wysokosci[i];
+        }
+    }
+
 
     // zapisanie listy wysokości do pliku
     name = outFileName+".wys";
     out.open(name.c_str());
 
     if(out.good()){
-        out.width(4);
-        out << this->liczba_wierzcholkow <<endl;
-        this->max_wysokosc = (this->lista_wysokosci[0]);
-        this->min_wysokosc = this->lista_wysokosci[0];
+        //pierwsza linijka - min i max
+        out.width(5);
+        out << this->min_wysokosc;
+        out.width(5);
+        out << this->max_wysokosc;
 
         for(int i=0; i<(this->liczba_wierzcholkow); i++){
             out.width(4);
             out<< (this->lista_wysokosci[i]);
             out<< endl;
-
-            if((this->lista_wysokosci[i])>this->max_wysokosc){
-                this->max_wysokosc = this->lista_wysokosci[i];
-            }
-            if((this->lista_wysokosci[i])<this->min_wysokosc){
-                this->min_wysokosc = this->lista_wysokosci[i];
-            }
         }
         out.close();
     }
@@ -661,4 +756,48 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
 
 unsigned int Graph :: distance(int ax,int ay,int bx,int by){
     return (unsigned int)(sqrt((ax-bx)*(ax-bx) + (ay-by)*(ay-by)));
+}
+
+void Graph::debug(){
+    cout<<"Liczba krawedzi: "<<this->liczba_krawedzi<<endl;
+    cout<<"Liczba wierzcholkow: "<<this->liczba_wierzcholkow<<endl;
+    cout<<"Max wys: "<< this->max_wysokosc<< endl;
+    cout<<"Min wys: "<< this->min_wysokosc<< endl;
+    cout<<"Ostatni wierzcholek "<< this->lista_wierzcholkow[this->liczba_wierzcholkow-1].x()<<" "<< this->lista_wierzcholkow[this->liczba_wierzcholkow-1].y()<<endl;
+    cout<<"Ostatnia krawedz: "<< this->lista_krawedzi[this->liczba_krawedzi-1].x1()<<" "<< endl;
+}
+
+void Graph::destroy(){
+        //fajne usuwanie
+        for (int i = 0; i<(liczba_wierzcholkow); i++){
+            delete macierz_przyleglosci[i];
+            delete macierz_betonu[i];
+            delete macierz_wysokosci[i];
+        }
+        delete macierz_przyleglosci;
+        delete macierz_betonu;
+        delete macierz_wysokosci;
+        macierz_przyleglosci = NULL;
+        macierz_betonu = NULL;
+        macierz_wysokosci = NULL;
+
+        delete lista_wierzcholkow;
+        lista_wierzcholkow = NULL;
+
+        delete lista_betonu;
+        lista_betonu = NULL;
+
+        delete lista_krawedzi;
+        lista_krawedzi = NULL;
+
+        delete lista_wysokosci;
+        lista_wysokosci = NULL;
+
+        min_wysokosc = 0;
+        max_wysokosc = 0;
+        szerokosc_grafu = 0;
+        wysokosc_grafu = 0;
+        liczba_krawedzi = 0;
+        liczba_wierzcholkow = 0;
+
 }
