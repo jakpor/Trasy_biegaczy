@@ -12,10 +12,6 @@ GraphView::GraphView(QWidget *parent) :
 {
     ui->setupUi(this);
     gr = Graph();
-//    gr.sciezka.append(1);
-//    gr.sciezka.append(2);
-//    gr.sciezka.append(6);
-//    gr.sciezka.append(5);
 }
 
 GraphView::~GraphView()
@@ -33,7 +29,7 @@ void GraphView::paintEvent(QPaintEvent *event)
 
     //painter.drawLines(gr.lista_krawedzi,gr.liczba_krawedzi); //rysuje wszystkie krawędzie naraz - może się przydać kiedyś...
 
-    //krawędzie + beton
+    /** krawędzie + beton **/
     for(int i = 0; i<(gr.liczba_krawedzi); i++){
         if(gr.lista_betonu[i]==1){
             pen.setStyle(Qt::DotLine);
@@ -43,25 +39,19 @@ void GraphView::paintEvent(QPaintEvent *event)
         }
         painter.setPen(pen);
         painter.drawLine(gr.lista_krawedzi[i]);
-            //testy
-//            cout<<gr.lista_krawedzi[i].dx()<<"  "<< gr.lista_krawedzi[i].dy()<<endl;
-//            for (int k = 0; k<gr.liczba_krawedzi; k++ ){
-//                cout<<gr.lista_krawedzi[k].x1()<<" "<<gr.lista_krawedzi[k].y1()<<" "<<gr.lista_krawedzi[k].x2()<<" "<<gr.lista_krawedzi[k].y2()<<" "<<endl;
-//            }
     }
 
-    //aktualna trasa
-    //gr.sciezka.fill(-1, 10);
-
+    /** aktualna trasa **/
     pen.setStyle(Qt::SolidLine);
     pen.setColor(Qt::red);
     pen.setWidth(5);
     painter.setPen(pen);
     for(int i = 0; i<(gr.sciezka.size()-1); i++){
+        //używam funkcji at, bo jest szybsza i read only
         painter.drawLine(gr.lista_wierzcholkow[gr.sciezka.at(i)],gr.lista_wierzcholkow[gr.sciezka.at(i+1)]);
     }
 
-    //dobór promienia kółek
+    /** dobór promienia kółek **/
     int r = 5;
     if(gr.szerokosc_grafu<15){
         r = 20-gr.szerokosc_grafu;
@@ -69,7 +59,8 @@ void GraphView::paintEvent(QPaintEvent *event)
     else{
         r =5;
     }
-    //kółka - wierzchołki
+
+    /** kółka = wierzchołki **/
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
     pen.setColor(Qt::black);

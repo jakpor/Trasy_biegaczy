@@ -545,18 +545,19 @@
      <attribute name="title">
       <string>Wizualizacja grafu</string>
      </attribute>
-     <widget class="QWidget" name="graphWidget" native="true">
+     <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>800</width>
-        <height>600</height>
+        <width>801</width>
+        <height>601</height>
        </rect>
       </property>
+      <layout class="QVBoxLayout" name="graphviewLayout"/>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_4">
+    <widget class="QWidget" name="tab_3">
      <attribute name="title">
       <string>Szukanie trasy</string>
      </attribute>
@@ -650,6 +651,22 @@
       <property name="text">
        <string>Oblicz</string>
       </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Wizualizacja trasy</string>
+     </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>801</width>
+        <height>601</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
      </widget>
     </widget>
    </widget>

@@ -108,10 +108,11 @@ Graph Graph::load_graph(string filename){
     ifstream in;
     string name;
 
-    //macierz przyleglosci
+    /** macierz przyleglosci **/
 
     name = filename +".txt";
     in.open(name.c_str());
+    if(in.good()){
     in>>a.liczba_wierzcholkow;
 
     unsigned int ** macierz = new unsigned int * [a.liczba_wierzcholkow];
@@ -129,6 +130,10 @@ Graph Graph::load_graph(string filename){
     a.macierz_przyleglosci = macierz;
 
     in.close();
+    }
+    else{
+        cout << "Nie udało się otworzyc pliku z marzerza przyleglosci: "<< name << endl;
+    }
 
     //wierzcholki
     /*
@@ -165,30 +170,13 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     this->szerokosc_grafu = w;
     this->wysokosc_grafu = h;
 
-    //int** macierz_wierzcholkow;
     int** wspolrzedneX;
     int** wspolrzedneY;
-    //unsigned int** macierz_przyleglosci;
 
     int u; //iterator
 
-    //etykietki wierzcholkow
-    //macierz_wierzcholkow = etykietki_wierzcholkow(h,w,0);
 
-    // wypisz etykietki wierzcholkow
-    //wypisz_macierz(w,h,macierz_wierzcholkow, 4);
-
-    //wspolrzedne wierzcholkow
-    /*
-    marginesX = 50;
-    marginesY = 20;
-    wysokosc_okna = 600;
-    szerokosc_okna = 800;
-    roznorodnosc = 100;
-    czy_kwadrat = true;
-    */
-
-    //funkcja generująca współrzedne
+    /** Wspolrzedne punktow **/
     srand(time(NULL));
 
     wspolrzedneX = new int *[h];
@@ -245,74 +233,44 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         }
     }
 
-    //cout<< "X"<< endl;
-    //wypisz_macierz(w,h,wspolrzedneX, 4);
-
-    //cout<< "Y"<< endl;
-    //wypisz_macierz(w,h,wspolrzedneY, 4);
 
     // zapisanie współrzednych do pliku
-
     name = outFileName+".xy";
-    //name = "muminki.xy";
     out.open(name.c_str(), ios::out);
     if(out.good())
     {
         out.width(4);
-
         this->lista_wierzcholkow = new QPoint[this->liczba_wierzcholkow];//do klasy Graph
         u = 0;
-
         out << this->liczba_wierzcholkow <<endl;
-        //cout<< endl << this->liczba_wierzcholkow <<endl;
-        //cout<< name <<endl;
-        //cout << outFileName <<endl;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
                 out.width(4);
                 out << wspolrzedneX[i][j];
-                //cout << wspolrzedneX[i][j] <<' ';
                 out.width(4);
                 out << wspolrzedneY[i][j];
-                //cout << wspolrzedneY[i][j];
                 out<< endl;
-                //cout<< endl;
                 this->lista_wierzcholkow[u] = QPoint(wspolrzedneX[i][j],wspolrzedneY[i][j]);
                 u++; //u to po prostu iterator
             }
         }
-
         out.close();
     }
     else
-        cout << "nie otwarto pliku" << endl;
+        cout << "Nie utworzono pliku ze wspolrzednymi wierzcholkow: "<< name << endl;
 
-
-
-
-
-
-    // macierz przyleglosci
+    /** macierz przyleglosci **/
     /* wierzcholek moze laczyc sie tylko z wierzcholkami sasiednimi, czyli majac polozenie x, y kandydatami sa:
        x,   y,  numer
        x+1, y,  numer + w      - jeden w dol
        x+1, y+1 numer +w+1     - jeden w prawo i jeden w dol (przekatna)
        x,   y+1 numer+1        - jeden w prawo
-       x+1, y-1 numer+w -1     -2nd przekatna  - nie dziala dla y==0, czyli numer%w==1
-
-       (4 mozliwosci)
-     w=3, h=4 (width, height)
-       1   2   3
-       4   5   6
-       7   8   9
-      10  11  12
-
+       x+1, y-1 numer+w -1     - 2nd przekatna  - nie dziala dla y==0, czyli numer%w==1
 
      macierz ma wymiar (h*x) x (this->liczba_wierzcholkow) - calkiem spora sie robi, ale wypelniamy tylko g�rna pol�wk�
      wartosci - rzeczywiste odleglosci miedzy punktami (zeby cos sie dzialo)
     */
 
-    //this->macierz_przyleglosci
 
     this->macierz_przyleglosci = new unsigned int *[this->liczba_wierzcholkow];
     for (int i = 0; i< this->liczba_wierzcholkow; i++){
@@ -324,13 +282,12 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             this->macierz_przyleglosci[i][j] = 0;
         }
     }
-
     for (int i=0 ; i<h; i++){
         for(int j=0; j<w; j++){
-            int szansa = 4; //4;//rand() % 5+2; // ile krawedzi
+            int szansa = 4; //rand() % 5+2; // ile krawedzi
             int ktora = -1;
             for(int m =0; m<szansa; m++){
-                ktora = ktora+1; //ktora+1; //rand() % 4; //ktora krawedz
+                ktora = ktora+1; //rand() % 4; //ktora krawedz
                 switch (ktora){
                     case 0:
                         // jeden w prawo
@@ -367,47 +324,38 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
                     default:
                         break;
                 }
-                //cout<<i*w+j+1;
             }
         }
 
     }
 
-    //Symetryczność macierzy!!!
+    //Symetryczność macierzy
     for (int i = 0;i<this->liczba_wierzcholkow;i++){
         for(int j=0; j<i; j++){
             this->macierz_przyleglosci[i][j] =  this->macierz_przyleglosci[j][i];
         }
     }
 
-    //cout<< "Macierz przyleglosci"<< endl;
-    //wypisz_macierz(this->liczba_wierzcholkow,this->liczba_wierzcholkow,(int **)this->macierz_przyleglosci, 4);
-
     //zapis macierzy przyległości do pliku
     name = outFileName+".txt";
     out.open(name.c_str());
-
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
-        for(int j =0; j<this->liczba_wierzcholkow; j++){
-            out.width(4);
-            out << this->macierz_przyleglosci[i][j];
+    if(out.good()){
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for(int j =0; j<this->liczba_wierzcholkow; j++){
+                out.width(4);
+                out << this->macierz_przyleglosci[i][j];
+            }
+            out<< endl;
         }
-        out<< endl;
+        out.close();
+    }
+    else{
+        cout << "Nie utworzono pliku macierzy przyległości: "<<name<< endl;
     }
 
-    out.close();
-
-
-
-
-    //lista krawedzi
-
-    //cout<< "Lista krawedzi"<< endl;
-
+    /** lista krawedzi **/
     name = outFileName+".kr";
     out.open(name.c_str());
-
-
     int licznik_krawedzi = 0;
 
     for (int i=0 ; i< this->liczba_wierzcholkow; i++){
@@ -417,50 +365,50 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             }
         }
     }
-    out<<licznik_krawedzi<<endl; //pierwsza linijka pliku
+
 
     this->liczba_krawedzi = licznik_krawedzi;
     this->lista_krawedzi = new QLine[licznik_krawedzi];
 
     int x1, x2, y1, y2;
     u = 0;
+    if(out.good()){
+        out.width(4);
+        out<<licznik_krawedzi<<endl; //pierwsza linijka pliku
+        for (int i=0 ; i< (this->liczba_wierzcholkow); i++){
+            for(int j =i; j< (this->liczba_wierzcholkow); j++){
+                if(this->macierz_przyleglosci[i][j]!=0){
+                    //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
+                    x1 = wspolrzedneX[(i -(i%w))/w][i%w];
+                    y1 = wspolrzedneY[(i -(i%w))/w][i%w];
+                    x2 = wspolrzedneX[(j -(j%w))/w][j%w];
+                    y2 = wspolrzedneY[(j -(j%w))/w][j%w];
 
-    for (int i=0 ; i< (this->liczba_wierzcholkow); i++){
-        for(int j =i; j< (this->liczba_wierzcholkow); j++){
-            if(this->macierz_przyleglosci[i][j]!=0){
-                //j to numer wierzcholka -1, ktory lezy na j%w wierszu i j - h*(j%w) kolumnie
-                x1 = wspolrzedneX[(i -(i%w))/w][i%w];
-                y1 = wspolrzedneY[(i -(i%w))/w][i%w];
-                x2 = wspolrzedneX[(j -(j%w))/w][j%w];
-                y2 = wspolrzedneY[(j -(j%w))/w][j%w];
+                    out.width(4);
+                    out<<x1;
+                    out.width(4);
+                    out<<y1;
+                    out.width(4);
+                    out<<x2;
+                    out.width(4);
+                    out<<y2;
+                    out<< endl;
 
-                out.width(4);
-                out<<x1;
-                out.width(4);
-                out<<y1;
-                out.width(4);
-                out<<x2;
-                out.width(4);
-                out<<y2;
-                //out.width(4);
-                //cout<<this->macierz_przyleglosci[i][j];    //waga
-                //cout.width(4);
-                //cout<<i;                           //numer i tego w
-                //cout.width(4);
-                //cout<<j; //numer polaczonego do niego
-                out<< endl;
-
-                this->lista_krawedzi[u] = QLine(x1,y1,x2,y2);
-                u++;
+                    this->lista_krawedzi[u] = QLine(x1,y1,x2,y2);
+                    u++;
+                }
             }
         }
+        out.close();
     }
-    out.close();
+    else{
+        cout << "Nie utworzono pliku z lista krawedzi: "<<name<< endl;
+    }
 
-    //lista wysokości wierzcholkow + macierz
+
+    /** lista wysokości wierzcholkow + macierz **/
 
     this->lista_wysokosci = new int[this->liczba_wierzcholkow];
-
 
     switch(profil){
     case 1: //góra - nie działa
@@ -472,7 +420,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             }
         }
         break;
-    case 2: //dolina -nie działa
+    case 2: //dolina -nie działa wciąż!
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
@@ -502,26 +450,31 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     // zapisanie listy wysokości do pliku
     name = outFileName+".wys";
     out.open(name.c_str());
-    out.width(4);
 
-    out << this->liczba_wierzcholkow <<endl;
-    this->max_wysokosc = -1000;
-    this->min_wysokosc = 1000;
-
-    for(int i=0; i<(this->liczba_wierzcholkow); i++){
+    if(out.good()){
         out.width(4);
-        out<< (this->lista_wysokosci[i]);
-        out<< endl;
+        out << this->liczba_wierzcholkow <<endl;
+        this->max_wysokosc = (this->lista_wysokosci[0]);
+        this->min_wysokosc = this->lista_wysokosci[0];
 
-        if((this->lista_wysokosci[i])>this->max_wysokosc){
-            this->max_wysokosc = this->lista_wysokosci[i];
+        for(int i=0; i<(this->liczba_wierzcholkow); i++){
+            out.width(4);
+            out<< (this->lista_wysokosci[i]);
+            out<< endl;
+
+            if((this->lista_wysokosci[i])>this->max_wysokosc){
+                this->max_wysokosc = this->lista_wysokosci[i];
+            }
+            if((this->lista_wysokosci[i])<this->min_wysokosc){
+                this->min_wysokosc = this->lista_wysokosci[i];
+            }
         }
-        if((this->lista_wysokosci[i])<this->min_wysokosc){
-            this->min_wysokosc = this->lista_wysokosci[i];
-        }
+        out.close();
     }
-    out.close();
-    //cout<<"Lista wysokosci";
+    else{
+        cout << "Nie utworzono pliku z lista wsokosci wierzcholkow: "<<name<< endl;
+    }
+    //cout<<"Lista wysokosci OK";
 
     //macierz wysokości
 
@@ -543,17 +496,22 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     name = outFileName+".mwys";
     out.open(name.c_str());
 
-    out << this->liczba_wierzcholkow <<endl;
+    if(out.good()){
+        out << this->liczba_wierzcholkow <<endl;
 
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
-        for(int j =0; j<this->liczba_wierzcholkow; j++){
-            out.width(4);
-            out << this->macierz_wysokosci[i][j];
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for(int j =0; j<this->liczba_wierzcholkow; j++){
+                out.width(4);
+                out << this->macierz_wysokosci[i][j];
+            }
+            out<< endl;
         }
-        out<< endl;
-    }
 
-    out.close();
+        out.close();
+    }
+    else{
+        cout << "Nie utworzono pliku z macierza wysokosci: "<<name<< endl;
+    }
 
 
 //betonowość
@@ -576,7 +534,6 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
                 }
             }
         }
-
     case 0: //losowo
         for (int i=0 ; i< (this->liczba_krawedzi); i++){
             this->lista_betonu [i] = rand() %2;
@@ -595,13 +552,18 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     name = outFileName+".bet";
     out.open(name.c_str());
 
-    out<<(this->liczba_krawedzi)<<endl;
+    if(out.good()){
+        out<<(this->liczba_krawedzi)<<endl;
 
-    for (int i=0 ; i< (this->liczba_krawedzi); i++){
-        out<<(this->lista_betonu [i]);
-        out<<endl;
+        for (int i=0 ; i< (this->liczba_krawedzi); i++){
+            out<<(this->lista_betonu [i]);
+            out<<endl;
+        }
+        out.close();
     }
-    out.close();
+    else{
+        cout << "Nie utworzono pliku z lista betonu: "<<name<< endl;
+    }
     //cout<<"Beton"<<endl;
 
     //macierz betonu
@@ -630,34 +592,21 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     name = outFileName+".mbet";
     out.open(name.c_str());
 
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
-        for(int j =0; j<this->liczba_wierzcholkow; j++){
-            out.width(4);
-            out << this->macierz_betonu[i][j];
+    if(out.good()){
+        out<<(this->liczba_wierzcholkow)<<endl;//pierwsza linia
+
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for(int j =0; j<this->liczba_wierzcholkow; j++){
+                out.width(4);
+                out << this->macierz_betonu[i][j];
+            }
+            out<< endl;
         }
-        out<< endl;
+        out.close();
     }
-
-    out.close();
-
-    //od teraz tworzymy Graph
-
-//    Graph a;
-
-//    a.macierz_przyleglosci = this->macierz_przyleglosci;
-
-//    a.liczba_krawedzi = licznik_krawedzi;
-//    a.liczba_wierzcholkow = this->liczba_wierzcholkow;
-//    a.szerokosc_grafu = w;
-//    a.wysokosc_grafu = h;
-//    a.lista_krawedzi = this->lista_krawedzi;
-//    a.lista_wierzcholkow = this->lista_wierzcholkow;
-    //cout<<"Stworzono Graph"<<endl;
-    //cout<<licznik_krawedzi<<endl;
-//    for (int k = 0; k<licznik_krawedzi; k++ ){
-//        cout<<a.lista_krawedzi[k].x1()<<" "<<a.lista_krawedzi[k].y1()<<" "<<a.lista_krawedzi[k].x2()<<" "<<a.lista_krawedzi[k].y2()<<" "<<endl;
-//    }
-    //return a;
+    else{
+        cout << "Nie utworzono pliku z macierza betonu: "<<name<< endl;
+    }
 }
 
 

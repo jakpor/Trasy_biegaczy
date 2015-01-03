@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->graphviewLayout->addWidget(&graphview);
     graphview.show();
 }
 
@@ -18,6 +19,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// slidery i zmienne do generowania grafu
 void MainWindow::on_heightSlider_valueChanged(int value)
 {
     ui->heightBox->setValue(value);
@@ -45,19 +47,11 @@ void MainWindow::on_widthBox_valueChanged(int value)
     ui->widthSlider->setValue(value);
 }
 
-
+/** Przycisk "Generuj Graf" **/
 void MainWindow::on_createGraphButton_clicked()
 {
-    /*
-    generator a = generator(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
-              ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
-              ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked());
-    */
-    //delete &g;
-
     int betonowosc=ui->betonBox->currentIndex(); //0-losowo, 1-pion+poziom
-    int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina
-
+    int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina, 3 - przełęcz
 
     graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
                    ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
@@ -67,10 +61,11 @@ void MainWindow::on_createGraphButton_clicked()
 
     //graphview.gr = g.copy_graph(); //wersja do rysowania
     graphview.repaint();
-    //cout<<graphview.gr.liczba_krawedzi;
 
 }
 
+
+/** Przycisk "Oblicz" najkrotsza trase **/
 void MainWindow::on_countButton_clicked(){
     Trasa a;
     int r;
