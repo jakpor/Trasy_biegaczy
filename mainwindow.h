@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
+#include "qcustomplot.h"
 #include "graph.h"
 #include "graphview.h"
 #include "pathview.h"
@@ -42,6 +44,7 @@ private:
     Ui::MainWindow *ui;
     GraphView graphview;
     PathView pathview;
+    void setupplot1(QCustomPlot *customplot);
 };
 
 #endif // MAINWINDOW_H
