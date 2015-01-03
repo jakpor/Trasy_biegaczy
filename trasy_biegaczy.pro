@@ -14,16 +14,18 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    generator.cpp \
-    readgraph.cpp \
+#    generator.cpp \
+#    readgraph.cpp \
     graph.cpp \
-    graphview.cpp
+    graphview.cpp \
+    trasa.cpp
 
 HEADERS  += mainwindow.h \
-    generator.h \
-    readgraph.h \
+#    generator.h \
+#    readgraph.h \
     graph.h \
-    graphview.h
+    graphview.h \
+    trasa.h
 
 FORMS    += mainwindow.ui\
         graphview.ui \
