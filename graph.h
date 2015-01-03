@@ -25,6 +25,7 @@ public:
     int liczba_krawedzi;
     int szerokosc_grafu;
     int wysokosc_grafu;
+    //13 zmiennych (jak dodajesz to tu dopisz, więcej - do konstuktorów)
     QVector<int> sciezka;
     Graph copy_graph();
     void create_graph(string outFileName, int h, int w, int marginesX, int marginesY,

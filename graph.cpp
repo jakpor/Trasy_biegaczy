@@ -6,13 +6,20 @@
 
 Graph::Graph()
 {
+    //konstruktor na 13 zmiennych
     lista_wierzcholkow = NULL ;
     macierz_przyleglosci = NULL ;
+    macierz_betonu = NULL ;
+    macierz_wysokosci = NULL ;
+    lista_betonu = NULL;
+    lista_wysokosci = NULL;
     lista_krawedzi = NULL ;
     liczba_wierzcholkow = 0;
     liczba_krawedzi = 0;
     szerokosc_grafu = 0;
     wysokosc_grafu = 0;
+    min_wysokosc = 0;
+    max_wysokosc = 0;
 }
 
 Graph::~Graph()
@@ -37,42 +44,82 @@ Graph::~Graph()
 }
 
 Graph Graph::copy_graph(){
+    //13 zmiennych
     Graph a;
     a.liczba_krawedzi = this->liczba_krawedzi;
     a.liczba_wierzcholkow = this->liczba_wierzcholkow;
     a.szerokosc_grafu = this->szerokosc_grafu;
     a.wysokosc_grafu = this->wysokosc_grafu;
+    a.min_wysokosc = this->min_wysokosc;
+    a.max_wysokosc = this->max_wysokosc;
 
-
+    //lista wierzcholkow
     QPoint * wierz = new QPoint[(a.liczba_wierzcholkow)];
     for (int i=0 ; i<a.liczba_wierzcholkow; i++){
         wierz[i] = this->lista_wierzcholkow[i];
     }
     a.lista_wierzcholkow = wierz;
 
+    //lista krawedzi
     QLine * kraw = new QLine[a.liczba_krawedzi];
     for (int i=0 ; i<a.liczba_krawedzi; i++){
         kraw[i] = this->lista_krawedzi[i];
     }
-
     a.lista_krawedzi = kraw;
 
+    //macierz przyleglosci
     unsigned int ** macierz = new unsigned int * [a.liczba_wierzcholkow];
     for (int i=0 ; i<a.liczba_wierzcholkow; i++){
         macierz[i] = new unsigned int [(a.liczba_wierzcholkow)];
     }
-
     for (int i=0 ; i<a.liczba_wierzcholkow; i++){
         for (int j=0 ; j<a.liczba_wierzcholkow; j++){
             macierz[i][j] = this->macierz_przyleglosci[i][j];
         }
     }
-
     a.macierz_przyleglosci = macierz;
 
-    return a;
+    //macierz betonu
+    int ** beton = new int * [a.liczba_wierzcholkow];
+    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
+        beton[i] = new int [(a.liczba_wierzcholkow)];
+    }
+    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
+        for (int j=0 ; j<a.liczba_wierzcholkow; j++){
+            beton[i][j] = this->macierz_betonu[i][j];
+        }
+    }
+    a.macierz_betonu = beton;
 
+    //macierz wysokosci
+    int ** wysokosci = new int * [a.liczba_wierzcholkow];
+    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
+        wysokosci[i] = new int [(a.liczba_wierzcholkow)];
+    }
+    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
+        for (int j=0 ; j<a.liczba_wierzcholkow; j++){
+            wysokosci[i][j] = this->macierz_wysokosci[i][j];
+        }
+    }
+    a.macierz_wysokosci = wysokosci;
+
+    //lista betonu
+    int * lista_b = new int [a.liczba_krawedzi];
+    for (int i=0 ; i<a.liczba_krawedzi; i++){
+        lista_b[i] = this->lista_betonu[i];
+    }
+    a.lista_betonu = lista_b;
+
+    //lista wysokosci
+    int * lista_w = new int [a.liczba_wierzcholkow];
+    for (int i=0 ; i<a.liczba_wierzcholkow; i++){
+        lista_w[i] = this->lista_wysokosci[i];
+    }
+    a.lista_wysokosci = lista_w;
+
+    return a;
 }
+
 void Graph::save_graph(string name){
     ofstream out;
     string long_name;
@@ -104,6 +151,7 @@ void Graph::save_graph(string name){
 }
 
 Graph Graph::load_graph(string filename){
+    //13 zmiennych
     Graph a;
     ifstream in;
     string name;
@@ -164,6 +212,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
                      int szerokosc, int wysokosc, bool czy_kwadrat, int roznorodnosc,
                      bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil)
 {
+    //13 zmiennych
     ofstream out;
     string name;
     this->liczba_wierzcholkow = h*w; //ile wszystkich

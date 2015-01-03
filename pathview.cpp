@@ -23,7 +23,6 @@ void PathView::paintEvent(QPaintEvent *event)
 
     //painter.drawLines(gr.lista_krawedzi,gr.liczba_krawedzi); //rysuje wszystkie krawędzie naraz - może się przydać kiedyś...
 
-    cerr<<"aaa";
     /** krawędzie + beton **/
     for(int i = 0; i<(graph.liczba_krawedzi); i++){
         if(graph.lista_betonu[i]==1){
