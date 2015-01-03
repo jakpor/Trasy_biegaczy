@@ -62,7 +62,7 @@ void MainWindow::on_createGraphButton_clicked()
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil);
 
 
-    //graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
+
 
     pathview.graph = graphview.gr.copy_graph(); //wersja do rysowania trasy
     pathview.repaint();
@@ -70,13 +70,18 @@ void MainWindow::on_createGraphButton_clicked()
     ui->tabWidget->setCurrentIndex(1);
 
 }
+/** Przycisk "Zapisz" **/
+void MainWindow::on_saveButton_clicked(){
+    graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
+
+}
 
 /** Przycisk "Oblicz" w zakładce 2 **/
 void MainWindow::on_countButton_clicked(){
     int r;
-//    cout<<a.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances)<<endl;
+
     r=pathview.trasa.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances);
-    cout<<r<<endl;
+//    cout<<r<<endl;
 
     ui->result->setText(QString::number(r));
 }
@@ -108,6 +113,8 @@ void MainWindow::on_pushButton_clicked()
     pathview.repaint();
     graphview.repaint();
 }
+
+
 
 void MainWindow::setupplot1(QCustomPlot *customPlot){
     customPlot->setWindowTitle("Wykres zależności funkcji celu od kolejnych iteracji algorytmu");

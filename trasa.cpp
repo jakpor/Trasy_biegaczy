@@ -113,11 +113,10 @@ int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph g
 
 QVector<int> result=build_result(Previous,wierzcholek_poczatkowy,wierzcholek_koncowy);
     this->path_best = result;
-    //            result.push_back(wierzcholek_koncowy);
-    //            result=build_result(result,Previous,wierzcholek_poczatkowy);
-            for(int i =0; i<result.size(); i++){
-                cout<<result[i]<<' ';
-            }
+
+//            for(int i =0; i<result.size(); i++){
+//                cout<<result[i]<<' ';
+//            }
     //    for(int i=0; i<graf.liczba_wierzcholkow; i++)
     //        cout<< Previous[i]<<' ';
 
