@@ -76,8 +76,10 @@ Graph Graph::copy_graph(){
 void Graph::save_graph(string name){
     ofstream out;
     string long_name;
+    //long_name = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
     long_name = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\testy\\"+ name +".txt";
     //long_name = "\\testy\\"+ name +".txt";
+    //"D:\Dokumenty\AGH\Semestr 5\MMWD\Symulacja\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
     cout<< long_name << endl;
     out.open(long_name.c_str(), ios_base::out);
 
