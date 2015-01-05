@@ -15,7 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //widoczna karta to generowanie grafu
     ui->tabWidget->setCurrentIndex(0);
-    setupplot1(ui->plotWidget);
+    setupplot1(ui->plotWidget_1);
+    setupplot2(ui->plotWidget_2);
+    setupplot3(ui->plotWidget_3);
+    setupplot4(ui->plotWidget_4);
 }
 
 MainWindow::~MainWindow()
@@ -81,6 +84,21 @@ void MainWindow::on_countButton_clicked(){
 //    cout<<r<<endl;
 
     ui->result->setText(QString::number(r));
+
+    //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
+    pathview.trasa.path_all.push_back(pathview.trasa.path_best);
+
+//    //testowy drugi wektor - możesz odkomentować i zobaczyć jak działa historia tras
+//    QVector <int> temp;
+//    temp.append(0);
+//    temp.append(1);
+//    temp.append(2);
+//    temp.append(3);
+//    pathview.trasa.path_all.push_back(temp);
+
+
+    //po wykonaniu algorytmu aktualizuje historie
+    pathview.trasa.aktualizuj_historie_tras();
 }
 
 /** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
@@ -114,14 +132,70 @@ void MainWindow::on_pushButton_clicked()
 
 
 
+/** Wykresy **/
+
 void MainWindow::setupplot1(QCustomPlot *customPlot){
-    customPlot->setWindowTitle("Wykres zależności funkcji celu od kolejnych iteracji algorytmu");
-    //customPlot->statusBar()->clearMessage();
+    // funkcja celu od iteracji
     QVector<double> x(101), y(101); // initialize with entries 0..100
     for (int i=0; i<101; ++i)
     {
       x[i] = i; // x goes from -1 to 1
       y[i] = 30*sqrt(x[i]);  // let's plot a sqrt function
+    }
+    // create graph and assign data to it:
+    customPlot->addGraph();
+    customPlot->graph(0)->setData(x, y);
+    // give the axes some labels:
+    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->yAxis->setLabel("Funkcja celu");
+    // set axes ranges, so we see all data:
+    customPlot->xAxis->setRange(0, 100);
+    customPlot->yAxis->setRange(0, 1000);
+}
+
+void MainWindow::setupplot2(QCustomPlot *customPlot){
+    // odległość od iteracji
+    QVector<double> x(101), y(101); // initialize with entries 0..100
+    for (int i=0; i<101; ++i)
+    {
+      x[i] = i; // x goes from -1 to 1
+      y[i] = 50*sqrt(x[i]);  // let's plot a sqrt function
+    }
+    // create graph and assign data to it:
+    customPlot->addGraph();
+    customPlot->graph(0)->setData(x, y);
+    // give the axes some labels:
+    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->yAxis->setLabel("Funkcja celu");
+    // set axes ranges, so we see all data:
+    customPlot->xAxis->setRange(0, 100);
+    customPlot->yAxis->setRange(0, 1000);
+}
+void MainWindow::setupplot3(QCustomPlot *customPlot){
+    // betonowośc od iteracji
+    QVector<double> x(101), y(101); // initialize with entries 0..100
+    for (int i=0; i<101; ++i)
+    {
+      x[i] = i; // x goes from -1 to 1
+      y[i] = 20*sqrt(x[i]);  // let's plot a sqrt function
+    }
+    // create graph and assign data to it:
+    customPlot->addGraph();
+    customPlot->graph(0)->setData(x, y);
+    // give the axes some labels:
+    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->yAxis->setLabel("Funkcja celu");
+    // set axes ranges, so we see all data:
+    customPlot->xAxis->setRange(0, 100);
+    customPlot->yAxis->setRange(0, 1000);
+}
+void MainWindow::setupplot4(QCustomPlot *customPlot){
+    //wysokość
+    QVector<double> x(101), y(101); // initialize with entries 0..100
+    for (int i=0; i<101; ++i)
+    {
+      x[i] = i; // x goes from -1 to 1
+      y[i] = 40*sqrt(x[i]);  // let's plot a sqrt function
     }
     // create graph and assign data to it:
     customPlot->addGraph();

@@ -27,6 +27,9 @@ public:
     QVector <int> f_profile;
     QVector <int> funkcja_celu;
 
+    //potrzebuję tego do kolorowania najczęściej używanych tras
+    QVector <int *> historia_tras;
+
     // ocena wg kryteriów zbiorowych
     //vector<??> wykluczenia // krótko, średnio i długoterminowe
 
@@ -38,6 +41,9 @@ public:
     Trasa(int start, int end);
     ~Trasa();
     Trasa(Trasa & trasa); //konstruktor kopiujący
+
+    //odpalaj po wykonaniu całego algorytmu, ale przed wizualizacją
+    void aktualizuj_historie_tras();
 
     // tworzenie pustego rozwiązania
         //trasa(wierzcholek);

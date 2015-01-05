@@ -45,6 +45,9 @@ private:
     GraphView graphview;
     PathView pathview;
     void setupplot1(QCustomPlot *customplot);
+    void setupplot2(QCustomPlot *customplot);
+    void setupplot3(QCustomPlot *customplot);
+    void setupplot4(QCustomPlot *customplot);
 };
 
 #endif // MAINWINDOW_H

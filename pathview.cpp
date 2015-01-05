@@ -36,6 +36,17 @@ void PathView::paintEvent(QPaintEvent *event)
         painter.drawLine(graph.lista_krawedzi[i]);
     }
 
+    /** historia tras **/
+    pen.setStyle(Qt::SolidLine);
+    pen.setColor(Qt::green);
+    pen.setWidth(8);
+    painter.setPen(pen);
+    for(int i = 1; i<(trasa.historia_tras.size()); i++){
+        pen.setColor(QColor::fromHsv(240, 255, 255-trasa.historia_tras[i][2]*255/trasa.historia_tras[0][1], 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
+        painter.setPen(pen);
+        painter.drawLine(graph.lista_wierzcholkow[trasa.historia_tras[i][0]],graph.lista_wierzcholkow[trasa.historia_tras[i][1]]);
+    }
+
     /** aktualna trasa **/
     pen.setStyle(Qt::SolidLine);
     pen.setColor(Qt::red);
