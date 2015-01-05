@@ -29,7 +29,7 @@ public:
     Graph copy_graph();
     void create_graph(string outFileName, int h, int w, int marginesX, int marginesY,
                          int szerokosc, int wysokosc, bool czy_kwadrat, int roznorodnosc,
-                         bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil);
+                         bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil, bool losowosc);
     unsigned int distance(int ax,int ay,int bx,int by);
 
     void load_graph(string filename);

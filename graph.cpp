@@ -123,8 +123,9 @@ Graph Graph::copy_graph(){
 void Graph::save_graph(string filename){
     ofstream out;
     string name;
-    string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki wyjsciowe\\";
-    //sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
+    /** Ścieżka do plików **/
+    //string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki wyjsciowe\\";
+    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
      //"D:\Dokumenty\AGH\Semestr 5\MMWD\Symulacja\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
 
     name = sciezka + filename +".txt";
@@ -268,18 +269,33 @@ else{
 }
 
 
-
-
-/**********************************wczytywanie z pliku**************************************************/
+/** ********************************wczytywanie z pliku************************************************ **/
 
 
 void Graph::load_graph(string filename){
     //13 zmiennych
     ifstream in;
     string name;
-    string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki z grafami\\";
+//    string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki z grafami\\";
+    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
 
     this->destroy();
+
+//    if ((plik=fopen("graf.txt","r"))==NULL)
+//    printf("Brak pliku graf.txt!\n"); else
+//    {
+//    //!Wczytujemy liczbe wierzcholkow grafu
+//    fscanf(plik,"%d",&Graf.n);
+
+//    //!Wczytujemy dane do macierzy przylegsosci
+//    for (j=0;j<Graf.n;j++)
+//    for (i=0;i<Graf.n;i++)
+//    {
+//    fscanf(plik,"%s",s);
+//    if (strcmp(s,"*")!=0)
+//    Graf.A[j][i]=atoi(s); else Graf.A[j][i]=nieskonczonosc;
+//    }
+//    fclose(plik);
 
     /** macierz przyleglosci **/
     name = sciezka + filename +".txt";
@@ -299,7 +315,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-        cerr << "Nie udało się otworzyc pliku z macierza przyleglosci: "<< name << endl;
+        cerr << "Nie udalo sie otworzyc pliku z macierza przyleglosci: "<< name << endl;
     }
 
     /** macierz betonu **/
@@ -320,7 +336,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-        cerr << "Nie udało się otworzyc pliku z macierza betonu: "<< name << endl;
+        cerr << "Nie udalo sie otworzyc pliku z macierza betonu: "<< name << endl;
     }
 
     /** macierz wysokosci **/
@@ -341,7 +357,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-        cerr << "Nie udało się otworzyc pliku z macierza wysokosci: "<< name << endl;
+        cerr << "Nie udalo sie otworzyc pliku z macierza wysokosci: "<< name << endl;
     }
 
     /** lista wierzcholkow **/
@@ -360,7 +376,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udało się otworzyc pliku z wierzcholkami: "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z wierzcholkami: "<< name << endl;
     }
 
     /** lista wysokosci **/
@@ -375,7 +391,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udało się otworzyc pliku z listą wysokości : "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z listą wysokości : "<< name << endl;
     }
 
     /** lista betonu **/
@@ -391,7 +407,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udało się otworzyc pliku z listą betonu : "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z listą betonu : "<< name << endl;
     }
 
     /** lista krawedzi **/
@@ -409,13 +425,13 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udało się otworzyc pliku z listą krawędzi : "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z listą krawędzi : "<< name << endl;
     }
 }
 
 void Graph::create_graph(string outFileName, int h, int w, int marginesX, int marginesY,
                      int szerokosc, int wysokosc, bool czy_kwadrat, int roznorodnosc,
-                     bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil)
+                     bool pionowo, bool poziomo, bool skos1, bool skos2, int betonowosc, int profil, bool losowosc)
 {
     this->destroy();
 
@@ -445,7 +461,6 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     }
 
     //poczatek ukladu wspolrzendych
-
     wspolrzedneX[0][0] = marginesX;
     wspolrzedneY[0][0] = marginesY;
 
@@ -479,16 +494,12 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             wspolrzedneX[0][j] = wspolrzedneX[0][j-1] + (szerokosc-2*marginesX)/w; // X rosnie
         }
     }
-
-
-
     for (int i=1 ; i<h; i++){
         for(int j =1; j<w; j++){
             wspolrzedneX[i][j] = wspolrzedneX[0][j];
             wspolrzedneY[i][j] = wspolrzedneY[i][0];
         }
     }
-
 
     // zapisanie współrzednych do pliku
     name = outFileName+".xy";
@@ -542,12 +553,24 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             this->macierz_przyleglosci[i][j] = 0;
         }
     }
+    int szansa = 4;
     for (int i=0 ; i<h; i++){
         for(int j=0; j<w; j++){
-            int szansa = 4; //rand() % 5+2; // ile krawedzi
+            if(losowosc){
+                szansa = rand() % 5+2;
+            }
+            else{
+                szansa = 4; // ile krawedzi
+            }
             int ktora = -1;
             for(int m =0; m<szansa; m++){
-                ktora = ktora+1; //rand() % 4; //ktora krawedz
+                if(losowosc){
+                    ktora = rand() % 4;
+                }
+                else{
+                    ktora = ktora+1; //ktora krawedz
+                }
+
                 switch (ktora){
                     case 0:
                         // jeden w prawo
@@ -626,8 +649,6 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             }
         }
     }
-
-
     this->liczba_krawedzi = licznik_krawedzi;
     this->lista_krawedzi = new QLine[licznik_krawedzi];
 
@@ -672,20 +693,20 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     this->lista_wysokosci = new int[this->liczba_wierzcholkow];
 
     switch(profil){
-    case 1: //góra - nie działa
+    case 1: //góra = x^2 + y^2 + x(0)^2 + y(0)^2
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
-                this->lista_wysokosci[u] = -1*(i-h/2)*(j-w/2);
+                this->lista_wysokosci[u] = -(i-(h)/2)*(i-(h)/2)-(j-(w)/2)*(j-(w)/2) + h*h/4 + w*w/4;
                 u++; //u to po prostu iterator
             }
         }
         break;
-    case 2: //dolina -nie działa wciąż!
+    case 2: //dolina = x^2 + y^2
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
-                this->lista_wysokosci[u] = (i-h/2)*(j-w/2);
+                this->lista_wysokosci[u] = (i-(h)/2)*(i-(h)/2)+(j-(w)/2)*(j-(w)/2);
                 u++; //u to po prostu iterator
             }
         }
@@ -731,6 +752,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         out << this->min_wysokosc;
         out.width(5);
         out << this->max_wysokosc;
+        out << endl;
 
         for(int i=0; i<(this->liczba_wierzcholkow); i++){
             out.width(4);
@@ -789,25 +811,43 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     case 1: //pion i poziom
         u = 0;
         for (int i=0 ; i< (this->liczba_wierzcholkow); i++){
-            for(int j =i; j< (this->liczba_wierzcholkow); j++){
+            for(int j = i; j< (this->liczba_wierzcholkow); j++){
                 if(this->macierz_przyleglosci[i][j]!=0){
                     this->lista_betonu[u] = 0;
-                    if(i == (j+1)){
-                        this->lista_betonu[u] = 1;
+                    if((i+this->szerokosc_grafu) == (j)){
+                        this->lista_betonu[u] = 1; //piony
                     }
-                    if((i+1) == (j+1)){
-                        this->lista_betonu[u] = 1;
+                    if((i+1) == (j)){
+                        this->lista_betonu[u] = 1; //poziomy
                     }
                     u++;
                 }
             }
         }
-    case 0: //losowo
+        break;
+    case 2: //losowo
         for (int i=0 ; i< (this->liczba_krawedzi); i++){
             this->lista_betonu [i] = rand() %2;
         }
         break;
-    case 2: //brak
+    case 0: //skosy = ! pion+poziom
+        u = 0;
+        for (int i=0 ; i< (this->liczba_wierzcholkow); i++){
+            for(int j = i; j< (this->liczba_wierzcholkow); j++){
+                if(this->macierz_przyleglosci[i][j]!=0){
+                    this->lista_betonu[u] = 1;
+                    if((i+this->szerokosc_grafu) == (j)){
+                        this->lista_betonu[u] = 0;
+                    }
+                    if((i+1) == (j)){
+                        this->lista_betonu[u] = 0;
+                    }
+                    u++;
+                }
+            }
+        }
+        break;
+    case 3: //brak
     default: //brak betonu
         for (int i=0 ; i< (this->liczba_krawedzi); i++){
             this->lista_betonu [i] = 0;
