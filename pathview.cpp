@@ -63,7 +63,7 @@ void PathView::paintEvent(QPaintEvent *event)
     painter.setPen( pen );
         for(int i = 0; i<(graph.liczba_wierzcholkow); i++){
             //zielone - minimum, czerwone - maksimum
-            painter.setBrush(QColor::fromHsv(((-120/(graph.max_wysokosc-graph.min_wysokosc))*graph.lista_wysokosci[i]+120/(1-graph.min_wysokosc/graph.max_wysokosc)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+            painter.setBrush(QColor::fromHsv(((120/(graph.min_wysokosc-graph.max_wysokosc))*graph.lista_wysokosci[i]-(120/(graph.min_wysokosc-graph.max_wysokosc)*graph.max_wysokosc)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
             painter.drawEllipse(graph.lista_wierzcholkow[i],r,r);
             painter.drawText(QPoint(graph.lista_wierzcholkow[i].x()-r/2, graph.lista_wierzcholkow[i].y()+r/2),QString::number(i)); //cyferki
         }

@@ -125,9 +125,8 @@ void Graph::save_graph(string filename){
     string name;
     /** Ścieżka do plików **/
     //string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki wyjsciowe\\";
-    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
+    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug\\";
      //"D:\Dokumenty\AGH\Semestr 5\MMWD\Symulacja\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
-
     name = sciezka + filename +".txt";
 
     out.open(name.c_str(), ios_base::out);
@@ -137,7 +136,7 @@ void Graph::save_graph(string filename){
         for (int i=0 ; i<this->liczba_wierzcholkow; i++){
             for(int j =0; j<this->liczba_wierzcholkow; j++){
                 out.width(4);
-                out << this->macierz_przyleglosci[i][j] << ' ';
+                out << this->macierz_przyleglosci[i][j];
             }
             out<< endl;
         }
@@ -149,123 +148,123 @@ void Graph::save_graph(string filename){
         cout << "Nie otwarto pliku: "<< name <<endl;
     }
 
-
-
-/** macierz betonu **/
-name =  sciezka + filename +".mbet";
-out.open(name.c_str());
-if(out.good()){
-    out<<this->liczba_wierzcholkow<<endl;
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
-        for (int j=0 ; j<this->liczba_wierzcholkow; j++){
-            out.width(4);
-            out<<this->macierz_betonu[i][j]<<' ';
+    /** macierz betonu **/
+    name =  sciezka + filename +".mbet";
+    out.open(name.c_str());
+    if(out.good()){
+        out<<this->liczba_wierzcholkow<<endl;
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for (int j=0 ; j<this->liczba_wierzcholkow; j++){
+                out.width(4);
+                out<<this->macierz_betonu[i][j];
+            }
+            out<<endl;
         }
-        out<<endl;
+        out.close();
     }
-    out.close();
-}
-else{
-    cerr << "Nie udało się otworzyc pliku z macierza betonu: "<< name << endl;
-}
+    else{
+        cerr << "Nie udało się otworzyc pliku z macierza betonu: "<< name << endl;
+    }
 
-/** macierz wysokosci **/
-name = sciezka +  filename +".mwys";
-out.open(name.c_str());
-if(out.good()){
-    out<<this->liczba_wierzcholkow<<endl;
+    /** macierz wysokosci **/
+    name = sciezka +  filename +".mwys";
+    out.open(name.c_str());
+    if(out.good()){
+        out<<this->liczba_wierzcholkow<<endl;
 
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
-        for (int j=0 ; j<this->liczba_wierzcholkow; j++){
-            out.width(4);
-            out<<this->macierz_wysokosci[i][j]<<' ';
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            for (int j=0 ; j<this->liczba_wierzcholkow; j++){
+                out.width(4);
+                out<<this->macierz_wysokosci[i][j];
+            }
+            out<<endl;
         }
-        out<<endl;
+        out.close();
     }
-    out.close();
-}
-else{
-    cerr << "Nie udało się otworzyc pliku z macierza wysokosci: "<< name << endl;
-}
-
-/** lista wierzcholkow **/
-name =  sciezka + filename + ".xy";
-out.open(name.c_str());
-int x = 0, y = 0; //zmienne tymczasowe;
-
-if(out.good()){
-    out.width(4);
-    out<< this->szerokosc_grafu<<' ';
-    out.width(4);
-    out<< this->wysokosc_grafu <<endl;
-
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
-        out.width(4);
-        out<<x<<' ';
-        out.width(4);
-        out<<y<<endl;
+    else{
+        cerr << "Nie udało się otworzyc pliku z macierza wysokosci: "<< name << endl;
     }
-    out.close();
-}
-else{
-     cerr << "Nie udało się otworzyc pliku z wierzcholkami: "<< name << endl;
-}
 
-/** lista wysokosci **/
-name =  sciezka + filename +".wys";
-out.open(name.c_str());
+    /** lista wierzcholkow **/
+    name =  sciezka + filename + ".xy";
+    out.open(name.c_str());
 
-if(out.good()){
-    out<< this->min_wysokosc<<' '<< this->max_wysokosc<<endl;
-    for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+    if(out.good()){
         out.width(4);
-        out << this->lista_wysokosci[i]<<endl;
+        out<< this->szerokosc_grafu;
+        out.width(4);
+        out<< this->wysokosc_grafu <<endl;
+
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            out.width(4);
+            out<<(this->lista_wierzcholkow[i].x());
+            out.width(4);
+            out<<(this->lista_wierzcholkow[i].y())<<endl;
+        }
+        out.close();
     }
-    out.close();
-}
-else{
-     cerr << "Nie udało się otworzyc pliku z listą wysokości : "<< name << endl;
-}
-
-/** lista betonu **/
-name =  sciezka + filename +".bet";
-out.open(name.c_str());
-
-if(out.good()){
-    out << this->liczba_krawedzi<<endl;
-
-    for (int i=0 ; i<this->liczba_krawedzi; i++){
-
-        out<<this->lista_betonu[i]<<endl;
+    else{
+         cerr << "Nie udało się otworzyc pliku z wierzcholkami: "<< name << endl;
     }
-    out.close();
-}
-else{
-     cerr << "Nie udało się otworzyc pliku z listą betonu : "<< name << endl;
-}
 
-/** lista krawedzi **/
-name =  sciezka + filename +".kr";
-out.open(name.c_str());
-if(out.good()){
-    out.width(4);
-    out<<this->liczba_krawedzi<<endl;
+    /** lista wysokosci **/
+    name =  sciezka + filename +".wys";
+    out.open(name.c_str());
 
-    for (int i=0 ; i<(this->liczba_krawedzi); i++){
+    if(out.good()){
         out.width(4);
-        out<<lista_krawedzi[i].x1()<<' ';
+        out<< this->min_wysokosc;
         out.width(4);
-        out<<lista_krawedzi[i].y1()<<' ';
-        out.width(4);
-        out<<lista_krawedzi[i].x2()<<' ';
-        out.width(4);
-        out<<lista_krawedzi[i].y2()<<endl;
+        out<< this->max_wysokosc<<endl;
+        for (int i=0 ; i<this->liczba_wierzcholkow; i++){
+            out.width(4);
+            out << this->lista_wysokosci[i]<<endl;
+        }
+        out.close();
     }
-    out.close();
-}
-else{
-     cerr << "Nie udało się otworzyc pliku z listą krawędzi : "<< name << endl;
-}
+    else{
+         cerr << "Nie udało się otworzyc pliku z listą wysokości : "<< name << endl;
+    }
+
+    /** lista betonu **/
+    name =  sciezka + filename +".bet";
+    out.open(name.c_str());
+
+    if(out.good()){
+        out << this->liczba_krawedzi<<endl;
+
+        for (int i=0 ; i<this->liczba_krawedzi; i++){
+
+            out<<this->lista_betonu[i]<<endl;
+        }
+        out.close();
+    }
+    else{
+         cerr << "Nie udało się otworzyc pliku z listą betonu : "<< name << endl;
+    }
+
+    /** lista krawedzi **/
+    name =  sciezka + filename +".kr";
+    out.open(name.c_str());
+    if(out.good()){
+        out.width(4);
+        out<<this->liczba_krawedzi<<endl;
+
+        for (int i=0 ; i<(this->liczba_krawedzi); i++){
+            out.width(4);
+            out<<lista_krawedzi[i].x1();
+            out.width(4);
+            out<<lista_krawedzi[i].y1();
+            out.width(4);
+            out<<lista_krawedzi[i].x2();
+            out.width(4);
+            out<<lista_krawedzi[i].y2()<<endl;
+        }
+        out.close();
+    }
+    else{
+         cerr << "Nie udało się otworzyc pliku z listą krawędzi : "<< name << endl;
+    }
 }
 
 
@@ -277,7 +276,7 @@ void Graph::load_graph(string filename){
     ifstream in;
     string name;
 //    string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki z grafami\\";
-    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug"+ name +".txt";
+    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug\\";
 
     this->destroy();
 
@@ -309,7 +308,7 @@ void Graph::load_graph(string filename){
         }
         for (int i=0 ; i<this->liczba_wierzcholkow; i++){
             for (int j=0 ; j<this->liczba_wierzcholkow; j++){
-                in>>this->macierz_przyleglosci [i][j];
+                in>>this->macierz_przyleglosci[i][j];
             }
         }
         in.close();
@@ -391,7 +390,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udalo sie otworzyc pliku z listą wysokości : "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z lista wysokosci : "<< name << endl;
     }
 
     /** lista betonu **/
@@ -407,7 +406,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udalo sie otworzyc pliku z listą betonu : "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z lista betonu : "<< name << endl;
     }
 
     /** lista krawedzi **/
@@ -425,7 +424,7 @@ void Graph::load_graph(string filename){
         in.close();
     }
     else{
-         cerr << "Nie udalo sie otworzyc pliku z listą krawędzi : "<< name << endl;
+         cerr << "Nie udalo sie otworzyc pliku z lista krawedzi : "<< name << endl;
     }
 }
 
@@ -748,9 +747,9 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
 
     if(out.good()){
         //pierwsza linijka - min i max
-        out.width(5);
+        out.width(4);
         out << this->min_wysokosc;
-        out.width(5);
+        out.width(4);
         out << this->max_wysokosc;
         out << endl;
 
@@ -864,6 +863,7 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         out<<(this->liczba_krawedzi)<<endl;
 
         for (int i=0 ; i< (this->liczba_krawedzi); i++){
+            out.width(4);
             out<<(this->lista_betonu [i]);
             out<<endl;
         }
@@ -896,6 +896,14 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             }
         }
     }
+
+    //Symetryczność macierzy
+    for (int i = 0;i<this->liczba_wierzcholkow;i++){
+        for(int j=0; j<i; j++){
+            this->macierz_betonu[i][j] =  this->macierz_betonu[j][i];
+        }
+    }
+
     // zapisanie macierzy betonu do pliku
     name = outFileName+".mbet";
     out.open(name.c_str());
@@ -928,7 +936,7 @@ void Graph::debug(){
     cout<<"Max wys: "<< this->max_wysokosc<< endl;
     cout<<"Min wys: "<< this->min_wysokosc<< endl;
     cout<<"Ostatni wierzcholek "<< this->lista_wierzcholkow[this->liczba_wierzcholkow-1].x()<<" "<< this->lista_wierzcholkow[this->liczba_wierzcholkow-1].y()<<endl;
-    cout<<"Ostatnia krawedz: "<< this->lista_krawedzi[this->liczba_krawedzi-1].x1()<<" "<< endl;
+    cout<<"Ostatnia krawedz: "<< this->lista_krawedzi[this->liczba_krawedzi-1].x1()<<" "<< this->lista_krawedzi[this->liczba_krawedzi-1].y1()<<" "<< this->lista_krawedzi[this->liczba_krawedzi-1].x2()<<" "<< this->lista_krawedzi[this->liczba_krawedzi-1].y2()<<" "<< endl;
 }
 
 void Graph::destroy(){

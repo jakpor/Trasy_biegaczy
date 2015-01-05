@@ -61,16 +61,13 @@ void MainWindow::on_createGraphButton_clicked()
                    ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil, ui->losowoscBox->isChecked());
 
-
-
-
     pathview.graph = graphview.gr.copy_graph(); //wersja do rysowania trasy
     pathview.repaint();
     graphview.repaint();
     ui->tabWidget->setCurrentIndex(1);
 
 }
-/** Przycisk "Zapisz" **/
+/** Przycisk "Zapisz" **/ //po co to nam potrzebne, skoro jeśli już generuję graf, to od razu zapisuje go do plików?
 void MainWindow::on_saveButton_clicked(){
     graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
 
@@ -99,10 +96,11 @@ void MainWindow::on_drawFromFileButton_clicked()
     graphview.gr.load_graph(ui->filenameInEdit->text().toStdString());
 
     graphview.gr.debug();
-    graphview.gr.save_graph("zapis");
 
-    //pathview.graph = graphview.gr.copy_graph();
-    //pathview.repaint();
+    pathview.graph = graphview.gr.copy_graph();
+    pathview.graph.save_graph("zapis"); //wypisuję skopiowany
+
+    pathview.repaint();
     graphview.repaint();
     ui->tabWidget->setCurrentIndex(1);
 }
