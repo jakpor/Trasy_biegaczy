@@ -31,9 +31,6 @@ private slots:
     void on_widthBox_valueChanged(int value);
     void on_percentageBox_valueChanged(int value);
 
-    void on_setLenghtBox_valueChanged(int value);
-    void on_setLenghtSlider_valueChanged(int value);
-
     void on_createGraphButton_clicked();
     void on_saveButton_clicked();
     void on_closeButton_clicked();
