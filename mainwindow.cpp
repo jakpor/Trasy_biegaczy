@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// slidery i zmienne do generowania grafu
+/** slidery i zmienne do generowania grafu **/
 void MainWindow::on_heightSlider_valueChanged(int value)
 {
     ui->heightBox->setValue(value);
@@ -35,7 +35,6 @@ void MainWindow::on_heightBox_valueChanged(int value)
 {
     ui->heightSlider->setValue(value);
 }
-
 void MainWindow::on_percentageSlider_valueChanged(int value)
 {
     ui->percentageBox->setValue(value);
@@ -44,7 +43,6 @@ void MainWindow::on_percentageBox_valueChanged(int value)
 {
     ui->percentageSlider->setValue(value);
 }
-
 void MainWindow::on_widthSlider_valueChanged(int value)
 {
     ui->widthBox->setValue(value);
@@ -52,6 +50,14 @@ void MainWindow::on_widthSlider_valueChanged(int value)
 void MainWindow::on_widthBox_valueChanged(int value)
 {
     ui->widthSlider->setValue(value);
+}
+void MainWindow::on_setLenghtBox_valueChanged(int value)
+{
+    ui->setLenghtSlider->setValue(value);
+}
+void MainWindow::on_setLenghtSlider_valueChanged(int value)
+{
+    ui->setLenghtBox->setValue(value);
 }
 
 void MainWindow::on_odlegloscSlider_valueChanged(int value)
