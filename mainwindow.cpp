@@ -54,6 +54,35 @@ void MainWindow::on_widthBox_valueChanged(int value)
     ui->widthSlider->setValue(value);
 }
 
+void MainWindow::on_odlegloscSlider_valueChanged(int value)
+{
+    ui->odlegloscBox->setValue(value);
+}
+void MainWindow::on_odlegloscBox_valueChanged(int value)
+{
+    ui->odlegloscSlider->setValue(value);
+}
+
+void MainWindow::on_betonowoscSlider_valueChanged(int value)
+{
+    ui->betonowoscBox->setValue(value);
+}
+void MainWindow::on_betonowoscBox_valueChanged(int value)
+{
+    ui->betonowoscSlider->setValue(value);
+}
+
+void MainWindow::on_wysokoscSlider_valueChanged(int value)
+{
+    ui->wysokoscBox->setValue(value);
+}
+void MainWindow::on_wysokoscBox_valueChanged(int value)
+{
+    ui->wysokoscSlider->setValue(value);
+}
+
+
+
 /** Przycisk "Wygeneruj Graf" **/
 void MainWindow::on_createGraphButton_clicked()
 {
@@ -79,11 +108,18 @@ void MainWindow::on_saveButton_clicked(){
 /** Przycisk "Oblicz" w zakładce 2 **/
 void MainWindow::on_countButton_clicked(){
     int r;
-
-    r=pathview.trasa.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(),graphview.gr,distances);
+    pathview.trasa.copy_graf(graphview.gr);
+    r=pathview.trasa.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(), distances);
 //    cout<<r<<endl;
 
     ui->result->setText(QString::number(r));
+
+    r=pathview.trasa.calc_profile();
+    ui->result_wysokosc->setText(QString::number(r));
+
+    r=pathview.trasa.calc_attractiveness();
+
+     ui->result_beton->setText(QString::number(r));
 
     //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
     pathview.trasa.path_all.push_back(pathview.trasa.path_best);

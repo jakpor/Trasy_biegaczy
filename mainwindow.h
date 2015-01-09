@@ -36,6 +36,14 @@ private slots:
     void on_closeButton_clicked();
     void on_countButton_clicked();
 
+    void on_odlegloscSlider_valueChanged(int value);
+    void on_odlegloscBox_valueChanged(int value);
+    void on_betonowoscSlider_valueChanged(int value);
+    void on_betonowoscBox_valueChanged(int value);
+    void on_wysokoscSlider_valueChanged(int value) ;
+    void on_wysokoscBox_valueChanged(int value);
+
+
     void on_drawFromFileButton_clicked();
 
     void on_pushButton_clicked();

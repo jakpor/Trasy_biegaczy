@@ -21,6 +21,21 @@ Trasa::Trasa(int start, int end){
     path_best = QVector <int> ();
     path_all = QVector < QVector < int > >();
 }
+Trasa::Trasa(Graph Graf_in){
+    wierzcholek_poczatkowy= 0;
+    wierzcholek_koncowy =0;
+    f_distance = QVector <int> ();
+    f_attractiveness = QVector <int> ();
+    f_profile = QVector <int> ();
+    funkcja_celu = QVector <int> ();
+    path_best = QVector <int> ();
+    path_all = QVector < QVector < int > >();
+    Graf= Graf_in.copy_graph();
+
+    }
+void Trasa::copy_graf(Graph graf_in){
+    Graf=graf_in.copy_graph();
+}
 
 Trasa::~Trasa(){
 
@@ -34,44 +49,100 @@ Trasa::Trasa(Trasa & trasa){
     funkcja_celu = QVector<int>(trasa.funkcja_celu);
     path_best = QVector <int> (trasa.path_best);
     //uwaga - nie wiem, czy to jest inteligentne!
+    //ja też nie ;)
     path_all = QVector < QVector < int > >(trasa.path_all);
 
 }
 
-int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph graf, kryterium type){
+int Trasa::calc_attractiveness(QVector<int> odcinek){
+    int wynik = 0;
+    for(int i=0; i< odcinek.size()-1; i++){
+        wynik+=Graf.macierz_betonu[odcinek[i]][odcinek[i+1]];
+    }
+    return wynik;
+}
+
+int Trasa::calc_attractiveness(){
+    int wynik = 0;
+    for(int i=0; i< path_best.size()-1; i++){
+        wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
+    }
+    return wynik;
+}
+
+int Trasa::calc_profile(QVector<int> odcinek){
+    int wynik = 0;
+    for(int i=0; i< odcinek.size()-1; i++){
+        wynik+=Graf.macierz_wysokosci[odcinek[i]][odcinek[i+1]];
+    }
+    return wynik;
+}
+int Trasa::calc_profile(){
+    int wynik = 0;
+    for(int i=0; i< path_best.size()-1; i++){
+        wynik+=Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]];
+    }
+    return wynik;
+}
+
+int Trasa::calc_distance(QVector<int> odcinek){
+    int wynik = 0;
+    for(int i=0; i< odcinek.size()-1; i++){
+        wynik+=Graf.macierz_przyleglosci[odcinek[i]][odcinek[i+1]];
+    }
+    return wynik;
+}
+
+int Trasa::calc_distance(){
+    int wynik = 0;
+    for(int i=0; i< this->path_best.size()-1; i++){
+        wynik+=Graf.macierz_przyleglosci[this->path_best[i]][this->path_best[i+1]];
+    }
+    return wynik;
+}
+
+int Trasa::calc_funkcja_celu(QVector<int> odcinek){
+    int wynik = 0;
+    wynik= this->w_attractiveness*calc_attractiveness(odcinek)+this->w_distance*calc_distance(odcinek)+w_profile*calc_profile(odcinek);
+    return wynik;
+}
+int Trasa::calc_funkcja_celu(){
+    int wynik = 0;
+    wynik= this->w_attractiveness*this->f_attractiveness.back()+this->w_distance*this->f_distance.back()+w_profile*this->f_profile.back();
+    return wynik;
+
+}
+
+
+int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryterium type){
     unsigned int** Matrix;
-    if(wierzcholek_poczatkowy<0 || wierzcholek_koncowy >= graf.liczba_wierzcholkow || wierzcholek_poczatkowy==wierzcholek_koncowy)
+    if(wierzcholek_poczatkowy<0 || wierzcholek_koncowy >= Graf.liczba_wierzcholkow || wierzcholek_poczatkowy==wierzcholek_koncowy)
         return 0;
 //to nie dziala!!
     switch(type){
         case distances:
-            Matrix = graf.macierz_przyleglosci;
+            Matrix = Graf.macierz_przyleglosci;
             break;
 
         case attractiveness:
-            Matrix = (unsigned int **)graf.macierz_betonu;
+            Matrix = (unsigned int **)Graf.macierz_betonu;
             break;
 
         case profile:
-            Matrix =(unsigned int **)graf.macierz_wysokosci;
+            Matrix =(unsigned int **)Graf.macierz_wysokosci;
             break;
 
     }
-    //    for (int i=0 ; i<graf.liczba_wierzcholkow; i++){
-    //        for(int j =0; j<graf.liczba_wierzcholkow; j++){
-    //            cout << Matrix[i][j] << ' ';
-    //        }
-    //        cout<< endl;
-    //    }
+
 
     unsigned int * T;
     unsigned int * P;
     int * Previous;
-    T = new unsigned int [graf.liczba_wierzcholkow];
-    P = new unsigned int [graf.liczba_wierzcholkow];
-    Previous = new int [graf.liczba_wierzcholkow];
+    T = new unsigned int [Graf.liczba_wierzcholkow];
+    P = new unsigned int [Graf.liczba_wierzcholkow];
+    Previous = new int [Graf.liczba_wierzcholkow];
 
-    for(int i=0; i < graf.liczba_wierzcholkow; i++){
+    for(int i=0; i < Graf.liczba_wierzcholkow; i++){
         //T[i]=Matrix[wierzcholek_poczatkowy][i];
         T[i]=0;
         P[i]=0;
@@ -92,7 +163,7 @@ int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph g
    // T[current]= INF;
 
     while(current!= wierzcholek_koncowy){
-        followers = nastepniki(current, Matrix, graf.liczba_wierzcholkow);
+        followers = nastepniki(current);
         for (int i=0; i<followers.size(); i++){
             if(T[followers[i]]==0){
                 Previous[followers[i]]=current;
@@ -105,25 +176,20 @@ int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph g
                     Previous[followers[i]]=current;
             }
         }
-        current=minimum(T, P, graf.liczba_wierzcholkow);
+        current=minimum(T, P, Graf.liczba_wierzcholkow);
         P[current]=T[current];
         //cout<< P[current];
         //T[current]= INF;
     }
 
-QVector<int> result=build_result(Previous,wierzcholek_poczatkowy,wierzcholek_koncowy);
+QVector<int> result = build_result(Previous,wierzcholek_poczatkowy,wierzcholek_koncowy);
     this->path_best = result;
-
-//            for(int i =0; i<result.size(); i++){
-//                cout<<result[i]<<' ';
-//            }
-    //    for(int i=0; i<graf.liczba_wierzcholkow; i++)
-    //        cout<< Previous[i]<<' ';
 
 
     int wynik =P[current];
     delete T;
     delete P;
+    this->f_distance.push_back(wynik);
     return wynik;
 
 }
@@ -156,14 +222,72 @@ int Trasa::minimum(unsigned int * temp, unsigned int * perm,int size){
 
 }
 
-QVector<int> Trasa::nastepniki(int x, unsigned int** A, int n){
+QVector<int> Trasa::nastepniki(int x){
     QVector<int> wynik;
 
-    for (int i=0;i<n;i++)
-        if ( A[x][i]!=0 )
+    for (int i=0;i<Graf.liczba_wierzcholkow;i++)
+        if ( Graf.macierz_przyleglosci[x][i]!=0 )
             wynik.push_back(i);
 
     return(wynik);
+}
+
+//dziala dla 1 lub 2 wykluczanych krawedzi, zwraca otoczenie <= rozmiarowi
+QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi){
+
+    QVector<int> n_first =nastepniki(wykluczenie.front());
+    QVector<int> n_last = nastepniki(wykluczenie.back());
+    QVector< QVector<int> >wynik;
+    QVector<int> line;
+
+
+    if(l_krawedzi<3){
+
+            QVector<int> kand_1;
+            set_intersection (n_first.begin(), n_first.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
+            for(int i=0 ; i < kand_1.size(); ++i) {
+                if(wykluczenie.contains(kand_1[i]) == false){
+                    line.push_back(wykluczenie.front());
+                    line.push_back(kand_1[i]);
+                    line.push_back(wykluczenie.back());
+                    wynik.push_back(line);
+                    line.clear();
+                }
+
+            }
+            kand_1.clear();
+
+            rozmiar--;
+            if(rozmiar == 0) return wynik;
+
+            QVector<int> kand_2;
+            for(int i=0 ; i<n_first.size(); ++i){
+                kand_2=nastepniki(n_first[i]);
+                 set_intersection (kand_2.begin(), kand_2.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
+
+                 for(int j=0 ; j < kand_1.size(); ++j) {
+                     if(wykluczenie.contains(kand_1[i]) == false && wykluczenie.contains(kand_2[i]) == false){
+
+                         line.push_back(wykluczenie.front());
+                         line.push_back(n_first[i]);
+                         line.push_back(kand_1[j]);
+                         line.push_back(wykluczenie.back());
+                         wynik.push_back(line);
+                         line.clear();
+                     }
+
+                 }
+                 kand_1.clear();
+                 kand_2.clear();
+            }
+            rozmiar--;
+            if(rozmiar==0) return wynik;
+
+
+
+    }
+
+        return wynik;
 }
 
 void Trasa::aktualizuj_historie_tras(){

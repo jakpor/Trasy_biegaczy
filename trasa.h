@@ -10,7 +10,7 @@ enum kryterium{distances=1, attractiveness=2, profile=3};
 class Trasa{
 public:
     /************ Pola ************/
-
+    Graph Graf;
     //lista wynik;
     // zbior krawędzi dołączonych do rozwiązania
     int wierzcholek_poczatkowy; //czy będzie to zrobione w tej postaci??
@@ -20,6 +20,11 @@ public:
     QVector <int> path_best;
     //cała pamięć tras
     QVector < QVector < int > > path_all;
+
+    // Mnożniki poszczegolnych parametrów
+    float w_distance;
+    float w_attractiveness;
+    float w_profile;
 
     // ocena trasy wg poszczególnych kryteriów - ostatnia wartość
     QVector <int> f_distance;
@@ -38,10 +43,21 @@ public:
 
     /************ Metody ************/
     Trasa();
+    Trasa(Graph Graf_in);
     Trasa(int start, int end);
     ~Trasa();
     Trasa(Trasa & trasa); //konstruktor kopiujący
+    void copy_graf(Graph graf_in);
 
+    int calc_funkcja_celu(QVector<int> odcinek);
+    int calc_distance(QVector<int> odcinek);
+    int calc_attractiveness(QVector<int> odcinek);
+    int calc_profile(QVector<int> odcinek);
+
+    int calc_funkcja_celu();
+    int calc_distance();
+    int calc_attractiveness();
+    int calc_profile();
     //odpalaj po wykonaniu całego algorytmu, ale przed wizualizacją
     void aktualizuj_historie_tras();
 
@@ -59,9 +75,9 @@ public:
     // inna wersja rozważa wywołanie tej funkcji z argumentem mówiącym
     //czy generujemy randomową trasę, czy trasę minimalną
 
-    int dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, Graph graf, kryterium type);
+    int dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryterium type);
     // uzywana w kontruktorze
-     QVector<int> nastepniki(int x, unsigned int** A, int n);
+     QVector<int> nastepniki(int x);
      int minimum(unsigned int * temp,unsigned int * perm, int size);
      QVector<int> build_result(int * history, int start, int end);
          //wyznaczenie nastepnikow wierzcholka x, n -rozmiar macierzy A
@@ -73,7 +89,7 @@ public:
         //wykluczenie/ void ocena_trasy(kryterium);
     // zmienia tablice wykluczeń lub zwraca wykluczenie, lub wywołuje
     // bezposrednio metody skroc, wydluz
-        //vector<lista> otoczenie (wykluczenie, rozmiar);
+QVector< QVector<int> > otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi);
     // wyznacza otoczenie rozwiązania, w kierunku którego chcemy
     //podążać i wybrać z niego rozwiązanie
         //bool kryterium_stopu( argumenty do kryt stopu);
