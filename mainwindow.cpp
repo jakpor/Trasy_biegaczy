@@ -90,7 +90,7 @@ void MainWindow::on_createGraphButton_clicked()
     ui->tabWidget->setCurrentIndex(1);
 
 }
-/** Przycisk "Zapisz" **/ //po co to nam potrzebne, skoro jeśli już generuję graf, to od razu zapisuje go do plików?
+/** Przycisk "Zapisz" **/
 void MainWindow::on_saveButton_clicked(){
     graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
 
@@ -139,9 +139,17 @@ void MainWindow::on_closeButton_clicked()
 /** Przycisk "Wczytaj Graf" **/
 void MainWindow::on_drawFromFileButton_clicked()
 {
+
+    //COŚ TUTAJ NAPRAWIA WCZYTYWANIE
+    int betonowosc=ui->betonBox->currentIndex(); //0-losowo, 1-pion+poziom
+    int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina, 3 - przełęcz
+    graphview.gr.create_graph("awaryjny",30,30,50,20,800,600,
+                   ui->cubeBox->isChecked(),100,ui->pionowoBox->isChecked(),
+                   ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil, ui->losowoscBox->isChecked());
+
     graphview.gr.load_graph(ui->filenameInEdit->text().toStdString());
 
-    graphview.gr.debug();
+    //graphview.gr.debug();
 
     pathview.graph = graphview.gr.copy_graph();
     //pathview.graph.save_graph("zapis"); //wypisuję skopiowany

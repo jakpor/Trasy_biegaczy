@@ -941,35 +941,36 @@ void Graph::debug(){
 
 void Graph::destroy(){
         //fajne usuwanie
-        for (int i = 0; i<(liczba_wierzcholkow); i++){
-            delete macierz_przyleglosci[i];
-            delete macierz_betonu[i];
-            delete macierz_wysokosci[i];
-        }
-        delete macierz_przyleglosci;
-        delete macierz_betonu;
-        delete macierz_wysokosci;
-        macierz_przyleglosci = NULL;
-        macierz_betonu = NULL;
-        macierz_wysokosci = NULL;
+//        for (int i = 0; i<(liczba_wierzcholkow); i++){
+//            delete macierz_przyleglosci[i];
+//            delete macierz_betonu[i];
+//            delete macierz_wysokosci[i];
 
-        delete lista_wierzcholkow;
-        lista_wierzcholkow = NULL;
+//        }
+//        delete macierz_przyleglosci;
+//        delete macierz_betonu;
+//        delete macierz_wysokosci;
+//        macierz_przyleglosci = NULL;
+//        macierz_betonu = NULL;
+//        macierz_wysokosci = NULL;
 
-        delete lista_betonu;
-        lista_betonu = NULL;
+//        delete lista_wierzcholkow;
+//        lista_wierzcholkow = NULL;
 
-        delete lista_krawedzi;
-        lista_krawedzi = NULL;
+//        delete lista_betonu;
+//        lista_betonu = NULL;
 
-        delete lista_wysokosci;
-        lista_wysokosci = NULL;
+//        delete lista_krawedzi;
+//        lista_krawedzi = NULL;
 
-        min_wysokosc = 0;
-        max_wysokosc = 0;
-        szerokosc_grafu = 0;
-        wysokosc_grafu = 0;
-        liczba_krawedzi = 0;
-        liczba_wierzcholkow = 0;
+//        delete lista_wysokosci;
+//        lista_wysokosci = NULL;
+
+//        min_wysokosc = 0;
+//        max_wysokosc = 0;
+//        szerokosc_grafu = 0;
+//        wysokosc_grafu = 0;
+//        liczba_krawedzi = 0;
+//        liczba_wierzcholkow = 0;
 
 }
