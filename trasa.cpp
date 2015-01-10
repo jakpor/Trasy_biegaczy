@@ -398,10 +398,14 @@ cout<<"znalazlo cos ";
 }
 
 void Trasa::aktualizuj_historie_tras(){
+
     historia_tras = QVector<int*>();
+
+
     QVector <int> temp;
     // kaw[0] - poczatek linii, kaw[1] - koniec linii (wiekszy niz kaw[0]), kaw[2] - ile razy sie powtorzyl
-    int* kawalek_historii;
+
+          int* kawalek_historii;
     int sprawdzenie_czy_if = 0;
 
     //pierwszy element historii tras to min i max
@@ -411,15 +415,17 @@ void Trasa::aktualizuj_historie_tras(){
     historia_tras.last()[2] = 0;
 
     for(int i = 0; i<path_all.size();i++){
-        temp = QVector<int>(path_all[i]);
+
+        temp = path_all[i];
         try{
             kawalek_historii = new int[3];
         }
         catch(...){
             cout<<"Kawalki historii sie rozsypaly"<<endl;
         }
-
+cout<<"cyc 7 ";
         for(int j = 0;j<(temp.size()-1); j++){
+cout<<"cyc 1 ";
             if(temp[j]<temp[j+1]){
                 kawalek_historii[0] = temp[j];
                 kawalek_historii[1] = temp[j+1];
@@ -428,19 +434,25 @@ void Trasa::aktualizuj_historie_tras(){
                 kawalek_historii[0] = temp[j+1];
                 kawalek_historii[1] = temp[j];
             }
+cout<<"cyc 2 ";
             kawalek_historii[2] = 1;
+cout<<"cyc 3 ";
             for(int u = 1; u<(historia_tras.size()-1); u++){ //tu się może psuć!!!
+cout<<"cyc 4 ";
                 if(historia_tras[i][0]==kawalek_historii[0]){
+cout<<"cyc 5 ";
                     if(historia_tras[i][1]==kawalek_historii[1]){
                         historia_tras[i][2]++; //zwieksz ilosc
                         sprawdzenie_czy_if = 1;
                         // zwiekszam maksimum
+cout<<"cyc 6 ";
                         if (historia_tras[i][2]>historia_tras[0][1]){
                             historia_tras[0][1]=historia_tras[i][2];
                         }
                     }
                 }
             }
+cout<<"cyc 6a ";
             if(sprawdzenie_czy_if==0){
                 //jesli if sie nie wykonaly
                 historia_tras.append(new int[3]);
@@ -452,8 +464,11 @@ void Trasa::aktualizuj_historie_tras(){
                 //cout<<"ostatni: "<<historia_tras.last()[0]<< " "<< historia_tras.last()[1]<< " "<< historia_tras.last()[2]<<endl;
 
             }
+cout<<"cyc 6b ";
         }
+cout<<"cyc 8 ";
     }
+cout<<"cyc 9 ";
 }
 
 void Trasa::algorithm_1(){
