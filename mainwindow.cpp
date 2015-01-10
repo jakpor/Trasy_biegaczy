@@ -36,15 +36,6 @@ void MainWindow::on_heightBox_valueChanged(int value)
     ui->heightSlider->setValue(value);
 }
 
-void MainWindow::on_percentageSlider_valueChanged(int value)
-{
-    ui->percentageBox->setValue(value);
-}
-void MainWindow::on_percentageBox_valueChanged(int value)
-{
-    ui->percentageSlider->setValue(value);
-}
-
 void MainWindow::on_widthSlider_valueChanged(int value)
 {
     ui->widthBox->setValue(value);
@@ -90,7 +81,7 @@ void MainWindow::on_createGraphButton_clicked()
     int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina, 3 - przełęcz
 
     graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
-                   ui->cubeBox->isChecked(),ui->percentageBox->value(),ui->pionowoBox->isChecked(),
+                   ui->cubeBox->isChecked(),100,ui->pionowoBox->isChecked(),
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil, ui->losowoscBox->isChecked());
 
     pathview.graph = graphview.gr.copy_graph(); //wersja do rysowania trasy
@@ -99,7 +90,7 @@ void MainWindow::on_createGraphButton_clicked()
     ui->tabWidget->setCurrentIndex(1);
 
 }
-/** Przycisk "Zapisz" **/ //po co to nam potrzebne, skoro jeśli już generuję graf, to od razu zapisuje go do plików?
+/** Przycisk "Zapisz" **/
 void MainWindow::on_saveButton_clicked(){
     graphview.gr.save_graph(ui->filenameOutEdit->text().toStdString());
 
@@ -123,7 +114,7 @@ void MainWindow::on_countButton_clicked(){
 
     r=pathview.trasa.calc_attractiveness();
 
-     ui->result_beton->setText(QString::number(r));
+    ui->result_beton->setText(QString::number(r));
 
     //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
     pathview.trasa.path_all.push_back(pathview.trasa.path_best);
@@ -151,12 +142,20 @@ void MainWindow::on_closeButton_clicked()
 /** Przycisk "Wczytaj Graf" **/
 void MainWindow::on_drawFromFileButton_clicked()
 {
+
+    //COŚ TUTAJ NAPRAWIA WCZYTYWANIE
+    int betonowosc=ui->betonBox->currentIndex(); //0-losowo, 1-pion+poziom
+    int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina, 3 - przełęcz
+    graphview.gr.create_graph("awaryjny",30,30,50,20,800,600,
+                   ui->cubeBox->isChecked(),100,ui->pionowoBox->isChecked(),
+                   ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil, ui->losowoscBox->isChecked());
+
     graphview.gr.load_graph(ui->filenameInEdit->text().toStdString());
 
-    graphview.gr.debug();
+    //graphview.gr.debug();
 
     pathview.graph = graphview.gr.copy_graph();
-    pathview.graph.save_graph("zapis"); //wypisuję skopiowany
+    //pathview.graph.save_graph("zapis"); //wypisuję skopiowany
 
     pathview.repaint();
     graphview.repaint();
