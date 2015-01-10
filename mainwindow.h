@@ -35,6 +35,7 @@ private slots:
     void on_saveButton_clicked();
     void on_closeButton_clicked();
     void on_countButton_clicked();
+    void on_liczButton_clicked();
 
     void on_odlegloscSlider_valueChanged(int value);
     void on_odlegloscBox_valueChanged(int value);

@@ -110,6 +110,9 @@ void MainWindow::on_countButton_clicked(){
     int r;
     pathview.trasa.copy_graf(graphview.gr);
     pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
+    pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
+    pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
+
     r=pathview.trasa.dijkstra(distances);
 //    cout<<r<<endl;
 
@@ -244,3 +247,29 @@ void MainWindow::setupplot4(QCustomPlot *customPlot){
     customPlot->xAxis->setRange(0, 100);
     customPlot->yAxis->setRange(0, 1000);
 }
+
+void MainWindow::on_liczButton_clicked(){
+        int r;
+        pathview.trasa.copy_graf(graphview.gr);
+        pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
+         pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
+        pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
+
+        pathview.trasa.algorithm_1();
+cout<< "przeszlo dalej";
+        r=pathview.trasa.f_distance.back();
+        ui->result->setText(QString::number(r));
+cout<< "przeszlo dalej";
+        r=pathview.trasa.calc_profile();
+        ui->result_wysokosc->setText(QString::number(r));
+cout<< "przeszlo dalej";
+        r=pathview.trasa.calc_attractiveness();
+        ui->result_beton->setText(QString::number(r));
+cout<< "przeszlo dalej";
+        //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
+        //pathview.trasa.path_all.push_back(pathview.trasa.path_best);
+
+        //po wykonaniu algorytmu aktualizuje historie
+        pathview.trasa.aktualizuj_historie_tras();
+cout<< "przeszlo dalej";
+    }

@@ -63,6 +63,11 @@ public:
     int calc_distance();
     int calc_attractiveness();
     int calc_profile();
+    //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+        int calc_funkcja_celu(int s, int e);
+        int calc_distance(int s, int e);
+        int calc_attractiveness(int s, int e);
+        int calc_profile(int s, int e);
 
     void set_parameters(int p_distance, int p_attractiveness, int p_profile);
     void set_edges(int start, int end);
@@ -88,6 +93,7 @@ public:
     // uzywana w kontruktorze
      QVector<int> nastepniki(int x);
      int minimum(unsigned int * temp,unsigned int * perm, int size);
+     int minimum(QVector<int> temp);
      QVector<int> build_result(int * history, int start, int end);
          //wyznaczenie nastepnikow wierzcholka x, n -rozmiar macierzy A
 

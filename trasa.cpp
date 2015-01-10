@@ -11,6 +11,7 @@ Trasa::Trasa(){
     path_all = QVector < QVector < int > >();
 
 }
+
 Trasa::Trasa(int start, int end){
     wierzcholek_poczatkowy= start;
     wierzcholek_koncowy = end;
@@ -21,6 +22,7 @@ Trasa::Trasa(int start, int end){
     path_best = QVector <int> ();
     path_all = QVector < QVector < int > >();
 }
+
 Trasa::Trasa(Graph Graf_in){
     wierzcholek_poczatkowy= 0;
     wierzcholek_koncowy =0;
@@ -74,6 +76,19 @@ int Trasa::calc_attractiveness(){
     this->f_attractiveness.push_back( wynik);
     return wynik;
 }
+
+//zwraca 0 jesli indeks startowy lub koncowy invalid
+int Trasa::calc_attractiveness(int s, int e){
+    int wynik = 0;
+
+    if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
+
+    for(int i=s; i< e; i++){
+        wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
+    }
+    return wynik;
+}
+
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_profile(QVector<int> odcinek){
     int wynik = 0;
@@ -82,7 +97,9 @@ int Trasa::calc_profile(QVector<int> odcinek){
     }
     return wynik;
 }
+
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+
 int Trasa::calc_profile(){
     int wynik = 0;
     for(int i=0; i< path_best.size()-1; i++){
@@ -92,7 +109,21 @@ int Trasa::calc_profile(){
     this->f_profile.push_back( wynik);
     return wynik;
 }
+
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+
+//zwraca 0 jesli indeks startowy lub koncowy invalid
+int Trasa::calc_profile(int s, int e){
+    int wynik = 0;
+
+    if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
+
+    for(int i=s; i< e; i++){
+        wynik+=Graf.macierz_wysokosci[path_best[i]][path_best[i+1]];
+    }
+    return wynik;
+}
+
 int Trasa::calc_distance(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
@@ -100,7 +131,9 @@ int Trasa::calc_distance(QVector<int> odcinek){
     }
     return wynik;
 }
+
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+
 int Trasa::calc_distance(){
     int wynik = 0;
     for(int i=0; i< this->path_best.size()-1; i++){
@@ -110,20 +143,36 @@ int Trasa::calc_distance(){
     this->f_distance.push_back( wynik);
     return wynik;
 }
+
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+
+//zwraca 0 jesli indeks startowy lub koncowy invalid
+int Trasa::calc_distance(int s, int e){
+    int wynik = 0;
+
+    if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
+
+    for(int i=s; i< e; i++){
+        wynik+=Graf.macierz_przyleglosci[path_best[i]][path_best[i+1]];
+    }
+    return wynik;
+}
+
 int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     int wynik = 0;
     wynik= this->w_attractiveness*calc_attractiveness(odcinek)+this->w_distance*calc_distance(odcinek)+w_profile*calc_profile(odcinek);
     return wynik;
 }
+
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+
 int Trasa::calc_funkcja_celu(){
     int wynik = 0;
     wynik= this->w_attractiveness*this->f_attractiveness.back()+this->w_distance*this->f_distance.back()+w_profile*this->f_profile.back();
     this->funkcja_celu.push_back(wynik);
     return wynik;
-
 }
+
 
 void Trasa::set_parameters(int p_distance, int p_attractiveness, int p_profile){
     this->w_distance=(float)p_distance/100.0;
@@ -137,11 +186,13 @@ void Trasa::set_edges(int start, int end){
     this->wierzcholek_koncowy = end;
 }
 
+
 void Trasa::set_wanted(int dist, int att, int prof){
     this->wanted_attractiveness=att;
     this->wanted_distance=dist;
     this->wanted_profile=prof;
 }
+
 
 int Trasa::dijkstra(kryterium type){
     unsigned int** Matrix;
@@ -218,10 +269,11 @@ int Trasa::dijkstra(kryterium type){
     int wynik =P[current];
     delete T;
     delete P;
-    //this->f_distance.push_back(wynik);
+    this->f_distance.push_back(wynik);
     return wynik;
 
 }
+
 
 QVector<int> Trasa::build_result(int * history, int start, int end){
     QVector<int> result;
@@ -236,6 +288,7 @@ QVector<int> Trasa::build_result(int * history, int start, int end){
 }
 
 
+
 int Trasa::minimum(unsigned int * temp, unsigned int * perm,int size){
     unsigned int min = 1000000;
     int i_min;
@@ -247,6 +300,26 @@ int Trasa::minimum(unsigned int * temp, unsigned int * perm,int size){
            }
        }
    }
+   return i_min;
+
+}
+
+int Trasa::minimum(QVector<int> temp){
+
+    unsigned int min = temp.front();
+
+    int i_min =0;
+
+   for(int i=0; i<temp.size(); i++){
+
+       if(temp[i]!= 0){
+           if(temp[i]<min){
+               min=temp[i];
+               i_min=i;
+           }
+       }
+   }
+
    return i_min;
 
 }
@@ -274,8 +347,9 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
 
             QVector<int> kand_1;
             set_intersection (n_first.begin(), n_first.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
+
             for(int i=0 ; i < kand_1.size(); ++i) {
-                if(wykluczenie.contains(kand_1[i]) == false){
+                if(this->path_best.contains(kand_1[i]) == false){
                     line.push_back(wykluczenie.front());
                     line.push_back(kand_1[i]);
                     line.push_back(wykluczenie.back());
@@ -284,6 +358,7 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
                 }
 
             }
+
             kand_1.clear();
 
             rozmiar--;
@@ -295,7 +370,8 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
                  set_intersection (kand_2.begin(), kand_2.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
 
                  for(int j=0 ; j < kand_1.size(); ++j) {
-                     if(wykluczenie.contains(kand_1[i]) == false && wykluczenie.contains(kand_2[i]) == false){
+//ten warunek nie zadziala z kand2 trzeba zmienic
+                     if(this->path_best.contains(kand_1[j]) == false && this->path_best.contains(kand_2[j]) == false){
 
                          line.push_back(wykluczenie.front());
                          line.push_back(n_first[i]);
@@ -303,9 +379,11 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
                          line.push_back(wykluczenie.back());
                          wynik.push_back(line);
                          line.clear();
+cout<<"znalazlo cos ";
                      }
 
                  }
+
                  kand_1.clear();
                  kand_2.clear();
             }
@@ -378,12 +456,66 @@ void Trasa::aktualizuj_historie_tras(){
     }
 }
 
-//void Trasa::algorithm_1(){
-//    int acc = this->dijkstra(distance);
-
-//    while(acc > -1){
-//        this->f_distance=acc;
+void Trasa::algorithm_1(){
+    int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
+    if(acc==0) return;
 
 
-//    }
-//}
+
+    acc= this->wanted_distance - acc;
+    QVector<int> Marks;
+    QVector< QVector<int> > Potencials;
+    this->f_distance.push_back(acc);
+    this->path_all.push_back(this->path_best);
+
+    for(int i=0; i<this->path_best.size()-1; i++){
+        Marks.push_back(this->calc_distance(i, i+1));
+    }
+    int iteracje=0;
+    while(acc > 0 && iteracje<50){
+         iteracje++;
+
+        cout<<endl<< iteracje <<" dupa 1";
+        int wyklucz = minimum(Marks);
+        cout<<"dupa 2";
+        QVector<int> Wykluczenie;
+        cout<<"dupa 3";
+        Wykluczenie.push_back(this->path_best[wyklucz]);
+        cout<<"dupa 4";
+        Wykluczenie.push_back(this->path_best[wyklucz+1]);
+        cout<<"dupa 5";
+        Potencials = otoczenie(Wykluczenie, 2, 1);
+        if(Potencials.size()==0){
+            Marks[wyklucz]=1000000;
+            continue;
+        }
+
+        cout<<"dupa 6";
+        QVector<int> Potencials_Marks;
+        cout<<"dupa 7";
+        for(int i=0; i< Potencials.size(); i++){
+            Potencials_Marks.push_back(abs(acc + this->calc_distance(Potencials[i])));
+        }
+        cout<<"dupa 8";
+        int best_index = minimum(Potencials_Marks);
+        cout<<"dupa8.5";
+        acc=this->calc_distance(Potencials[best_index])-Marks[wyklucz];
+        cout<<"dupa 9";
+        for(int i=1; i!=Potencials[best_index].size(); i++){
+
+            path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
+
+            Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
+            Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
+        }
+        cout<<"dupa 10";
+        this->f_distance.push_back(acc);
+        cout<<"dupa 11";
+        this->path_all.push_back(this->path_best);
+
+
+    }
+
+
+
+}
