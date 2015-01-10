@@ -39,6 +39,16 @@ void Trasa::copy_graf(Graph graf_in){
     Graf=graf_in.copy_graph();
 }
 
+void Trasa::clear_result(){
+        f_distance.clear();
+        f_attractiveness.clear();
+        f_profile.clear();
+        funkcja_celu.clear();
+        path_best.clear();
+        path_all.clear(); //nie wiem czy tak mozna
+        historia_tras.clear();
+    }
+
 Trasa::~Trasa(){
 
 }

@@ -52,6 +52,7 @@ public:
     ~Trasa();
     Trasa(Trasa & trasa); //konstruktor kopiujący
     void copy_graf(Graph graf_in);
+    void clear_result();
 
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
     int calc_funkcja_celu(QVector<int> odcinek);

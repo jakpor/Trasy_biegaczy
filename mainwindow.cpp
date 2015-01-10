@@ -89,6 +89,8 @@ void MainWindow::on_createGraphButton_clicked()
     graphview.repaint();
     ui->tabWidget->setCurrentIndex(1);
 
+    pathview.trasa.clear_result(); // wyczyszczenie wyników ze starej trasy jesli zmiana mapy
+
 }
 /** Przycisk "Zapisz" **/
 void MainWindow::on_saveButton_clicked(){
@@ -290,3 +292,13 @@ void MainWindow::on_liczButton_clicked(){
         //pathview.trasa.aktualizuj_historie_tras();
 //cout<< "przeszlo dalej";
     }
+
+void MainWindow::on_start_textChanged(const QString &arg1)
+{
+    pathview.trasa.clear_result();
+}
+
+void MainWindow::on_end_textChanged(const QString &arg1)
+{
+    pathview.trasa.clear_result();
+}

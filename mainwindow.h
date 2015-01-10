@@ -47,6 +47,9 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_start_textChanged(const QString &arg1);
+    void on_end_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     GraphView graphview;
