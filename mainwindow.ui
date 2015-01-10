@@ -563,7 +563,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>0</string>
+        <string>99</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="start">
@@ -699,10 +699,10 @@
       <widget class="QSlider" name="odlegloscSlider">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>249</x>
          <y>30</y>
-         <width>160</width>
-         <height>19</height>
+         <width>181</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="layoutDirection">
@@ -712,28 +712,34 @@
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>1000</number>
+        <number>2000</number>
        </property>
        <property name="pageStep">
         <number>2</number>
        </property>
        <property name="value">
-        <number>10</number>
+        <number>500</number>
        </property>
        <property name="sliderPosition">
-        <number>10</number>
+        <number>500</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>100</number>
        </property>
       </widget>
       <widget class="QSlider" name="betonowoscSlider">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>249</x>
          <y>60</y>
-         <width>160</width>
-         <height>19</height>
+         <width>181</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="minimum">
@@ -784,9 +790,9 @@
       <widget class="QSpinBox" name="betonowoscBox">
        <property name="geometry">
         <rect>
-         <x>210</x>
+         <x>180</x>
          <y>60</y>
-         <width>42</width>
+         <width>51</width>
          <height>22</height>
         </rect>
        </property>
@@ -803,9 +809,9 @@
       <widget class="QSpinBox" name="odlegloscBox">
        <property name="geometry">
         <rect>
-         <x>210</x>
+         <x>180</x>
          <y>30</y>
-         <width>42</width>
+         <width>51</width>
          <height>22</height>
         </rect>
        </property>
@@ -813,19 +819,19 @@
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>1000</number>
+        <number>2000</number>
        </property>
        <property name="value">
-        <number>10</number>
+        <number>500</number>
        </property>
       </widget>
       <widget class="QSlider" name="wysokoscSlider">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>249</x>
          <y>90</y>
-         <width>160</width>
-         <height>19</height>
+         <width>181</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="minimum">
@@ -863,9 +869,9 @@
       <widget class="QSpinBox" name="wysokoscBox">
        <property name="geometry">
         <rect>
-         <x>210</x>
+         <x>180</x>
          <y>90</y>
-         <width>42</width>
+         <width>51</width>
          <height>22</height>
         </rect>
        </property>

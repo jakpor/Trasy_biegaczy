@@ -263,13 +263,14 @@ void MainWindow::on_liczButton_clicked(){
 //        }
 //        cout<<endl;
         //wypisz wszystkie trasy:
-//        for(int i=0; i<pathview.trasa.path_all.size(); i++){
-//            cout<<"Trasa nr "<<i << " f_distance= "<<pathview.trasa.f_distance[i]<<" : ";
-//            for(int j =0; j<pathview.trasa.path_all[i].size(); j++){
-//                         cout<<pathview.trasa.path_all[i][j]<<" ";
-//                    }
-//            cout<<endl;
-//        }
+        cout<<endl;
+        for(int i=0; i<pathview.trasa.path_all.size(); i++){
+            cout<<"Trasa nr "<<i << " f_distance= "<<pathview.trasa.f_distance[i]<<" : ";
+            for(int j =0; j<pathview.trasa.path_all[i].size(); j++){
+                         cout<<pathview.trasa.path_all[i][j]<<" ";
+                    }
+            cout<<endl;
+        }
 
 
 //cout<< "przeszlo dalej";
