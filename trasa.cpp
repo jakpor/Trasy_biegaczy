@@ -306,24 +306,27 @@ int Trasa::minimum(unsigned int * temp, unsigned int * perm,int size){
 
 int Trasa::minimum(QVector<int> temp){
 
-    unsigned int min = temp.front();
+    int min = temp.front();
 
     int i_min =0;
     int flag=0;
 
    for(int i=0; i<temp.size(); i++){
 
-       if(temp[i]!= 0){
+       if(temp[i]!= 1000000){
            if(temp[i]<min){
                min=temp[i];
                i_min=i;
            }
-           else{
+       }
+       else{
                flag++;
-           }
        }
    }
-    if(flag==temp.size()) return flag;
+
+   if(flag == temp.size()){
+       return flag;
+   }
    return i_min;
 
 }
@@ -461,6 +464,7 @@ void Trasa::aktualizuj_historie_tras(){
 }
 
 void Trasa::algorithm_1(){
+
     int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
     if(acc==0) return;
     acc= this->wanted_distance - acc;
@@ -468,15 +472,15 @@ void Trasa::algorithm_1(){
     QVector< QVector<int> > Potencials;
     this->f_distance.push_back(acc);
     this->path_all.push_back(this->path_best);
-
+cout<<" dup 1";
     for(int i=0; i<this->path_best.size()-1; i++){
         Marks.push_back(this->calc_distance(i, i+1));
     }
     int iteracje=0;
-
+cout<<" dup 2";
     while(acc > 0 && iteracje<50){
          iteracje++;
-
+cout<<" dup 3";
         int wyklucz = minimum(Marks);
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
             break;
@@ -484,29 +488,34 @@ void Trasa::algorithm_1(){
         QVector<int> Wykluczenie;
         Wykluczenie.push_back(this->path_best[wyklucz]);
         Wykluczenie.push_back(this->path_best[wyklucz+1]);
-
+    cout<<" dup 4";
         Potencials = otoczenie(Wykluczenie, 2, 1);
         if(Potencials.size()==0){ //warunek na brak otoczenia krawedzi
-            Marks[wyklucz]=0;
+            Marks[wyklucz]=1000000;
             continue;
         }
-
+cout<<" dup 5";
         QVector<int> Potencials_Marks;
 
         for(int i=0; i< Potencials.size(); i++){
-            Potencials_Marks.push_back(abs(acc +Marks[wyklucz]- this->calc_distance(Potencials[i])));
+            Potencials_Marks.push_back(abs(acc + Marks[wyklucz]- this->calc_distance(Potencials[i])));
         }
-
+cout<<" dup 6";
         int best_index = minimum(Potencials_Marks);
-        acc=acc-this->calc_distance(Potencials[best_index])+Marks[wyklucz];
+cout<<" dup 6a";
+
+            cout<<" best_index "<<best_index<<" Potencials.size() "<<Potencials.size()<<" wyklucz "<<wyklucz<<" Marks.size "<<Marks.size()<<endl;
+        acc=acc - this->calc_distance(Potencials[best_index]) + Marks[wyklucz];
+cout<<" dup 6b";
         for(int i=1; i!=Potencials[best_index].size()-1; i++){
 
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
-
+cout<<" dup 6c";
             Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
             Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
         }
 
+cout<<" dup 7";
         if(f_distance.back()>=abs(acc)){
             this->f_distance.push_back(acc);
             this->path_all.push_back(this->path_best);
@@ -514,6 +523,7 @@ void Trasa::algorithm_1(){
         else{
             path_best=path_all.back();
         }
+        Potencials.clear();
     }
-
+cout<<" dup 8";
 }
