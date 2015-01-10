@@ -24,12 +24,10 @@ public:
 
 private slots:
     void on_heightSlider_valueChanged(int value);
-    void on_percentageSlider_valueChanged(int value);
     void on_widthSlider_valueChanged(int value);
 
     void on_heightBox_valueChanged(int value);
     void on_widthBox_valueChanged(int value);
-    void on_percentageBox_valueChanged(int value);
 
     void on_createGraphButton_clicked();
     void on_saveButton_clicked();
