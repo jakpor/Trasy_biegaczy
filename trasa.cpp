@@ -269,7 +269,7 @@ int Trasa::dijkstra(kryterium type){
     int wynik =P[current];
     delete T;
     delete P;
-    this->f_distance.push_back(wynik);
+    //this->f_distance.push_back(wynik);
     return wynik;
 
 }
@@ -309,6 +309,7 @@ int Trasa::minimum(QVector<int> temp){
     unsigned int min = temp.front();
 
     int i_min =0;
+    int flag=0;
 
    for(int i=0; i<temp.size(); i++){
 
@@ -317,9 +318,12 @@ int Trasa::minimum(QVector<int> temp){
                min=temp[i];
                i_min=i;
            }
+           else{
+               flag++;
+           }
        }
    }
-
+    if(flag==temp.size()) return flag;
    return i_min;
 
 }
@@ -459,8 +463,6 @@ void Trasa::aktualizuj_historie_tras(){
 void Trasa::algorithm_1(){
     int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
     if(acc==0) return;
-
-
     acc= this->wanted_distance - acc;
     QVector<int> Marks;
     QVector< QVector<int> > Potencials;
@@ -471,50 +473,47 @@ void Trasa::algorithm_1(){
         Marks.push_back(this->calc_distance(i, i+1));
     }
     int iteracje=0;
+
     while(acc > 0 && iteracje<50){
          iteracje++;
 
-        //cout<<endl<< iteracje <<" dupa 1";
         int wyklucz = minimum(Marks);
-        //cout<<"dupa 2";
+        if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
+            break;
+        }
         QVector<int> Wykluczenie;
-        //cout<<"dupa 3";
         Wykluczenie.push_back(this->path_best[wyklucz]);
-        //cout<<"dupa 4";
         Wykluczenie.push_back(this->path_best[wyklucz+1]);
-        //cout<<"dupa 5";
+
         Potencials = otoczenie(Wykluczenie, 2, 1);
-        if(Potencials.size()==0){
-            Marks[wyklucz]=1000000;
+        if(Potencials.size()==0){ //warunek na brak otoczenia krawedzi
+            Marks[wyklucz]=0;
             continue;
         }
 
-        //cout<<"dupa 6";
         QVector<int> Potencials_Marks;
-        //cout<<"dupa 7";
+
         for(int i=0; i< Potencials.size(); i++){
-            Potencials_Marks.push_back(abs(acc + this->calc_distance(Potencials[i])));
+            Potencials_Marks.push_back(abs(acc +Marks[wyklucz]- this->calc_distance(Potencials[i])));
         }
-        //cout<<"dupa 8";
+
         int best_index = minimum(Potencials_Marks);
-        //cout<<"dupa8.5";
-        acc=this->calc_distance(Potencials[best_index])-Marks[wyklucz];
-        //cout<<"dupa 9";
-        for(int i=1; i!=Potencials[best_index].size(); i++){
+        acc=acc-this->calc_distance(Potencials[best_index])+Marks[wyklucz];
+        for(int i=1; i!=Potencials[best_index].size()-1; i++){
 
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 
             Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
             Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
         }
-        //cout<<"dupa 10";
-        this->f_distance.push_back(acc);
-        //cout<<"dupa 11";
-        this->path_all.push_back(this->path_best);
 
-
+        if(f_distance.back()>=abs(acc)){
+            this->f_distance.push_back(acc);
+            this->path_all.push_back(this->path_best);
+        }
+        else{
+            path_best=path_all.back();
+        }
     }
-
-
 
 }

@@ -257,11 +257,19 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.algorithm_1();
 
         //wypisz najlepszą trasę
-        cout<<"Koncowa trasa to: ";
-        for(int i =0; i<pathview.trasa.path_best.size(); i++){
-            cout<<pathview.trasa.path_best[i]<< " ";
+//        cout<<"Koncowa trasa to: ";
+//        for(int i =0; i<pathview.trasa.path_best.size(); i++){
+//            cout<<pathview.trasa.path_best[i]<< " ";
+//        }
+//        cout<<endl;
+        //wypisz wszystkie trasy:
+        for(int i=0; i<pathview.trasa.path_all.size(); i++){
+            cout<<"Trasa nr "<<i << " f_distance= "<<pathview.trasa.f_distance[i]<<" : ";
+            for(int j =0; j<pathview.trasa.path_all[i].size(); j++){
+                         cout<<pathview.trasa.path_all[i][j]<<" ";
+                    }
+            cout<<endl;
         }
-        cout<<endl;
 
 
 //cout<< "przeszlo dalej";
