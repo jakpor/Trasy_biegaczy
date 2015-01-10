@@ -275,8 +275,8 @@ void Graph::load_graph(string filename){
     //13 zmiennych
     ifstream in;
     string name;
-    string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki z grafami\\";
- //   string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug\\";
+//    string sciezka = "C:\\Users\\Dzientak\\Documents\\GitHub\\Trasy\\Trasy_biegaczy\\Pliki z grafami\\";
+    string sciezka = "D:\\Dokumenty\\AGH\\Semestr 5\\MMWD\\Symulacja\\build-trasy_biegaczy-Desktop_Qt_5_4_0_MinGW_32bit-Debug\\";
 
     this->destroy();
 

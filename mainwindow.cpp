@@ -255,20 +255,20 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
 
         pathview.trasa.algorithm_1();
-cout<< "przeszlo 1" ;
+cout<< "przeszlo dalej";
         r=pathview.trasa.f_distance.back();
         ui->result->setText(QString::number(r));
-cout<< "przeszlo 2 ";
+cout<< "przeszlo dalej";
         r=pathview.trasa.calc_profile();
         ui->result_wysokosc->setText(QString::number(r));
-cout<< "przeszlo 3 ";
+cout<< "przeszlo dalej";
         r=pathview.trasa.calc_attractiveness();
         ui->result_beton->setText(QString::number(r));
-cout<< "przeszlo 4 ";
+cout<< "przeszlo dalej";
         //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
         //pathview.trasa.path_all.push_back(pathview.trasa.path_best);
 
         //po wykonaniu algorytmu aktualizuje historie
         pathview.trasa.aktualizuj_historie_tras();
-cout<< "przeszlo 5 ";
+cout<< "przeszlo dalej";
     }
