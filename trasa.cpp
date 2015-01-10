@@ -379,7 +379,7 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
                          line.push_back(wykluczenie.back());
                          wynik.push_back(line);
                          line.clear();
-cout<<"znalazlo cos ";
+//cout<<"znalazlo cos ";
                      }
 
                  }
@@ -461,7 +461,6 @@ void Trasa::algorithm_1(){
     if(acc==0) return;
 
 
-
     acc= this->wanted_distance - acc;
     QVector<int> Marks;
     QVector< QVector<int> > Potencials;
@@ -475,32 +474,32 @@ void Trasa::algorithm_1(){
     while(acc > 0 && iteracje<50){
          iteracje++;
 
-        cout<<endl<< iteracje <<" dupa 1";
+        //cout<<endl<< iteracje <<" dupa 1";
         int wyklucz = minimum(Marks);
-        cout<<"dupa 2";
+        //cout<<"dupa 2";
         QVector<int> Wykluczenie;
-        cout<<"dupa 3";
+        //cout<<"dupa 3";
         Wykluczenie.push_back(this->path_best[wyklucz]);
-        cout<<"dupa 4";
+        //cout<<"dupa 4";
         Wykluczenie.push_back(this->path_best[wyklucz+1]);
-        cout<<"dupa 5";
+        //cout<<"dupa 5";
         Potencials = otoczenie(Wykluczenie, 2, 1);
         if(Potencials.size()==0){
             Marks[wyklucz]=1000000;
             continue;
         }
 
-        cout<<"dupa 6";
+        //cout<<"dupa 6";
         QVector<int> Potencials_Marks;
-        cout<<"dupa 7";
+        //cout<<"dupa 7";
         for(int i=0; i< Potencials.size(); i++){
             Potencials_Marks.push_back(abs(acc + this->calc_distance(Potencials[i])));
         }
-        cout<<"dupa 8";
+        //cout<<"dupa 8";
         int best_index = minimum(Potencials_Marks);
-        cout<<"dupa8.5";
+        //cout<<"dupa8.5";
         acc=this->calc_distance(Potencials[best_index])-Marks[wyklucz];
-        cout<<"dupa 9";
+        //cout<<"dupa 9";
         for(int i=1; i!=Potencials[best_index].size(); i++){
 
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
@@ -508,9 +507,9 @@ void Trasa::algorithm_1(){
             Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
             Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
         }
-        cout<<"dupa 10";
+        //cout<<"dupa 10";
         this->f_distance.push_back(acc);
-        cout<<"dupa 11";
+        //cout<<"dupa 11";
         this->path_all.push_back(this->path_best);
 
 
