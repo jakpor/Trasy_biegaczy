@@ -109,7 +109,8 @@ void MainWindow::on_saveButton_clicked(){
 void MainWindow::on_countButton_clicked(){
     int r;
     pathview.trasa.copy_graf(graphview.gr);
-    r=pathview.trasa.dijkstra(ui->start->text().toInt(),ui->end->text().toInt(), distances);
+    pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
+    r=pathview.trasa.dijkstra(distances);
 //    cout<<r<<endl;
 
     ui->result->setText(QString::number(r));

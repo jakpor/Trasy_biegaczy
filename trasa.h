@@ -26,6 +26,10 @@ public:
     float w_attractiveness;
     float w_profile;
 
+    int wanted_distance;
+    int wanted_attractiveness;
+    int wanted_profile;
+
     // ocena trasy wg poszczególnych kryteriów - ostatnia wartość
     QVector <int> f_distance;
     QVector <int> f_attractiveness ;
@@ -49,15 +53,20 @@ public:
     Trasa(Trasa & trasa); //konstruktor kopiujący
     void copy_graf(Graph graf_in);
 
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
     int calc_funkcja_celu(QVector<int> odcinek);
     int calc_distance(QVector<int> odcinek);
     int calc_attractiveness(QVector<int> odcinek);
     int calc_profile(QVector<int> odcinek);
-
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
     int calc_funkcja_celu();
     int calc_distance();
     int calc_attractiveness();
     int calc_profile();
+
+    void set_parameters(int p_distance, int p_attractiveness, int p_profile);
+    void set_edges(int start, int end);
+    void set_wanted(int dist, int att, int prof);
     //odpalaj po wykonaniu całego algorytmu, ale przed wizualizacją
     void aktualizuj_historie_tras();
 
@@ -75,7 +84,7 @@ public:
     // inna wersja rozważa wywołanie tej funkcji z argumentem mówiącym
     //czy generujemy randomową trasę, czy trasę minimalną
 
-    int dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryterium type);
+    int dijkstra(kryterium type);
     // uzywana w kontruktorze
      QVector<int> nastepniki(int x);
      int minimum(unsigned int * temp,unsigned int * perm, int size);
@@ -84,6 +93,7 @@ public:
 
 
     /****** Metody algorytmu *******/
+     void algorithm_1();
         //lista/trasa skroc(kryterium, wykluczenie);
         //lista/trasa wydluz(kryterium, wkluczenie);
         //wykluczenie/ void ocena_trasy(kryterium);

@@ -54,6 +54,8 @@ Trasa::Trasa(Trasa & trasa){
 
 }
 
+
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_attractiveness(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
@@ -62,14 +64,17 @@ int Trasa::calc_attractiveness(QVector<int> odcinek){
     return wynik;
 }
 
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_attractiveness(){
     int wynik = 0;
     for(int i=0; i< path_best.size()-1; i++){
         wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
     }
+    wynik= this->wanted_attractiveness - wynik;
+    this->f_attractiveness.push_back( wynik);
     return wynik;
 }
-
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_profile(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
@@ -77,14 +82,17 @@ int Trasa::calc_profile(QVector<int> odcinek){
     }
     return wynik;
 }
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_profile(){
     int wynik = 0;
     for(int i=0; i< path_best.size()-1; i++){
         wynik+=Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]];
     }
+    wynik = this->wanted_profile - wynik;
+    this->f_profile.push_back( wynik);
     return wynik;
 }
-
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_distance(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
@@ -92,31 +100,52 @@ int Trasa::calc_distance(QVector<int> odcinek){
     }
     return wynik;
 }
-
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_distance(){
     int wynik = 0;
     for(int i=0; i< this->path_best.size()-1; i++){
         wynik+=Graf.macierz_przyleglosci[this->path_best[i]][this->path_best[i+1]];
     }
+    wynik = this->wanted_distance - wynik;
+    this->f_distance.push_back( wynik);
     return wynik;
 }
-
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     int wynik = 0;
     wynik= this->w_attractiveness*calc_attractiveness(odcinek)+this->w_distance*calc_distance(odcinek)+w_profile*calc_profile(odcinek);
     return wynik;
 }
+//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 int Trasa::calc_funkcja_celu(){
     int wynik = 0;
     wynik= this->w_attractiveness*this->f_attractiveness.back()+this->w_distance*this->f_distance.back()+w_profile*this->f_profile.back();
+    this->funkcja_celu.push_back(wynik);
     return wynik;
 
 }
 
+void Trasa::set_parameters(int p_distance, int p_attractiveness, int p_profile){
+    this->w_distance=(float)p_distance/100.0;
+    this->w_attractiveness=(float)p_attractiveness/100.0;
+    this->w_profile=(float)p_profile/100.0;
 
-int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryterium type){
+}
+
+void Trasa::set_edges(int start, int end){
+    this->wierzcholek_poczatkowy=start;
+    this->wierzcholek_koncowy = end;
+}
+
+void Trasa::set_wanted(int dist, int att, int prof){
+    this->wanted_attractiveness=att;
+    this->wanted_distance=dist;
+    this->wanted_profile=prof;
+}
+
+int Trasa::dijkstra(kryterium type){
     unsigned int** Matrix;
-    if(wierzcholek_poczatkowy<0 || wierzcholek_koncowy >= Graf.liczba_wierzcholkow || wierzcholek_poczatkowy==wierzcholek_koncowy)
+    if(this->wierzcholek_poczatkowy<0 || this->wierzcholek_koncowy >= Graf.liczba_wierzcholkow || this->wierzcholek_poczatkowy==this->wierzcholek_koncowy)
         return 0;
 //to nie dziala!!
     switch(type){
@@ -149,10 +178,10 @@ int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryteri
         Previous[i]=0;
     }
 
-    P[wierzcholek_poczatkowy]=1000000; // zabezpieczenie od zmiany
+    P[this->wierzcholek_poczatkowy]=1000000; // zabezpieczenie od zmiany
     QVector<int> followers;
     int current;
-    current = wierzcholek_poczatkowy;
+    current = this->wierzcholek_poczatkowy;
 
 //    followers = nastepniki(wierzcholek_poczatkowy, Matrix, graf.liczba_wierzcholkow);
 //    for (int i=0;i<followers.size();i++){
@@ -162,7 +191,7 @@ int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryteri
 
    // T[current]= INF;
 
-    while(current!= wierzcholek_koncowy){
+    while(current!= this->wierzcholek_koncowy){
         followers = nastepniki(current);
         for (int i=0; i<followers.size(); i++){
             if(T[followers[i]]==0){
@@ -182,14 +211,14 @@ int Trasa::dijkstra(int wierzcholek_poczatkowy, int wierzcholek_koncowy, kryteri
         //T[current]= INF;
     }
 
-QVector<int> result = build_result(Previous,wierzcholek_poczatkowy,wierzcholek_koncowy);
+    QVector<int> result = build_result(Previous,this->wierzcholek_poczatkowy,this->wierzcholek_koncowy);
     this->path_best = result;
 
 
     int wynik =P[current];
     delete T;
     delete P;
-    this->f_distance.push_back(wynik);
+    //this->f_distance.push_back(wynik);
     return wynik;
 
 }
@@ -348,3 +377,13 @@ void Trasa::aktualizuj_historie_tras(){
         }
     }
 }
+
+//void Trasa::algorithm_1(){
+//    int acc = this->dijkstra(distance);
+
+//    while(acc > -1){
+//        this->f_distance=acc;
+
+
+//    }
+//}
