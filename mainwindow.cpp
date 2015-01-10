@@ -117,7 +117,7 @@ void MainWindow::on_countButton_clicked(){
     ui->result_beton->setText(QString::number(r));
 
     //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
-    pathview.trasa.path_all.push_back(pathview.trasa.path_best);
+    //pathview.trasa.path_all.push_back(pathview.trasa.path_best);
 
 //    //testowy drugi wektor - możesz odkomentować i zobaczyć jak działa historia tras
 //    QVector <int> temp;
@@ -129,7 +129,7 @@ void MainWindow::on_countButton_clicked(){
 
 
     //po wykonaniu algorytmu aktualizuje historie
-    pathview.trasa.aktualizuj_historie_tras();
+    //pathview.trasa.aktualizuj_historie_tras();
 }
 
 /** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
@@ -255,20 +255,29 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
 
         pathview.trasa.algorithm_1();
-cout<< "przeszlo dalej";
+
+        //wypisz najlepszą trasę
+        cout<<"Koncowa trasa to: ";
+        for(int i =0; i<pathview.trasa.path_best.size(); i++){
+            cout<<pathview.trasa.path_best[i]<< " ";
+        }
+        cout<<endl;
+
+
+//cout<< "przeszlo dalej";
         r=pathview.trasa.f_distance.back();
         ui->result->setText(QString::number(r));
-cout<< "przeszlo dalej";
+//cout<< "przeszlo dalej";
         r=pathview.trasa.calc_profile();
         ui->result_wysokosc->setText(QString::number(r));
-cout<< "przeszlo dalej";
+//cout<< "przeszlo dalej";
         r=pathview.trasa.calc_attractiveness();
         ui->result_beton->setText(QString::number(r));
-cout<< "przeszlo dalej";
+//cout<< "przeszlo dalej";
         //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
         //pathview.trasa.path_all.push_back(pathview.trasa.path_best);
 
         //po wykonaniu algorytmu aktualizuje historie
-        pathview.trasa.aktualizuj_historie_tras();
-cout<< "przeszlo dalej";
+        //pathview.trasa.aktualizuj_historie_tras();
+//cout<< "przeszlo dalej";
     }
