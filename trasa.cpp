@@ -485,7 +485,7 @@ void Trasa::aktualizuj_historie_tras(){
 //    cerr<< endl;
 }
 
-void Trasa::algorithm_1(){
+void Trasa::algorithm_1(int ile_wykluczac){
 
     int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
     if(acc==0) return;
@@ -495,46 +495,68 @@ void Trasa::algorithm_1(){
     this->f_distance.push_back(acc);
     this->path_all.push_back(this->path_best);
 
-    for(int i=0; i<this->path_best.size()-1; i++){
-        Marks.push_back(this->calc_distance(i, i+1));
+    //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
+    for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
+        Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
     }
     int iteracje=0;
 
     while(acc > 0 && iteracje<50){
          iteracje++;
 
-        int wyklucz = minimum(Marks);
+        int wyklucz = minimum(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
             break;
         }
 cout<<path_best[wyklucz]<<" ";
-        QVector<int> Wykluczenie;
-        Wykluczenie.push_back(this->path_best[wyklucz]);
-        Wykluczenie.push_back(this->path_best[wyklucz+1]);
+        QVector<int> Wykluczenie; //zbudowanie vektora wykluczenia wysulanego do metody otoczenie
+        for(int i=0; i<=ile_wykluczac;i++){
+            Wykluczenie.push_back(this->path_best[wyklucz+i]);
+        }
 
-        Potencials = otoczenie(Wykluczenie, 2, 1);
+
+        Potencials = otoczenie(Wykluczenie, 2, 1); //wszystkie potencjalne zamienniki dla naszego wykluczenia
         if(Potencials.size()==0){ //warunek na brak otoczenia krawedzi
-            Marks[wyklucz]=1000000;
+            Marks[wyklucz]=1000000; //zabronienie dlugoterminowe na wykluczanie tej krawedzi.
             continue;
         }
 
-        QVector<int> Potencials_Marks;
-
+        QVector<int> Potencials_Marks; //ocena wszystkich zamienników pod względem polepszenia f. celu
+//wartość bezwzględna( ile brakuje + ile da wykluczenie - ile da zamiennik wykluczenia)
         for(int i=0; i< Potencials.size(); i++){
             Potencials_Marks.push_back(abs(acc + Marks[wyklucz]- this->calc_distance(Potencials[i])));
         }
 
-        int best_index = minimum(Potencials_Marks);
+        int best_index = minimum(Potencials_Marks); //wybieramy tą która najbardziej zblizyla nam to ile brakuje do zera
 
-        acc=acc - this->calc_distance(Potencials[best_index]) + Marks[wyklucz];
+        acc=acc - this->calc_distance(Potencials[best_index]) + Marks[wyklucz]; //zmianiamy aktualną wartość tego ile brakuje
+if(ile_wykluczac == 1){
+    for(int i=1; i!=Potencials[best_index].size()-1; i++){
 
-        for(int i=1; i!=Potencials[best_index].size()-1; i++){
+        path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 
+        Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
+        Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
+    }
+}
+else if(ile_wykluczac==2){
+    for(int i=1; i!=Potencials[best_index].size()-1; i++){
+
+        if(i==1){
+            path_best[wyklucz+1]=Potencials[best_index][i];
+            Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+1);
+            Marks[wyklucz+1]=this->calc_distance(wyklucz+1, wyklucz+2);
+        }
+        else if(i==2){
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 
             Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
             Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
         }
+
+    }
+}
+
 
         if(f_distance.back()>=abs(acc)){
             this->f_distance.push_back(acc);

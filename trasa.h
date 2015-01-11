@@ -100,7 +100,7 @@ public:
 
 
     /****** Metody algorytmu *******/
-     void algorithm_1();
+     void algorithm_1(int ile_wykluczac);
         //lista/trasa skroc(kryterium, wykluczenie);
         //lista/trasa wydluz(kryterium, wkluczenie);
         //wykluczenie/ void ocena_trasy(kryterium);
