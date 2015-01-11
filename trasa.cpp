@@ -415,7 +415,12 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
 }
 
 void Trasa::aktualizuj_historie_tras(){
-    historia_tras = QVector<int*>();
+
+    for( int i = historia_tras.size(); i>0; i--){
+        historia_tras.pop_back();
+    }
+
+    historia_tras = QVector<int*>(); //zeruj wektor historii tras
     QVector <int> temp;
     // kaw[0] - poczatek linii, kaw[1] - koniec linii (wiekszy niz kaw[0]), kaw[2] - ile razy sie powtorzyl
     int* kawalek_historii;
@@ -446,18 +451,19 @@ void Trasa::aktualizuj_historie_tras(){
                 kawalek_historii[1] = temp[j];
             }
             kawalek_historii[2] = 1;
-            for(int u = 1; u<(historia_tras.size()-1); u++){ //tu się może psuć!!!
-                if(historia_tras[i][0]==kawalek_historii[0]){
-                    if(historia_tras[i][1]==kawalek_historii[1]){
-                        historia_tras[i][2]++; //zwieksz ilosc
-                        sprawdzenie_czy_if = 1;
-                        // zwiekszam maksimum
-                        if (historia_tras[i][2]>historia_tras[0][1]){
-                            historia_tras[0][1]=historia_tras[i][2];
-                        }
+            sprawdzenie_czy_if = 0;
+
+            for(int u = 1; u<(historia_tras.size()); u++){ //tu się może psuć!!!
+                if((historia_tras[u][0]==kawalek_historii[0])&&(historia_tras[u][1]==kawalek_historii[1])){
+                    historia_tras[u][2]++; //zwieksz ilosc
+                    sprawdzenie_czy_if = 1;
+                    // zwiekszam maksimum
+                    if (historia_tras[u][2]>historia_tras[0][1]){
+                        historia_tras[0][1]=historia_tras[u][2];
                     }
                 }
             }
+
             if(sprawdzenie_czy_if==0){
                 //jesli if sie nie wykonaly
                 historia_tras.append(new int[3]);
@@ -471,6 +477,12 @@ void Trasa::aktualizuj_historie_tras(){
             }
         }
     }
+
+//    cerr<< "Aktualna historia to: (A,B,ilosc): ";
+//    for(int i = 0; i<historia_tras.size(); i++){
+//        cerr<<"("<<historia_tras.at(i)[0]<<", "<< historia_tras.at(i)[1]<<", "<< historia_tras.at(i)[2]<<") ";
+//    }
+//    cerr<< endl;
 }
 
 void Trasa::algorithm_1(){

@@ -41,8 +41,10 @@ void PathView::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::green);
     pen.setWidth(8);
     painter.setPen(pen);
+    int kolor = 0;
     for(int i = 1; i<(trasa.historia_tras.size()); i++){
-        pen.setColor(QColor::fromHsv(240, 255, 255-trasa.historia_tras[i][2]*255/trasa.historia_tras[0][1], 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
+        kolor = 255-trasa.historia_tras[i][2]*255/trasa.historia_tras[0][1];
+        pen.setColor(QColor::fromHsv(120, 40, kolor , 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
         painter.setPen(pen);
         painter.drawLine(graph.lista_wierzcholkow[trasa.historia_tras[i][0]],graph.lista_wierzcholkow[trasa.historia_tras[i][1]]);
     }
@@ -50,7 +52,7 @@ void PathView::paintEvent(QPaintEvent *event)
     /** aktualna trasa **/
     pen.setStyle(Qt::SolidLine);
     pen.setColor(Qt::red);
-    pen.setWidth(5);
+    pen.setWidth(3);
     painter.setPen(pen);
     for(int i = 0; i<(trasa.path_best.size()-1); i++){
         //używam funkcji at, bo jest szybsza i read only
@@ -78,6 +80,21 @@ void PathView::paintEvent(QPaintEvent *event)
             painter.drawEllipse(graph.lista_wierzcholkow[i],r,r);
             painter.drawText(QPoint(graph.lista_wierzcholkow[i].x()-r/2, graph.lista_wierzcholkow[i].y()+r/2),QString::number(i)); //cyferki
         }
+
+    /** Początek i koniec **/
+        pen.setStyle(Qt::SolidLine);
+        pen.setWidth(3);
+        pen.setColor(Qt::black);
+        painter.setPen( pen );
+        int a = trasa.wierzcholek_poczatkowy;
+        painter.setBrush(QColor::fromHsv(((120/(graph.min_wysokosc-graph.max_wysokosc))*graph.lista_wysokosci[a]-(120/(graph.min_wysokosc-graph.max_wysokosc)*graph.max_wysokosc)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+        painter.drawEllipse(graph.lista_wierzcholkow[a],r,r);
+        painter.drawText(QPoint(graph.lista_wierzcholkow[a].x()-r/2, graph.lista_wierzcholkow[a].y()+r/2),QString::number(a)); //cyferki
+
+        a = trasa.wierzcholek_koncowy;
+        painter.setBrush(QColor::fromHsv(((120/(graph.min_wysokosc-graph.max_wysokosc))*graph.lista_wysokosci[a]-(120/(graph.min_wysokosc-graph.max_wysokosc)*graph.max_wysokosc)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+        painter.drawEllipse(graph.lista_wierzcholkow[a],r,r);
+        painter.drawText(QPoint(graph.lista_wierzcholkow[a].x()-r/2, graph.lista_wierzcholkow[a].y()+r/2),QString::number(a)); //cyferki
 
     painter.end();
 }

@@ -101,6 +101,9 @@ void MainWindow::on_saveButton_clicked(){
 /** Przycisk "Oblicz" w zakładce 2 **/
 void MainWindow::on_countButton_clicked(){
     int r;
+    //tu też czyszczę trasę
+    pathview.trasa.clear_result();
+
     pathview.trasa.copy_graf(graphview.gr);
     pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
     pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
@@ -117,21 +120,6 @@ void MainWindow::on_countButton_clicked(){
     r=pathview.trasa.calc_attractiveness();
 
     ui->result_beton->setText(QString::number(r));
-
-    //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
-    //pathview.trasa.path_all.push_back(pathview.trasa.path_best);
-
-//    //testowy drugi wektor - możesz odkomentować i zobaczyć jak działa historia tras
-//    QVector <int> temp;
-//    temp.append(0);
-//    temp.append(1);
-//    temp.append(2);
-//    temp.append(3);
-//    pathview.trasa.path_all.push_back(temp);
-
-
-    //po wykonaniu algorytmu aktualizuje historie
-    //pathview.trasa.aktualizuj_historie_tras();
 }
 
 /** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
@@ -169,6 +157,10 @@ void MainWindow::on_pushButton_clicked()
 {
     pathview.repaint();
     graphview.repaint();
+    setupplot1(ui->plotWidget_1);
+    setupplot2(ui->plotWidget_2);
+    setupplot3(ui->plotWidget_3);
+    setupplot4(ui->plotWidget_4);
 }
 
 
@@ -177,83 +169,149 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::setupplot1(QCustomPlot *customPlot){
     // funkcja celu od iteracji
-    QVector<double> x(101), y(101); // initialize with entries 0..100
-    for (int i=0; i<101; ++i)
+    QVector<double> x(pathview.trasa.funkcja_celu.size()), y(pathview.trasa.funkcja_celu.size()), z(pathview.trasa.funkcja_celu.size()); // initialize with entries 0..100
+    int max = 0;
+    int min = 0;
+    int wartosc = 0;
+    for (int i=0; i<pathview.trasa.funkcja_celu.size(); ++i)
     {
+      wartosc = pathview.trasa.funkcja_celu.at(i);
       x[i] = i; // x goes from -1 to 1
-      y[i] = 30*sqrt(x[i]);  // let's plot a sqrt function
+      y[i] = wartosc;  //konwersja na double
+      if(max<wartosc){
+          max = wartosc;
+      }
+      if(min>wartosc){
+          min = wartosc;
+      }
+      z[i] = 0; //wartość zadana - minimum
     }
     // create graph and assign data to it:
     customPlot->addGraph();
     customPlot->graph(0)->setData(x, y);
+    customPlot->addGraph();
+    customPlot->graph(1)->setData(x, z);
+    QPen pen( Qt::green, 1 );
+    customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
     customPlot->xAxis->setLabel("Iteracje");
     customPlot->yAxis->setLabel("Funkcja celu");
     // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(0, 100);
-    customPlot->yAxis->setRange(0, 1000);
+    customPlot->xAxis->setRange(0, pathview.trasa.funkcja_celu.size());
+    customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
+    customPlot->replot();
 }
 
 void MainWindow::setupplot2(QCustomPlot *customPlot){
     // odległość od iteracji
-    QVector<double> x(101), y(101); // initialize with entries 0..100
-    for (int i=0; i<101; ++i)
+    QVector<double> x(pathview.trasa.f_distance.size()), y(pathview.trasa.f_distance.size()), z(pathview.trasa.f_distance.size()); // initialize with entries 0..100
+    int max = pathview.trasa.wanted_distance;
+    int min = pathview.trasa.wanted_distance;
+    int wartosc = 0;
+    for (int i=0; i<pathview.trasa.f_distance.size(); ++i)
     {
+      wartosc = pathview.trasa.wanted_distance - pathview.trasa.f_distance.at(i);
       x[i] = i; // x goes from -1 to 1
-      y[i] = 50*sqrt(x[i]);  // let's plot a sqrt function
+      y[i] = wartosc;  //konwersja na double
+      if(max<wartosc){
+          max = wartosc;
+      }
+      if(min>wartosc){
+          min = wartosc;
+      }
+      z[i] = pathview.trasa.wanted_distance;
     }
     // create graph and assign data to it:
     customPlot->addGraph();
     customPlot->graph(0)->setData(x, y);
+    customPlot->addGraph();
+    customPlot->graph(1)->setData(x, z);
+    QPen pen( Qt::green, 1 );
+    customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
     customPlot->xAxis->setLabel("Iteracje");
-    customPlot->yAxis->setLabel("Funkcja celu");
+    customPlot->yAxis->setLabel("Odległość");
     // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(0, 100);
-    customPlot->yAxis->setRange(0, 1000);
+    customPlot->xAxis->setRange(0, pathview.trasa.f_distance.size());
+    customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
+    customPlot->replot();
 }
 void MainWindow::setupplot3(QCustomPlot *customPlot){
     // betonowośc od iteracji
-    QVector<double> x(101), y(101); // initialize with entries 0..100
-    for (int i=0; i<101; ++i)
+    QVector<double> x(pathview.trasa.f_attractiveness.size()), y(pathview.trasa.f_attractiveness.size()), z(pathview.trasa.f_attractiveness.size()); // initialize with entries 0..100
+    int max = pathview.trasa.wanted_attractiveness;
+    int min = pathview.trasa.wanted_attractiveness;
+    int wartosc = 0;
+    for (int i=0; i<pathview.trasa.f_attractiveness.size(); ++i)
     {
+      wartosc = pathview.trasa.wanted_attractiveness - pathview.trasa.f_attractiveness.at(i);
       x[i] = i; // x goes from -1 to 1
-      y[i] = 20*sqrt(x[i]);  // let's plot a sqrt function
+      y[i] = wartosc;  //konwersja na double
+      if(max<wartosc){
+          max = wartosc;
+      }
+      if(min>wartosc){
+          min = wartosc;
+      }
+      z[i] = pathview.trasa.wanted_attractiveness;
     }
     // create graph and assign data to it:
     customPlot->addGraph();
     customPlot->graph(0)->setData(x, y);
+    customPlot->addGraph();
+    customPlot->graph(1)->setData(x, z);
+    QPen pen( Qt::green, 1 );
+    customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
     customPlot->xAxis->setLabel("Iteracje");
-    customPlot->yAxis->setLabel("Funkcja celu");
+    customPlot->yAxis->setLabel("Ilość betonu");
     // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(0, 100);
-    customPlot->yAxis->setRange(0, 1000);
+    customPlot->xAxis->setRange(0, pathview.trasa.f_attractiveness.size());
+    customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
+    customPlot->replot();
 }
 void MainWindow::setupplot4(QCustomPlot *customPlot){
     //wysokość
-    QVector<double> x(101), y(101); // initialize with entries 0..100
-    for (int i=0; i<101; ++i)
+    QVector<double> x(pathview.trasa.f_profile.size()), y(pathview.trasa.f_profile.size()), z(pathview.trasa.f_profile.size()); // initialize with entries 0..100
+    int max = pathview.trasa.wanted_profile;
+    int min = pathview.trasa.wanted_profile;
+    int wartosc = 0;
+    for (int i=0; i<pathview.trasa.f_profile.size(); ++i)
     {
+      wartosc = pathview.trasa.wanted_profile - pathview.trasa.f_profile.at(i);
       x[i] = i; // x goes from -1 to 1
-      y[i] = 40*sqrt(x[i]);  // let's plot a sqrt function
+      y[i] = wartosc;  //konwersja na double
+      if(max<wartosc){
+          max = wartosc;
+      }
+      if(min>wartosc){
+          min = wartosc;
+      }
+      z[i] = pathview.trasa.wanted_profile;
     }
     // create graph and assign data to it:
     customPlot->addGraph();
     customPlot->graph(0)->setData(x, y);
+    customPlot->addGraph();
+    customPlot->graph(1)->setData(x, z);
+    QPen pen( Qt::green, 1 );
+    customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
     customPlot->xAxis->setLabel("Iteracje");
-    customPlot->yAxis->setLabel("Funkcja celu");
+    customPlot->yAxis->setLabel("Zgodność z profilem");
     // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(0, 100);
-    customPlot->yAxis->setRange(0, 1000);
+    customPlot->xAxis->setRange(0, pathview.trasa.f_profile.size());
+    customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
+    customPlot->replot();
 }
 
+
+/** Przycisk "Oblicz najkrótszą trasę!" **/
 void MainWindow::on_liczButton_clicked(){
         int r;
         pathview.trasa.copy_graf(graphview.gr);
         pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
-         pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
+        pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
         pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
 
         pathview.trasa.algorithm_1();
@@ -264,6 +322,7 @@ void MainWindow::on_liczButton_clicked(){
 //            cout<<pathview.trasa.path_best[i]<< " ";
 //        }
 //        cout<<endl;
+
         //wypisz wszystkie trasy:
         cout<<endl;
         for(int i=0; i<pathview.trasa.path_all.size(); i++){
@@ -274,23 +333,20 @@ void MainWindow::on_liczButton_clicked(){
             cout<<endl;
         }
 
-
-//cout<< "przeszlo dalej";
         r=pathview.trasa.f_distance.back();
         ui->result->setText(QString::number(r));
-//cout<< "przeszlo dalej";
         r=pathview.trasa.calc_profile();
         ui->result_wysokosc->setText(QString::number(r));
-//cout<< "przeszlo dalej";
         r=pathview.trasa.calc_attractiveness();
         ui->result_beton->setText(QString::number(r));
-//cout<< "przeszlo dalej";
-        //tą linijkę trzeba umiescić gdzieś w algorytmie, bo teraz za każdym kliknięciem się dodaje do wektora...
-        //pathview.trasa.path_all.push_back(pathview.trasa.path_best);
 
         //po wykonaniu algorytmu aktualizuje historie
-        //pathview.trasa.aktualizuj_historie_tras();
-//cout<< "przeszlo dalej";
+        pathview.trasa.aktualizuj_historie_tras();
+
+        setupplot1(ui->plotWidget_1);
+        setupplot2(ui->plotWidget_2);
+        setupplot3(ui->plotWidget_3);
+        setupplot4(ui->plotWidget_4);
     }
 
 void MainWindow::on_start_textChanged(const QString &arg1)
