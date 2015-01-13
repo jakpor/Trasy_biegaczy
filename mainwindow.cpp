@@ -114,12 +114,12 @@ void MainWindow::on_countButton_clicked(){
 
     ui->result->setText(QString::number(r));
 
-    r=pathview.trasa.calc_profile();
-    ui->result_wysokosc->setText(QString::number(r));
+//    r=pathview.trasa.calc_profile();
+//    ui->result_wysokosc->setText(QString::number(r));
 
-    r=pathview.trasa.calc_attractiveness();
+//    r=pathview.trasa.calc_attractiveness();
 
-    ui->result_beton->setText(QString::number(r));
+//    ui->result_beton->setText(QString::number(r));
 }
 
 /** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
@@ -344,11 +344,11 @@ void MainWindow::on_liczButton_clicked(){
 //Tu trzeba zmienić wyznaczanie wartosci na aktualne wartości
         r=pathview.trasa.f_distance.back();
         ui->result->setText(QString::number(r));
-        r=pathview.trasa.calc_profile();
+        r=pathview.trasa.f_profile.back();
         ui->result_wysokosc->setText(QString::number(r));
-        r=pathview.trasa.calc_attractiveness();
+        r=pathview.trasa.f_attractiveness.back();
         ui->result_beton->setText(QString::number(r));
-        r=pathview.trasa.calc_funkcja_celu();
+        r=pathview.trasa.funkcja_celu.back();
         ui->funckja_celu->setText(QString::number(r));
 
         //po wykonaniu algorytmu aktualizuje historie

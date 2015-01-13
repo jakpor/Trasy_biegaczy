@@ -195,9 +195,9 @@ int Trasa::calc_funkcja_celu(QVector<int> odcinek){
 //brak zabezpieczenia przed niezsumowaniem się w_(...)
 int Trasa::calc_funkcja_celu(){
     int wynik = 0;
-    wynik   = this->w_attractiveness * abs(this->calc_attractiveness())
-            + this->w_distance * abs(this->calc_distance())
-            + w_profile * abs(this->calc_profile());
+    wynik   = this->w_attractiveness * abs(this->f_attractiveness.back())
+            + this->w_distance * abs(this->f_distance.back())
+            + w_profile * abs(this->f_profile.back());
     this->funkcja_celu.push_back(wynik);
     return wynik;
 }
@@ -563,7 +563,7 @@ void Trasa::aktualizuj_historie_tras(){
 }
 
 void Trasa::algorithm_1(int ile_wykluczac){
-//cout<<"5 ";
+cout<<"5 ";
     int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
     if(acc==0) return;
     acc= this->wanted_distance - acc;
@@ -571,21 +571,28 @@ void Trasa::algorithm_1(int ile_wykluczac){
 
     QVector<int> Marks; //tablica oceny wszystkich potencjalnych wykluczeń
     QVector< QVector<int> > Potencials; //zbior tras do włączenia potencjalnie do trasy
-//cout<<"6 ";
+cout<<"6 ";
     this->f_distance.push_back(acc); //aktualizacja listy rozwiązań
     this->path_all.push_back(this->path_best);
+    calc_attractiveness();
+    calc_profile();
+    calc_funkcja_celu();
+
     if(acc<0)
         return;
     //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
-    for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
-        Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
-    }
+
     int iteracje=0;
     int znacznik_zmian=0;
-//cout<<"7 ";
+cout<<"7 ";
 
 //Główna pętla algorytmu
     while( acc!= 0 && iteracje<100 && znacznik_zmian<20){
+        //zlozonosc obliczeniowa *bum*
+        Marks.clear();
+        for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
+            Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
+        }
 
          iteracje++;
 
@@ -599,7 +606,7 @@ void Trasa::algorithm_1(int ile_wykluczac){
         }
         if(Long_Term.contains(path_best[wyklucz])){
             cerr<<"wykluczamy cos co jest zabronione";
-            break;
+            continue;
         }
 //cout<<"9 ";
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
@@ -645,7 +652,8 @@ void Trasa::algorithm_1(int ile_wykluczac){
         Potencials_Marks.clear();
 //cout<<"12b ";
         acc=acc + Marks[wyklucz];
-                  //zmianiamy aktualną wartość tego ile brakuje
+
+//zmianiamy aktualną wartość tego ile brakuje
 //warunek dodania
 //cout<<"12c ";
         if(iteracje!=1 &&  abs(f_distance.back()) <= abs(acc)){
@@ -659,16 +667,22 @@ cerr<< path_best[wyklucz] << " :nie powinno byc juz wykluczane (2)"<<endl;
             }
 //cout<<"13 ";
         }
-cout<<path_best[wyklucz]<<" ";
+        else{
+            znacznik_zmian=0;
+        }
+//cout<<path_best[wyklucz]<<" ";
 //cout<<"14 ";
 
+
+
+//blok do wstawiania krawedzi nowych
         if(ile_wykluczac == 1){
         for(int i=1; i!=Potencials[best_index].size()-1; i++){
 
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 //cout<<"15 ";
-            Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-ile_wykluczac, wyklucz+i);
-            Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+ile_wykluczac));
+            //Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-ile_wykluczac, wyklucz+i);
+            //Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+ile_wykluczac));
         }
     }
     else if(ile_wykluczac==2){
@@ -677,63 +691,75 @@ cout<<path_best[wyklucz]<<" ";
             if(i==0 && Potencials[best_index].size()==2){
 //cout<<"16b1 ";
                 path_best.erase(path_best.begin()+wyklucz+1);
-                Marks.erase(Marks.begin()+wyklucz+1);
-                Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
+                //Marks.erase(Marks.begin()+wyklucz+1);
+                //Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
 //cout<<"16b ";
             }
             else if(i==1){
 //cout<<"16c1 ";
                 path_best[wyklucz+1]=Potencials[best_index][i];
 
-                Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
-if((wyklucz+1)<Marks.size()){
-                Marks[wyklucz+1]=this->calc_distance(wyklucz+1, wyklucz+1+ile_wykluczac);
-}
+                //Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
+//if((wyklucz+1)<Marks.size()){
+                //Marks[wyklucz+1]=this->calc_distance(wyklucz+1, wyklucz+1+ile_wykluczac);
+//}
 //cout<<"16c ";
-            }
-
+        }
             else if(i==2){
 //cout<<"16d1 ";
                 path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 
-                Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i-1 +ile_wykluczac);
-if((wyklucz+i-1)<Marks.size()){
-                Marks.insert(Marks.begin()+wyklucz+i-1,this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
-}
-else{
-    Marks.push_back(this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
-}
+//                Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i-1 +ile_wykluczac);
+//if((wyklucz+i-1)<Marks.size()){
+//                Marks.insert(Marks.begin()+wyklucz+i-1,this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
+//}
+//else{
+//    Marks.push_back(this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
+//}
 //cout<<"16d ";
             }
 //cout<<"17 ";
         }
 //cout<<"17a "   ;
     }
-
+        if(acc!=calc_distance(path_best))
+            cerr<< "COS JEST OSTRO NIE TAK"<<endl;
 //cout<<"18 ";
-        if(f_distance.back()>=abs(acc)){
+       // if(f_distance.back()>=abs(acc)){
             this->f_distance.push_back(acc);
             this->path_all.push_back(this->path_best);
-            znacznik_zmian=0;
-        }
-        else{
-            znacznik_zmian++;
-            this->f_distance.push_back(acc);
-            this->path_all.push_back(this->path_best);
+ //           znacznik_zmian=0;
+//cout<<"19 ";
+//        }
+//        else{
+//cout<<"20 ";
+//            znacznik_zmian++;
+//            this->f_distance.push_back(acc);
+//            this->path_all.push_back(this->path_best);
             //path_best=path_all.back();
            // Marks[]=
            //Marks[wyklucz]=1000000;
             //acc=f_distance.back();
             //znacznik_zmian++;
-//cout<<"19 ";
-        }
-        Long_Term.push_back(path_best[wyklucz]);
+//cout<<"21 ";
+ //       }
+
+//cout<<"22 ";
+        //Long_Term.push_back(path_best[wyklucz]);
         Potencials.clear();
         calc_attractiveness();
         calc_profile();
         calc_funkcja_celu();
     }
+//cout<<"23a ";
     int minimo=minimum(this->f_distance);
+//cout<<"23b ";
     f_distance.push_back(f_distance[minimo]);
-
+//cout<<"23c ";
+    f_profile.push_back(f_profile[minimo]);
+//cout<<"23d ";
+    f_attractiveness.push_back((f_attractiveness[minimo]));
+//cout<<"23e ";
+    funkcja_celu.push_back(funkcja_celu[minimo]);
+//cout<<"24 ";
 }

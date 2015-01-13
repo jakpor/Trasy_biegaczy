@@ -44,7 +44,7 @@ void PathView::paintEvent(QPaintEvent *event)
     int kolor = 0;
     for(int i = 1; i<(trasa.historia_tras.size()); i++){
         kolor = 255-trasa.historia_tras[i][2]*255/trasa.historia_tras[0][1];
-        if((kolor<255)&&(kolor>0)){
+        if((kolor<=255)&&(kolor>=0)){
             pen.setColor(QColor::fromHsv(120, 40, kolor , 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
         }
         else{
