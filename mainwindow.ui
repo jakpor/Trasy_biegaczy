@@ -27,7 +27,7 @@
      <number>0</number>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_1">
      <attribute name="title">
@@ -1029,6 +1029,32 @@
        <string>Szukaj trasy optymalnej!</string>
       </property>
      </widget>
+     <widget class="QGroupBox" name="groupBox_11">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>290</y>
+        <width>241</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Wartość minimalizowanej funkcji celu</string>
+      </property>
+      <widget class="QLineEdit" name="funckja_celu">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>113</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_4">
      <attribute name="title">
@@ -1168,6 +1194,19 @@
     </property>
     <property name="text">
      <string>Przerysuj grafy</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>150</y>
+      <width>131</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Czy wyświetlić historię tras?</string>
     </property>
    </widget>
   </widget>

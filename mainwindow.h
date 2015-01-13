@@ -50,6 +50,8 @@ private slots:
     void on_start_textChanged(const QString &arg1);
     void on_end_textChanged(const QString &arg1);
 
+    void on_checkBox_pressed();
+
 private:
     Ui::MainWindow *ui;
     GraphView graphview;

@@ -95,6 +95,7 @@ public:
      QVector<int> nastepniki(int x);
      int minimum(unsigned int * temp,unsigned int * perm, int size);
      int minimum(QVector<int> temp);
+     int maksimum(QVector<int> temp);
      QVector<int> build_result(int * history, int start, int end);
          //wyznaczenie nastepnikow wierzcholka x, n -rozmiar macierzy A
 

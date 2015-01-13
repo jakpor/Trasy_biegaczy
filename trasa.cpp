@@ -73,6 +73,8 @@ int Trasa::calc_attractiveness(QVector<int> odcinek){
     for(int i=0; i< odcinek.size()-1; i++){
         wynik+=Graf.macierz_betonu[odcinek[i]][odcinek[i+1]];
     }
+    wynik=wynik*100;
+    wynik= wynik / (odcinek.size()-1);
     return wynik;
 }
 
@@ -82,9 +84,12 @@ int Trasa::calc_attractiveness(){
     for(int i=0; i< path_best.size()-1; i++){
         wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
     }
+    wynik=wynik*100;
+    wynik= wynik / path_best.size();
     wynik= this->wanted_attractiveness - wynik;
     this->f_attractiveness.push_back( wynik);
     return wynik;
+
 }
 
 //zwraca 0 jesli indeks startowy lub koncowy invalid
@@ -96,6 +101,8 @@ int Trasa::calc_attractiveness(int s, int e){
     for(int i=s; i< e; i++){
         wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
     }
+    wynik=wynik*100;
+    wynik= wynik / (e-s);
     return wynik;
 }
 
@@ -105,6 +112,7 @@ int Trasa::calc_profile(QVector<int> odcinek){
     for(int i=0; i< odcinek.size()-1; i++){
         wynik+=Graf.macierz_wysokosci[odcinek[i]][odcinek[i+1]];
     }
+
     return wynik;
 }
 
@@ -135,10 +143,14 @@ int Trasa::calc_profile(int s, int e){
 }
 
 int Trasa::calc_distance(QVector<int> odcinek){
+
     int wynik = 0;
+
     for(int i=0; i< odcinek.size()-1; i++){
         wynik+=Graf.macierz_przyleglosci[odcinek[i]][odcinek[i+1]];
+
     }
+
     return wynik;
 }
 
@@ -170,15 +182,18 @@ int Trasa::calc_distance(int s, int e){
 
 int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     int wynik = 0;
-    wynik= this->w_attractiveness*calc_attractiveness(odcinek)+this->w_distance*calc_distance(odcinek)+w_profile*calc_profile(odcinek);
+   // wynik= abs(this->w_attractiveness*calc_attractiveness(odcinek)) + abs(this->w_distance*calc_distance(odcinek)) + abs(w_profile*calc_profile(odcinek));
     return wynik;
 }
 
 //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-
+//wywoluje wszystkie do policzenia i pushuje je do rozwiązań
+//brak zabezpieczenia przed niezsumowaniem się w_(...)
 int Trasa::calc_funkcja_celu(){
     int wynik = 0;
-    wynik= this->w_attractiveness*this->f_attractiveness.back()+this->w_distance*this->f_distance.back()+w_profile*this->f_profile.back();
+    wynik   = this->w_attractiveness * abs(this->calc_attractiveness())
+            + this->w_distance * abs(this->calc_distance())
+            + w_profile * abs(this->calc_profile());
     this->funkcja_celu.push_back(wynik);
     return wynik;
 }
@@ -319,7 +334,7 @@ int Trasa::minimum(QVector<int> temp){
     int min = temp.front();
 
     int i_min =0;
-    int flag=0;
+    int flag=1;
 
    for(int i=0; i<temp.size(); i++){
 
@@ -351,6 +366,34 @@ QVector<int> Trasa::nastepniki(int x){
     return(wynik);
 }
 
+int Trasa::maksimum(QVector<int> temp){
+
+    int max = temp.front();
+
+    int i_max =0;
+    int flag=1;
+
+   for(int i=0; i<temp.size(); i++){
+
+       if(temp[i]!= 1000000){
+           if(temp[i]>max){
+               max=temp[i];
+               i_max=i;
+           }
+       }
+       else{
+               flag++;
+       }
+   }
+
+   if(flag == temp.size()){
+       return flag;
+   }
+   return i_max;
+
+}
+
+
 //dziala dla 1 lub 2 wykluczanych krawedzi, zwraca otoczenie <= rozmiarowi
 QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi){
 
@@ -364,6 +407,14 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
 
             QVector<int> kand_1;
             set_intersection (n_first.begin(), n_first.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
+
+            if(l_krawedzi == 2)
+                if(n_last.contains(wykluczenie.front())){
+                    line.push_back(wykluczenie.front());
+                    line.push_back(wykluczenie.back());
+                    wynik.push_back(line);
+                    line.clear();
+                }
 
             for(int i=0 ; i < kand_1.size(); ++i) {
                 if(this->path_best.contains(kand_1[i]) == false){
@@ -486,13 +537,15 @@ void Trasa::aktualizuj_historie_tras(){
 }
 
 void Trasa::algorithm_1(int ile_wykluczac){
-
+//cout<<"5 ";
     int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
     if(acc==0) return;
     acc= this->wanted_distance - acc;
-    QVector<int> Marks;
-    QVector< QVector<int> > Potencials;
-    this->f_distance.push_back(acc);
+    //
+    QVector<int> Marks; //tablica oceny wszystkich potencjalnych wykluczeń
+    QVector< QVector<int> > Potencials; //zbior tras do włączenia potencjalnie do trasy
+//cout<<"6 ";
+    this->f_distance.push_back(acc); //aktualizacja listy rozwiązań
     this->path_all.push_back(this->path_best);
 
     //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
@@ -500,72 +553,148 @@ void Trasa::algorithm_1(int ile_wykluczac){
         Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
     }
     int iteracje=0;
+    int znacznik_zmian=0;
+//cout<<"7 ";
 
-    while(acc > 0 && iteracje<50){
+//Główna pętla algorytmu
+    while( acc!= 0 && iteracje<100 && znacznik_zmian<50){
+        // acc > 0  &&
          iteracje++;
+         //if(acc <= 0)
 
-        int wyklucz = minimum(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
+//cout<<"8 ";
+        int wyklucz;
+        if(acc<0){
+            wyklucz=maksimum(Marks);
+        }
+        else{
+            wyklucz= minimum(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
+        }
+//cout<<"9 ";
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
+            cerr<<"brak rozwiazan dopuszczalnych w otoczeniu";
             break;
         }
+//cout<<"10a ";
 cout<<path_best[wyklucz]<<" ";
-        QVector<int> Wykluczenie; //zbudowanie vektora wykluczenia wysulanego do metody otoczenie
+        QVector<int> Wykluczenie; //zbudowanie vektora wykluczenia wysylanego do metody otoczenie
         for(int i=0; i<=ile_wykluczac;i++){
+
             Wykluczenie.push_back(this->path_best[wyklucz+i]);
         }
+//cout<<"10b ";
 
-
-        Potencials = otoczenie(Wykluczenie, 2, 1); //wszystkie potencjalne zamienniki dla naszego wykluczenia
+        Potencials = otoczenie(Wykluczenie, 2, ile_wykluczac); //wszystkie potencjalne zamienniki dla naszego wykluczenia
         if(Potencials.size()==0){ //warunek na brak otoczenia krawedzi
             Marks[wyklucz]=1000000; //zabronienie dlugoterminowe na wykluczanie tej krawedzi.
+cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
             continue;
         }
-
+//cout<<"11 ";
         QVector<int> Potencials_Marks; //ocena wszystkich zamienników pod względem polepszenia f. celu
 //wartość bezwzględna( ile brakuje + ile da wykluczenie - ile da zamiennik wykluczenia)
         for(int i=0; i< Potencials.size(); i++){
             Potencials_Marks.push_back(abs(acc + Marks[wyklucz]- this->calc_distance(Potencials[i])));
         }
-
+//cout<<"12 ";
         int best_index = minimum(Potencials_Marks); //wybieramy tą która najbardziej zblizyla nam to ile brakuje do zera
-
-        acc=acc - this->calc_distance(Potencials[best_index]) + Marks[wyklucz]; //zmianiamy aktualną wartość tego ile brakuje
-if(ile_wykluczac == 1){
-    for(int i=1; i!=Potencials[best_index].size()-1; i++){
-
-        path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
-
-        Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
-        Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
-    }
+if(best_index==Potencials.size()){
+    Marks[wyklucz]=1000000;
+cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
+    continue;
 }
-else if(ile_wykluczac==2){
-    for(int i=1; i!=Potencials[best_index].size()-1; i++){
-
-        if(i==1){
-            path_best[wyklucz+1]=Potencials[best_index][i];
-            Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+1);
-            Marks[wyklucz+1]=this->calc_distance(wyklucz+1, wyklucz+2);
+//cout<<"12a ";
+//cout<<endl<<Potencials.size()<<" "<<best_index<<" "<<Potencials_Marks.size()<<endl;
+        acc -= calc_distance(Potencials[best_index]);
+        Potencials_Marks.clear();
+//cout<<"12b ";
+        acc=acc + Marks[wyklucz];
+                  //zmianiamy aktualną wartość tego ile brakuje
+//warunek dodania
+//cout<<"12c ";
+        if(abs(f_distance.back()) <= abs(acc)){
+            Marks[wyklucz]=1000000;
+cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
+            znacznik_zmian++;
+            if(f_distance.back()*acc >0){
+                acc=f_distance.back();
+                continue;
+            }
+//cout<<"13 ";
         }
-        else if(i==2){
+//cout<<"14 ";
+
+        if(ile_wykluczac == 1){
+        for(int i=1; i!=Potencials[best_index].size()-1; i++){
+
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
-
-            Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i);
-            Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+1));
+//cout<<"15 ";
+            Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-ile_wykluczac, wyklucz+i);
+            Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+ile_wykluczac));
         }
-
     }
+    else if(ile_wykluczac==2){
+        for(int i=0; i!=Potencials[best_index].size()-1; i++){
+//cout<<"16a ";
+            if(i==0 && Potencials[best_index].size()==2){
+//cout<<"16b1 ";
+                path_best.erase(path_best.begin()+wyklucz+1);
+                Marks.erase(Marks.begin()+wyklucz+1);
+                Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
+//cout<<"16b ";
+            }
+            else if(i==1){
+//cout<<"16c1 ";
+                path_best[wyklucz+1]=Potencials[best_index][i];
+
+                Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
+if((wyklucz+1)<Marks.size()){
+                Marks[wyklucz+1]=this->calc_distance(wyklucz+1, wyklucz+1+ile_wykluczac);
 }
+//cout<<"16c ";
+            }
 
+            else if(i==2){
+//cout<<"16d1 ";
+                path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 
+                Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i-1 +ile_wykluczac);
+if((wyklucz+i-1)<Marks.size()){
+                Marks.insert(Marks.begin()+wyklucz+i-1,this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
+}
+else{
+    Marks.push_back(this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
+}
+//cout<<"16d ";
+            }
+//cout<<"17 ";
+        }
+//cout<<"17a "   ;
+    }
+
+//cout<<"18 ";
         if(f_distance.back()>=abs(acc)){
             this->f_distance.push_back(acc);
             this->path_all.push_back(this->path_best);
+            znacznik_zmian=0;
         }
         else{
-            path_best=path_all.back();
+            znacznik_zmian++;
+            this->f_distance.push_back(acc);
+            this->path_all.push_back(this->path_best);
+            //path_best=path_all.back();
+           // Marks[]=
+           //Marks[wyklucz]=1000000;
+            //acc=f_distance.back();
+            //znacznik_zmian++;
+//cout<<"19 ";
         }
         Potencials.clear();
+        calc_attractiveness();
+        calc_profile();
+        calc_funkcja_celu();
     }
+    int minimo=minimum(this->f_distance);
+    f_distance.push_back(f_distance[minimo]);
 
 }

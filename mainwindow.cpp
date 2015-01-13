@@ -187,6 +187,7 @@ void MainWindow::setupplot1(QCustomPlot *customPlot){
       z[i] = 0; //wartość zadana - minimum
     }
     // create graph and assign data to it:
+//    customPlot->clearGraphs();
     customPlot->addGraph();
     customPlot->graph(0)->setData(x, y);
     customPlot->addGraph();
@@ -200,6 +201,7 @@ void MainWindow::setupplot1(QCustomPlot *customPlot){
     customPlot->xAxis->setRange(0, pathview.trasa.funkcja_celu.size());
     customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
     customPlot->replot();
+
 }
 
 void MainWindow::setupplot2(QCustomPlot *customPlot){
@@ -332,16 +334,18 @@ void MainWindow::on_liczButton_clicked(){
                     }
             cout<<endl;
         }
-
+//Tu trzeba zmienić wyznaczanie wartosci na aktualne wartości
         r=pathview.trasa.f_distance.back();
         ui->result->setText(QString::number(r));
         r=pathview.trasa.calc_profile();
         ui->result_wysokosc->setText(QString::number(r));
         r=pathview.trasa.calc_attractiveness();
         ui->result_beton->setText(QString::number(r));
+        r=pathview.trasa.calc_funkcja_celu();
+        ui->funckja_celu->setText(QString::number(r));
 
         //po wykonaniu algorytmu aktualizuje historie
-        pathview.trasa.aktualizuj_historie_tras();
+       // pathview.trasa.aktualizuj_historie_tras();
 
         setupplot1(ui->plotWidget_1);
         setupplot2(ui->plotWidget_2);
@@ -357,4 +361,10 @@ void MainWindow::on_start_textChanged(const QString &arg1)
 void MainWindow::on_end_textChanged(const QString &arg1)
 {
     pathview.trasa.clear_result();
+}
+
+void MainWindow::on_checkBox_pressed()
+{
+    //po wykonaniu algorytmu aktualizuje historie
+   pathview.trasa.aktualizuj_historie_tras();
 }
