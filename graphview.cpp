@@ -56,12 +56,35 @@ void GraphView::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::black);
     painter.setBrush(Qt::green);
     painter.setPen( pen );
+    int kolor;
+
+    if(gr.liczba_wierzcholkow<200){
         for(int i = 0; i<(gr.liczba_wierzcholkow); i++){
             //zielone - minimum, czerwone - maksimum
-            painter.setBrush(QColor::fromHsv(((120/(gr.min_wysokosc-gr.max_wysokosc))*gr.lista_wysokosci[i]-(120/(gr.min_wysokosc-gr.max_wysokosc)*gr.max_wysokosc)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+            if((gr.min_wysokosc-gr.max_wysokosc)!=0){
+                kolor = ((120/(gr.min_wysokosc-gr.max_wysokosc))*gr.lista_wysokosci[i]-(120/(gr.min_wysokosc-gr.max_wysokosc)*gr.max_wysokosc));
+            }
+            else{
+                kolor = 120;
+            }
+            painter.setBrush(QColor::fromHsv(kolor,255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
             painter.drawEllipse(gr.lista_wierzcholkow[i],r,r);
             painter.drawText(QPoint(gr.lista_wierzcholkow[i].x()-r/2, gr.lista_wierzcholkow[i].y()+r/2),QString::number(i)); //cyferki
         }
+    }
+    else{
+        for(int i = 0; i<(gr.liczba_wierzcholkow); i++){
+            //zielone - minimum, czerwone - maksimum
+            if((gr.min_wysokosc-gr.max_wysokosc)!=0){
+                kolor = ((120/(gr.min_wysokosc-gr.max_wysokosc))*gr.lista_wysokosci[i]-(120/(gr.min_wysokosc-gr.max_wysokosc)*gr.max_wysokosc));
+            }
+            else{
+                kolor = 120;
+            }
+            painter.setBrush(QColor::fromHsv(kolor,255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+            painter.drawEllipse(gr.lista_wierzcholkow[i],r,r);
+        }
+    }
 
     painter.end();
 }

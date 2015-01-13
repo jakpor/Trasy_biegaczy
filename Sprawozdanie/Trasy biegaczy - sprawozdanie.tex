@@ -101,6 +101,11 @@ $\overline{b}$ -- zadana ilość dróg o nawierzchni betonowej w \% \\
 $w_1, w_2, w_3$ -- wagi dobierane przez użytkownika
 
 \subsection{Ograniczenia}
+\begin{enumerate}
+\item[a)] Biegacz nie przebiega dwukrotnie po tej samej drodze.
+\item[b)] Maksymalna długość trasy biegu wynosi 1000000 jednostek (metrów). Jest to ograniczenie obliczeniowe algorytmu
+\item[c)] 
+\end{enumerate}
 
 \section{Implementacja algorytmu}
 Algorytm Taboo Search
@@ -157,9 +162,33 @@ Macierz kwadratowa przeskalowanych odległości między wierzchołkami
 Klasa graph opisuje w pełni wszystkie połączenia i wierzchołki w badanym grafie.
 
 \subsection{Interface użytkownika}
+Podczas pracy programu użytkownik ma pełną kontrolę nad przebiegiem algorytmu. W pierwszym oknie możliwe jest wczytanie znanej mapy z pliku lub wygenerowanie nowej mapy zgodnie z przyjętymi parametrami.
 \begin{figure}[!h]
 	\centering
 	\includegraphics[height=110mm]{./ilustracje/screen1.png}
+	\caption{Zakładka pozwalająca na edycję mapy.}
+\end{figure}
+
+Następnie po wygenerowaniu lub wczytaniu mapy możemy dokonać jej podglądu.
+Drogi pokryte betonem zaznaczono linią przerywaną, a ścieżki bardzo atrakcyjne dla biegacza linią ciągłą.
+Kolory wierzchołków oznaczają względną wysokość danego wierzchołka. Wierzchołki zielone są niżej, a wierzchołki czerwone są wyżej na mapie.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=110mm]{./ilustracje/screen2.png}
+	\caption{Zakładka pozwalająca podgląd mapy.}
+\end{figure}
+
+Kolejną zakładką jest wybór docelowych opcji trasy. Możemy tu wybrać jaka ma być długość trasy, ile na trasie ma być krawędzi betonowych oraz jak bardzo pochyłą chcemy naszą trasę. Następnie po kliknięciu na przycisk ,,Wygeneruj najlepszą trasę!'' program generuje trasę, którą możemy zobaczyć na zakładce 4.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=110mm]{./ilustracje/screen3.png}
+	\caption{Zakładka pozwalająca na wybór parametrów do algorytmu.}
+\end{figure}
+W zakładce ,,Wizualizacja trasy'' możemy zobaczyć na czerwono zaznaczoną trasę optymalną obliczona przez algorytm. W odcieniach szarości zaznaczone są krawędzie, po których algorytm ,,chodził''. Im ciemniejsza krawędź tym częściej algorytm znajdował się na niej.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=110mm]{./ilustracje/screen3.png}
+	\caption{Zakładka ,,Wizualizacja trasy'' wraz z wyświetlonym przykładowym rozwiązaniem i historią przebiegu.}
 \end{figure}
 
 \section{Testowanie algorytmu}

@@ -719,6 +719,12 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
             }
         }
         break;
+    case 4: //płasko - zupełnie płasko, że aż 0
+        for(int i=0; i<(this->liczba_wierzcholkow); i++){
+            this->lista_wysokosci[i] = 0;
+            //cerr<<this->lista_wysokosci[i]<<endl;
+        }
+        break;
     case 0: //losowo
     default: //losowo też
         for(int i=0; i<(this->liczba_wierzcholkow); i++){
