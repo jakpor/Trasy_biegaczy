@@ -44,7 +44,13 @@ void PathView::paintEvent(QPaintEvent *event)
     int kolor = 0;
     for(int i = 1; i<(trasa.historia_tras.size()); i++){
         kolor = 255-trasa.historia_tras[i][2]*255/trasa.historia_tras[0][1];
-        pen.setColor(QColor::fromHsv(120, 40, kolor , 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
+        if((kolor<255)&&(kolor>0)){
+            pen.setColor(QColor::fromHsv(120, 40, kolor , 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
+        }
+        else{
+            cerr<<"ERROR: Historia tras: Bledna wartosc koloru = "<<kolor<<". Indeks: "<<i<<", wartosc historii: "<<trasa.historia_tras[i][2]<<", rozmiar: "<< trasa.historia_tras.size()<<endl;
+            pen.setColor(QColor::fromHsv(180, 255, 255 , 255)); //H, S, V, A (przezroczystość), H - 0-360, SLA - 0-255
+        }
         painter.setPen(pen);
         painter.drawLine(graph.lista_wierzcholkow[trasa.historia_tras[i][0]],graph.lista_wierzcholkow[trasa.historia_tras[i][1]]);
     }

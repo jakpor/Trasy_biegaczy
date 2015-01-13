@@ -45,7 +45,10 @@ void Trasa::clear_result(){
         f_profile.clear();
         funkcja_celu.clear();
         path_best.clear();
-        path_all.clear(); //nie wiem czy tak mozna
+        for( int i =path_all.size()-1; i>=0; i--){
+            path_all[i].clear();
+        }
+        path_all.clear();
         historia_tras.clear();
     }
 
@@ -467,66 +470,68 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
 
 void Trasa::aktualizuj_historie_tras(){
 
-    for( int i = historia_tras.size(); i>0; i--){
-        historia_tras.pop_back();
-    }
-
-    historia_tras = QVector<int*>(); //zeruj wektor historii tras
-    QVector <int> temp;
-    // kaw[0] - poczatek linii, kaw[1] - koniec linii (wiekszy niz kaw[0]), kaw[2] - ile razy sie powtorzyl
-    int* kawalek_historii;
-    int sprawdzenie_czy_if = 0;
-
-    //pierwszy element historii tras to min i max
-    historia_tras.append(new int[3]);
-    historia_tras.last()[0] = 1;
-    historia_tras.last()[1] = 1;
-    historia_tras.last()[2] = 0;
-
-    for(int i = 0; i<path_all.size();i++){
-        temp = QVector<int>(path_all[i]);
-        try{
-            kawalek_historii = new int[3];
+    try{
+        //cerr<<"Rozmiar historii przed to: "<<this->historia_tras.size()<<endl;
+        for( int i = this->historia_tras.size()-1; i>=0; i--){
+            //cerr<<"delete "<<i<<" "<<this->historia_tras.size()<<endl;
+            delete this->historia_tras[i];
         }
-        catch(...){
-            cout<<"Kawalki historii sie rozsypaly"<<endl;
-        }
+        this->historia_tras.clear();
+        //cerr<<"Rozmiar historii po to: "<<this->historia_tras.size()<<endl;
 
-        for(int j = 0;j<(temp.size()-1); j++){
-            if(temp[j]<temp[j+1]){
-                kawalek_historii[0] = temp[j];
-                kawalek_historii[1] = temp[j+1];
-            }
-            else{
-                kawalek_historii[0] = temp[j+1];
-                kawalek_historii[1] = temp[j];
-            }
-            kawalek_historii[2] = 1;
-            sprawdzenie_czy_if = 0;
+        QVector <int> temp = QVector <int>();
+        // kaw[0] - poczatek linii, kaw[1] - koniec linii (wiekszy niz kaw[0]), kaw[2] - ile razy sie powtorzyl
+        int kawalek_historii[3];
+        int sprawdzenie_czy_if = 0;
 
-            for(int u = 1; u<(historia_tras.size()); u++){ //tu się może psuć!!!
-                if((historia_tras[u][0]==kawalek_historii[0])&&(historia_tras[u][1]==kawalek_historii[1])){
-                    historia_tras[u][2]++; //zwieksz ilosc
-                    sprawdzenie_czy_if = 1;
-                    // zwiekszam maksimum
-                    if (historia_tras[u][2]>historia_tras[0][1]){
-                        historia_tras[0][1]=historia_tras[u][2];
-                    }
+        //pierwszy element historii tras to min i max
+        this->historia_tras.append(new int[3]);
+        this->historia_tras.last()[0] = 1;
+        this->historia_tras.last()[1] = 1;
+        this->historia_tras.last()[2] = 0;
+
+        for(int i = 0; i<path_all.size();i++){
+            temp.clear();
+            temp = QVector<int>(path_all[i]);
+
+            for(int j = 0;j<(temp.size()-1); j++){
+                if(temp[j]<temp[j+1]){
+                    kawalek_historii[0] = temp[j];
+                    kawalek_historii[1] = temp[j+1];
                 }
-            }
-
-            if(sprawdzenie_czy_if==0){
-                //jesli if sie nie wykonaly
-                historia_tras.append(new int[3]);
-                historia_tras.last()[0] = kawalek_historii[0];
-                historia_tras.last()[1] = kawalek_historii[1];
-                historia_tras.last()[2] = kawalek_historii[2];
+                else{
+                    kawalek_historii[0] = temp[j+1];
+                    kawalek_historii[1] = temp[j];
+                }
+                kawalek_historii[2] = 1;
                 sprawdzenie_czy_if = 0;
 
-                //cout<<"ostatni: "<<historia_tras.last()[0]<< " "<< historia_tras.last()[1]<< " "<< historia_tras.last()[2]<<endl;
+                for(int u = 1; u<(this->historia_tras.size()); u++){ //tu się może psuć!!!
+                    if((this->historia_tras[u][0]==kawalek_historii[0])&&(this->historia_tras[u][1]==kawalek_historii[1])){
+                        this->historia_tras[u][2]++; //zwieksz ilosc
+                        sprawdzenie_czy_if = 1;
+                        // zwiekszam maksimum
+                        if (this->historia_tras[u][2]>this->historia_tras[0][1]){
+                            this->historia_tras[0][1]=this->historia_tras[u][2];
+                        }
+                    }
+                }
 
+                if(sprawdzenie_czy_if==0){
+                    //jesli if sie nie wykonaly
+                    this->historia_tras.push_back(new int[3]);
+                    this->historia_tras.last()[0] = kawalek_historii[0];
+                    this->historia_tras.last()[1] = kawalek_historii[1];
+                    this->historia_tras.last()[2] = kawalek_historii[2];
+                    sprawdzenie_czy_if = 0;
+
+                    //cout<<"ostatni: "<<historia_tras.last()[0]<< " "<< historia_tras.last()[1]<< " "<< historia_tras.last()[2]<<endl;
+                }
             }
         }
+    }
+    catch(...){
+        cerr<<"ERROR: Historia trasy: Znowu historia sieje bledami..."<<endl;
     }
 
 //    cerr<< "Aktualna historia to: (A,B,ilosc): ";

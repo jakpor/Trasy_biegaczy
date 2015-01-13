@@ -167,6 +167,8 @@ void MainWindow::on_pushButton_clicked()
 
 /** Wykresy **/
 
+
+/** Wykres funkcji celu **/
 void MainWindow::setupplot1(QCustomPlot *customPlot){
     // funkcja celu od iteracji
     QVector<double> x(pathview.trasa.funkcja_celu.size()), y(pathview.trasa.funkcja_celu.size()), z(pathview.trasa.funkcja_celu.size()); // initialize with entries 0..100
@@ -204,6 +206,7 @@ void MainWindow::setupplot1(QCustomPlot *customPlot){
 
 }
 
+/** Wykres odległości **/
 void MainWindow::setupplot2(QCustomPlot *customPlot){
     // odległość od iteracji
     QVector<double> x(pathview.trasa.f_distance.size()), y(pathview.trasa.f_distance.size()), z(pathview.trasa.f_distance.size()); // initialize with entries 0..100
@@ -232,12 +235,13 @@ void MainWindow::setupplot2(QCustomPlot *customPlot){
     customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
     customPlot->xAxis->setLabel("Iteracje");
-    customPlot->yAxis->setLabel("Odległość");
+    customPlot->yAxis->setLabel("Długość trasy");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, pathview.trasa.f_distance.size());
     customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
     customPlot->replot();
 }
+/** Wykres betonu **/
 void MainWindow::setupplot3(QCustomPlot *customPlot){
     // betonowośc od iteracji
     QVector<double> x(pathview.trasa.f_attractiveness.size()), y(pathview.trasa.f_attractiveness.size()), z(pathview.trasa.f_attractiveness.size()); // initialize with entries 0..100
@@ -272,6 +276,8 @@ void MainWindow::setupplot3(QCustomPlot *customPlot){
     customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
     customPlot->replot();
 }
+
+/** Wykres wysokości **/
 void MainWindow::setupplot4(QCustomPlot *customPlot){
     //wysokość
     QVector<double> x(pathview.trasa.f_profile.size()), y(pathview.trasa.f_profile.size()), z(pathview.trasa.f_profile.size()); // initialize with entries 0..100
@@ -311,6 +317,7 @@ void MainWindow::setupplot4(QCustomPlot *customPlot){
 /** Przycisk "Oblicz najkrótszą trasę!" **/
 void MainWindow::on_liczButton_clicked(){
         int r;
+        pathview.trasa.clear_result();
         pathview.trasa.copy_graf(graphview.gr);
         pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
         pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
@@ -351,20 +358,26 @@ void MainWindow::on_liczButton_clicked(){
         setupplot2(ui->plotWidget_2);
         setupplot3(ui->plotWidget_3);
         setupplot4(ui->plotWidget_4);
+        ui->tabWidget->setCurrentIndex(3);
+
+        //odkomentuj jak bedziesz pewna, że wszystko już jest na tip top i historia nie popsuje
+        //po odkomentowaniu automatycznie będzie klikało nam na przycisk z historią - nie wyrzucajmy przycisku :)
+        //ui->historyButton->click();
     }
 
 void MainWindow::on_start_textChanged(const QString &arg1)
 {
-    pathview.trasa.clear_result();
+    //pathview.trasa.clear_result();
 }
 
 void MainWindow::on_end_textChanged(const QString &arg1)
 {
-    pathview.trasa.clear_result();
+    //pathview.trasa.clear_result();
 }
 
-void MainWindow::on_checkBox_pressed()
+void MainWindow::on_historyButton_clicked()
 {
     //po wykonaniu algorytmu aktualizuje historie
    pathview.trasa.aktualizuj_historie_tras();
+   pathview.repaint();
 }

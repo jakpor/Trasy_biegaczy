@@ -1196,17 +1196,17 @@
      <string>Przerysuj grafy</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QPushButton" name="historyButton">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>150</y>
-      <width>131</width>
-      <height>51</height>
+      <x>824</x>
+      <y>130</y>
+      <width>111</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Czy wyświetlić historię tras?</string>
+     <string>Pokaż historię trasy</string>
     </property>
    </widget>
   </widget>

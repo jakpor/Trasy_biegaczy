@@ -50,7 +50,7 @@ private slots:
     void on_start_textChanged(const QString &arg1);
     void on_end_textChanged(const QString &arg1);
 
-    void on_checkBox_pressed();
+    void on_historyButton_clicked();
 
 private:
     Ui::MainWindow *ui;
