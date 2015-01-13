@@ -20,6 +20,7 @@ public:
     QVector <int> path_best;
     //cała pamięć tras
     QVector < QVector < int > > path_all;
+    QVector <int> Long_Term;
 
     // Mnożniki poszczegolnych parametrów
     float w_distance;
@@ -95,6 +96,7 @@ public:
      QVector<int> nastepniki(int x);
      int minimum(unsigned int * temp,unsigned int * perm, int size);
      int minimum(QVector<int> temp);
+     int minimumMarks(QVector<int> temp);
      int maksimum(QVector<int> temp);
      QVector<int> build_result(int * history, int start, int end);
          //wyznaczenie nastepnikow wierzcholka x, n -rozmiar macierzy A

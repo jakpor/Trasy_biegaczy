@@ -50,6 +50,7 @@ void Trasa::clear_result(){
         }
         path_all.clear();
         historia_tras.clear();
+        Long_Term.clear();
     }
 
 Trasa::~Trasa(){
@@ -337,18 +338,37 @@ int Trasa::minimum(QVector<int> temp){
     int min = temp.front();
 
     int i_min =0;
+
+   for(int i=0; i<temp.size(); i++){
+
+           if(abs(temp[i])<min){
+               min=temp[i];
+               i_min=i;
+           }
+   }
+
+   return i_min;
+
+}
+
+int Trasa::minimumMarks(QVector<int> temp){
+
+    int min = temp.front();
+
+    int i_min =0;
     int flag=1;
 
    for(int i=0; i<temp.size(); i++){
 
-       if(temp[i]!= 1000000){
-           if(temp[i]<min){
-               min=temp[i];
-               i_min=i;
-           }
+       if(Long_Term.contains(path_best[i])){
+           flag++;
        }
        else{
-               flag++;
+
+               if(abs(temp[i])<min){
+                   min=temp[i];
+                   i_min=i;
+               }
        }
    }
 
@@ -378,15 +398,16 @@ int Trasa::maksimum(QVector<int> temp){
 
    for(int i=0; i<temp.size(); i++){
 
-       if(temp[i]!= 1000000){
-           if(temp[i]>max){
-               max=temp[i];
-               i_max=i;
+       if(Long_Term.contains(path_best[i])){
+                          flag++;
            }
-       }
        else{
-               flag++;
+       if(temp[i]>max){
+           max=temp[i];
+           i_max=i;
+
        }
+   }
    }
 
    if(flag == temp.size()){
@@ -547,12 +568,14 @@ void Trasa::algorithm_1(int ile_wykluczac){
     if(acc==0) return;
     acc= this->wanted_distance - acc;
     //
+
     QVector<int> Marks; //tablica oceny wszystkich potencjalnych wykluczeń
     QVector< QVector<int> > Potencials; //zbior tras do włączenia potencjalnie do trasy
 //cout<<"6 ";
     this->f_distance.push_back(acc); //aktualizacja listy rozwiązań
     this->path_all.push_back(this->path_best);
-
+    if(acc<0)
+        return;
     //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
     for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
         Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
@@ -562,10 +585,9 @@ void Trasa::algorithm_1(int ile_wykluczac){
 //cout<<"7 ";
 
 //Główna pętla algorytmu
-    while( acc!= 0 && iteracje<100 && znacznik_zmian<50){
-        // acc > 0  &&
+    while( acc!= 0 && iteracje<100 && znacznik_zmian<20){
+
          iteracje++;
-         //if(acc <= 0)
 
 //cout<<"8 ";
         int wyklucz;
@@ -573,7 +595,11 @@ void Trasa::algorithm_1(int ile_wykluczac){
             wyklucz=maksimum(Marks);
         }
         else{
-            wyklucz= minimum(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
+            wyklucz= minimumMarks(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
+        }
+        if(Long_Term.contains(path_best[wyklucz])){
+            cerr<<"wykluczamy cos co jest zabronione";
+            break;
         }
 //cout<<"9 ";
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
@@ -581,7 +607,7 @@ void Trasa::algorithm_1(int ile_wykluczac){
             break;
         }
 //cout<<"10a ";
-cout<<path_best[wyklucz]<<" ";
+
         QVector<int> Wykluczenie; //zbudowanie vektora wykluczenia wysylanego do metody otoczenie
         for(int i=0; i<=ile_wykluczac;i++){
 
@@ -590,9 +616,12 @@ cout<<path_best[wyklucz]<<" ";
 //cout<<"10b ";
 
         Potencials = otoczenie(Wykluczenie, 2, ile_wykluczac); //wszystkie potencjalne zamienniki dla naszego wykluczenia
-        if(Potencials.size()==0){ //warunek na brak otoczenia krawedzi
-            Marks[wyklucz]=1000000; //zabronienie dlugoterminowe na wykluczanie tej krawedzi.
-cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
+        Wykluczenie.clear();
+
+        if(Potencials.size()==0){ //-warunek na brak otoczenia krawedzi
+            Long_Term.push_back(path_best[wyklucz]);
+            //Marks[wyklucz]=1000000; //zabronienie dlugoterminowe na wykluczanie tej krawedzi.
+            cout<< endl<<path_best[wyklucz]<< " :nie powinno byc juz wykluczane (0)"<<endl;
             continue;
         }
 //cout<<"11 ";
@@ -603,11 +632,13 @@ cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
         }
 //cout<<"12 ";
         int best_index = minimum(Potencials_Marks); //wybieramy tą która najbardziej zblizyla nam to ile brakuje do zera
-if(best_index==Potencials.size()){
-    Marks[wyklucz]=1000000;
-cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
-    continue;
-}
+
+        if(best_index==Potencials.size()){
+            Long_Term.push_back(path_best[wyklucz]);
+            //Marks[wyklucz]=1000000;
+        cout<< endl<< path_best[wyklucz]<< " :nie powinno byc juz wykluczane (1)"<<endl;
+            continue;
+        }
 //cout<<"12a ";
 //cout<<endl<<Potencials.size()<<" "<<best_index<<" "<<Potencials_Marks.size()<<endl;
         acc -= calc_distance(Potencials[best_index]);
@@ -617,9 +648,10 @@ cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
                   //zmianiamy aktualną wartość tego ile brakuje
 //warunek dodania
 //cout<<"12c ";
-        if(abs(f_distance.back()) <= abs(acc)){
-            Marks[wyklucz]=1000000;
-cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
+        if(iteracje!=1 &&  abs(f_distance.back()) <= abs(acc)){
+            Long_Term.push_back(path_best[wyklucz]);
+            //Marks[wyklucz]=1000000;
+cerr<< path_best[wyklucz] << " :nie powinno byc juz wykluczane (2)"<<endl;
             znacznik_zmian++;
             if(f_distance.back()*acc >0){
                 acc=f_distance.back();
@@ -627,6 +659,7 @@ cerr<< wyklucz<< " :nie powinno byc juz wykluczane"<<endl;
             }
 //cout<<"13 ";
         }
+cout<<path_best[wyklucz]<<" ";
 //cout<<"14 ";
 
         if(ile_wykluczac == 1){
@@ -694,6 +727,7 @@ else{
             //znacznik_zmian++;
 //cout<<"19 ";
         }
+        Long_Term.push_back(path_best[wyklucz]);
         Potencials.clear();
         calc_attractiveness();
         calc_profile();
