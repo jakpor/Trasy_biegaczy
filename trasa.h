@@ -39,6 +39,9 @@ public:
 
     //potrzebuję tego do kolorowania najczęściej używanych tras
     QVector <int *> historia_tras;
+    int MAX_ITERACJI;
+    int MAX_BRAK_POPRAW;
+    QString kryterium_stopu;
 
     // ocena wg kryteriów zbiorowych
     //vector<??> wykluczenia // krótko, średnio i długoterminowe

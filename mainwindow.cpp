@@ -325,6 +325,8 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.set_edges(ui->start->text().toInt(),ui->end->text().toInt());
         pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
         pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
+        pathview.trasa.MAX_ITERACJI=ui->iteracje->value();
+        pathview.trasa.MAX_BRAK_POPRAW=ui->czekanie->value();
 
         pathview.trasa.algorithm_2(2);
 
@@ -353,6 +355,8 @@ void MainWindow::on_liczButton_clicked(){
         ui->result_beton->setText(QString::number(r));
         r=pathview.trasa.funkcja_celu.back();
         ui->funckja_celu->setText(QString::number(r));
+
+        ui->stop->setText(pathview.trasa.kryterium_stopu);
 
         //po wykonaniu algorytmu aktualizuje historie
        // pathview.trasa.aktualizuj_historie_tras();

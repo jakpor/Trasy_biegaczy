@@ -829,7 +829,7 @@ void Trasa::algorithm_2(int ile_wykluczac){
             kryterium_stopu="STOP 5 - wykluczone wszystkie";
             break;
         }
-
+            
             wyklucz= rand() % (path_best.size()-ile_wykluczac -Long_Term.size());
             int i_w=0;
             for(int j=wyklucz; j>0; i_w++){
