@@ -1,5 +1,6 @@
 #include "trasa.h"
-
+#define MAX_ITERACJI 1000
+#define MAX_BRAK_POPRAW 20
 Trasa::Trasa(){
     wierzcholek_poczatkowy= 0;
     wierzcholek_koncowy =0;
@@ -341,8 +342,8 @@ int Trasa::minimum(QVector<int> temp){
 
    for(int i=0; i<temp.size(); i++){
 
-           if(abs(temp[i])<min){
-               min=temp[i];
+           if(abs(temp[i]) <= min){
+               min=abs(temp[i]);
                i_min=i;
            }
    }
@@ -353,7 +354,7 @@ int Trasa::minimum(QVector<int> temp){
 
 int Trasa::minimumMarks(QVector<int> temp){
 
-    int min = temp.front();
+    int min = 1000000;
 
     int i_min =0;
     int flag=1;
@@ -372,10 +373,11 @@ int Trasa::minimumMarks(QVector<int> temp){
        }
    }
 
-   if(flag == temp.size()){
+   if(flag == temp.size() || min==1000000){
        return flag;
    }
-   return i_min;
+   else
+       return i_min;
 
 }
 
@@ -587,9 +589,10 @@ cout<<"6 ";
 cout<<"7 ";
 
 //Główna pętla algorytmu
-    while( acc!= 0 && iteracje<100 && znacznik_zmian<20){
+    while( acc!= 0 && iteracje<MAX_ITERACJI && znacznik_zmian<MAX_BRAK_POPRAW){
         //zlozonosc obliczeniowa *bum*
         Marks.clear();
+
         for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
             Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
         }
@@ -610,7 +613,7 @@ cout<<"7 ";
         }
 //cout<<"9 ";
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
-            cerr<<"brak rozwiazan dopuszczalnych w otoczeniu";
+            cerr<<"STOP 5 - wykluczone wszystkie"<<endl;
             break;
         }
 //cout<<"10a ";
@@ -628,7 +631,7 @@ cout<<"7 ";
         if(Potencials.size()==0){ //-warunek na brak otoczenia krawedzi
             Long_Term.push_back(path_best[wyklucz]);
             //Marks[wyklucz]=1000000; //zabronienie dlugoterminowe na wykluczanie tej krawedzi.
-            cout<< endl<<path_best[wyklucz]<< " :nie powinno byc juz wykluczane (0)"<<endl;
+            cerr<< endl<<path_best[wyklucz]<< " :taboo - brak otoczenia (0)"<<endl;
             continue;
         }
 //cout<<"11 ";
@@ -643,7 +646,7 @@ cout<<"7 ";
         if(best_index==Potencials.size()){
             Long_Term.push_back(path_best[wyklucz]);
             //Marks[wyklucz]=1000000;
-        cout<< endl<< path_best[wyklucz]<< " :nie powinno byc juz wykluczane (1)"<<endl;
+        cerr<< endl<< path_best[wyklucz]<< " :taboo - zly dobor otoczenia(1)"<<endl;
             continue;
         }
 //cout<<"12a ";
@@ -659,7 +662,7 @@ cout<<"7 ";
         if(iteracje!=1 &&  abs(f_distance.back()) <= abs(acc)){
             Long_Term.push_back(path_best[wyklucz]);
             //Marks[wyklucz]=1000000;
-cerr<< path_best[wyklucz] << " :nie powinno byc juz wykluczane (2)"<<endl;
+cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
             znacznik_zmian++;
             if(f_distance.back()*acc >0){
                 acc=f_distance.back();
@@ -722,8 +725,10 @@ cerr<< path_best[wyklucz] << " :nie powinno byc juz wykluczane (2)"<<endl;
         }
 //cout<<"17a "   ;
     }
-        if(acc!=calc_distance(path_best))
+        if(acc!=(wanted_distance - calc_distance(path_best))){
             cerr<< "COS JEST OSTRO NIE TAK"<<endl;
+            cerr<<"acc "<<acc<<" wylicozne= "<<wanted_distance<<"-"<<calc_distance(path_best)<<"="<<wanted_distance-calc_distance(path_best)<<endl;
+        }
 //cout<<"18 ";
        // if(f_distance.back()>=abs(acc)){
             this->f_distance.push_back(acc);
@@ -750,6 +755,8 @@ cerr<< path_best[wyklucz] << " :nie powinno byc juz wykluczane (2)"<<endl;
         calc_attractiveness();
         calc_profile();
         calc_funkcja_celu();
+        if(znacznik_zmian == 1)
+            Long_Term.clear();
     }
 //cout<<"23a ";
     int minimo=minimum(this->f_distance);
@@ -762,4 +769,16 @@ cerr<< path_best[wyklucz] << " :nie powinno byc juz wykluczane (2)"<<endl;
 //cout<<"23e ";
     funkcja_celu.push_back(funkcja_celu[minimo]);
 //cout<<"24 ";
+    if(acc==0){
+        cerr<<"STOP 1 - znaleziono rozwiazanie"<<endl;
+    }
+    else if(znacznik_zmian == MAX_BRAK_POPRAW){
+        cerr<<"STOP 2 - dlugi okres braku poprawy"<<endl;
+    }
+    else if(iteracje == MAX_ITERACJI){
+        cerr<<"STOP 3 - maksymalna liczba iteracji"<<endl;
+    }
+    else{
+        cerr<<"STOP 4 - zabroniono wszystko"<<endl;
+    }
 }
