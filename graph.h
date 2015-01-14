@@ -5,6 +5,10 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <string>
+#include <ctime>
+#include <cctype>
+
 
 using namespace std;
 class Graph

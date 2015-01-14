@@ -79,7 +79,8 @@ int Trasa::calc_attractiveness(QVector<int> odcinek){
         wynik+=Graf.macierz_betonu[odcinek[i]][odcinek[i+1]];
     }
     wynik=wynik*100;
-    wynik= wynik / (odcinek.size()-1);
+    //wynik= wynik / (odcinek.size()-1);
+    wynik = wynik / (path_best.size()-1); //przyblizenie globalnego wplywu tej krawedzi
     return wynik;
 }
 
@@ -90,7 +91,7 @@ int Trasa::calc_attractiveness(){
         wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
     }
     wynik=wynik*100;
-    wynik= wynik / path_best.size();
+    wynik= wynik / (path_best.size()-1);
     wynik= this->wanted_attractiveness - wynik;
     this->f_attractiveness.push_back( wynik);
     return wynik;
@@ -107,7 +108,8 @@ int Trasa::calc_attractiveness(int s, int e){
         wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
     }
     wynik=wynik*100;
-    wynik= wynik / (e-s);
+    //wynik= wynik / (e-s);
+    wynik = wynik / (path_best.size()-1);
     return wynik;
 }
 
@@ -816,7 +818,7 @@ void Trasa::algorithm_2(int ile_wykluczac){
 
     int iteracje=0;
     int znacznik_zmian=0;
-
+    srand(time(NULL));
 
 //*** MAIN LOOP ***//
 //Główna pętla algorytmu
@@ -832,13 +834,19 @@ void Trasa::algorithm_2(int ile_wykluczac){
 
 //cout<<"8 ";
         int wyklucz;
+//if(znacznik_zmian>0)
+//    wyklucz=maksimum(Marks);
+//else
+          //  wyklucz= minimumMarks(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
+        if(Long_Term.size()<=Marks.size())
+        do{
+                wyklucz= rand() % Marks.size();
+          }while(Long_Term.contains(path_best[wyklucz]));
 
-            wyklucz= minimumMarks(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
-
-        if(Long_Term.contains(path_best[wyklucz])){
-            cerr<<"wykluczamy cos co jest zabronione";
-            break;
-        }
+                if(Long_Term.contains(path_best[wyklucz])){
+                    cerr<<"wykluczamy cos co jest zabronione";
+                    break;
+                }
 //cout<<"9 ";
         if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
             cerr<<"STOP 5 - wykluczone wszystkie"<<endl;
@@ -881,29 +889,14 @@ void Trasa::algorithm_2(int ile_wykluczac){
         Potencials_Marks.clear();
 
 //AKTUALIZACJA NOWEJ WARTOSCI AKTUALNEJ
-        acc -= calc_funkcja_celu(Potencials[best_index]);
+        //acc -= calc_funkcja_celu(Potencials[best_index]);
 //cout<<"12b ";
-        acc=acc + Marks[wyklucz];
-    cout<<"acc= acc -"<<calc_funkcja_celu(Potencials[best_index])<<"+"<<Marks[wyklucz]<<"="<<acc <<endl;
+        //acc=acc + Marks[wyklucz];
+    //cout<<"acc= acc -"<<calc_funkcja_celu(Potencials[best_index])<<"+"<<Marks[wyklucz]<<"="<<acc <<endl;
 
 //WARUNEK DODANIA - BADANIE POLEPSZENIA FUNKCJI
 //cout<<"12c ";
-        if(iteracje!=1 &&  funkcja_celu.back() <= acc){
-            //JESLI BRAK POPRAWY
-            Long_Term.push_back(path_best[wyklucz]);
-cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
-            znacznik_zmian++;
-            //NARAZIE BRAK BADANIA DLUGIEGO BRAKU POPRAW
-//            if(f_distance.back()*acc >0){ //JESLI NIE OSCYLUJEMY WOKOL
-//                acc=f_distance.back();
-//                continue;
-//            }
-//cout<<"13 ";
-        }
-        else{
-            //JESLI POPRAWA
-            znacznik_zmian=0;
-        }
+
 //cout<<path_best[wyklucz]<<" ";
 //cout<<"14 ";
 
@@ -952,13 +945,39 @@ cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
         //Long_Term.push_back(path_best[wyklucz]); - SLUZYLO DO WYKLUCZENIA ZAWSZE PO ROZPATRZENIU
         Potencials.clear();
 //AKTUALIZACJA ROZWIAZANIA I WEKTOROW ROZWIAZAN
-        this->funkcja_celu.push_back(acc);
+        //this->funkcja_celu.push_back(acc);
         this->path_all.push_back(this->path_best);
         calc_attractiveness();
         calc_profile();
         calc_distance();
+        acc=calc_funkcja_celu(); // zamiast robienia na podstawie acc
 //        if(znacznik_zmian == 1) //OPCJONALNE, CZYSCIMY JESLI BEDZIEMY SKRACAC OD TEJ PORY CZASEM
 //            Long_Term.clear();
+
+        if(iteracje!=1 &&  funkcja_celu[funkcja_celu.size()-2] <= acc){
+            //JESLI BRAK POPRAWY
+
+cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
+            znacznik_zmian++;
+            //NARAZIE BRAK BADANIA DLUGIEGO BRAKU POPRAW
+            if(funkcja_celu[funkcja_celu.size()-3] < funkcja_celu[funkcja_celu.size()-2]){ //JESLI NIE OSCYLUJEMY WOKOL
+                Long_Term.push_back(path_best[wyklucz]);
+                Long_Term.pop_front();
+                path_all.pop_back();
+                f_distance.pop_back();
+                funkcja_celu.pop_back();
+                f_attractiveness.pop_back();
+                f_profile.pop_back();
+                path_best=path_all.back();
+                acc=funkcja_celu.back();
+
+            }
+//cout<<"13 ";
+        }
+        else {
+            //JESLI POPRAWA
+            znacznik_zmian=0;
+        }
     }
 //cout<<"23a ";
     int minimo=minimum(this->funkcja_celu);

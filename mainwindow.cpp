@@ -114,12 +114,15 @@ void MainWindow::on_countButton_clicked(){
 
     ui->result->setText(QString::number(r));
 
-//    r=pathview.trasa.calc_profile();
-//    ui->result_wysokosc->setText(QString::number(r));
+    r=pathview.trasa.calc_profile(pathview.trasa.path_best);
+    ui->result_wysokosc->setText(QString::number(r));
 
-//    r=pathview.trasa.calc_attractiveness();
+    r=pathview.trasa.calc_attractiveness(pathview.trasa.path_best);
 
-//    ui->result_beton->setText(QString::number(r));
+    ui->result_beton->setText(QString::number(r));
+
+    r=pathview.trasa.calc_funkcja_celu(pathview.trasa.path_best);
+    ui->funckja_celu->setText(QString::number(r));
 }
 
 /** przycisk zamknięcia - zamykanie okna głównego jest zrealizowane w Designerze (łączenie slotów). To zamyka wszyskie poboczne okienka
