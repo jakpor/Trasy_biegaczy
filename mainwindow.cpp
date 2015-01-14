@@ -323,7 +323,7 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.set_parameters(ui->pOdlegloscBox->value(),ui->pBetonowoscBox->value(),ui->pWysokoscBox->value());
         pathview.trasa.set_wanted(ui->odlegloscBox->value(),ui->betonowoscBox->value(),ui->wysokoscBox->value());
 
-        pathview.trasa.algorithm_1(2);
+        pathview.trasa.algorithm_2(2);
 
         //wypisz najlepszą trasę
 //        cout<<"Koncowa trasa to: ";

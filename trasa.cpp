@@ -1,5 +1,5 @@
 #include "trasa.h"
-#define MAX_ITERACJI 1000
+#define MAX_ITERACJI 100
 #define MAX_BRAK_POPRAW 20
 Trasa::Trasa(){
     wierzcholek_poczatkowy= 0;
@@ -187,7 +187,18 @@ int Trasa::calc_distance(int s, int e){
 
 int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     int wynik = 0;
-   // wynik= abs(this->w_attractiveness*calc_attractiveness(odcinek)) + abs(this->w_distance*calc_distance(odcinek)) + abs(w_profile*calc_profile(odcinek));
+    wynik= this->w_attractiveness*abs(calc_attractiveness(odcinek))
+            + this->w_distance*abs(calc_distance(odcinek))
+            + w_profile*abs(calc_profile(odcinek));
+    return wynik;
+}
+
+int Trasa::calc_funkcja_celu(int s, int e){
+    int wynik = 0;
+    if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
+    wynik= this->w_attractiveness*abs(calc_attractiveness(s,e))
+            + this->w_distance*abs(calc_distance(s,e))
+            + w_profile*abs(calc_profile(s,e));
     return wynik;
 }
 
@@ -367,7 +378,7 @@ int Trasa::minimumMarks(QVector<int> temp){
        else{
 
                if(abs(temp[i])<min){
-                   min=temp[i];
+                   min=abs(temp[i]);
                    i_min=i;
                }
        }
@@ -393,7 +404,7 @@ QVector<int> Trasa::nastepniki(int x){
 
 int Trasa::maksimum(QVector<int> temp){
 
-    int max = temp.front();
+    int max = 0;
 
     int i_max =0;
     int flag=1;
@@ -412,7 +423,7 @@ int Trasa::maksimum(QVector<int> temp){
    }
    }
 
-   if(flag == temp.size()){
+   if(flag == temp.size() || max==0){
        return flag;
    }
    return i_max;
@@ -768,6 +779,199 @@ cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
     f_attractiveness.push_back((f_attractiveness[minimo]));
 //cout<<"23e ";
     funkcja_celu.push_back(funkcja_celu[minimo]);
+//cout<<"24 ";
+    if(acc==0){
+        cerr<<"STOP 1 - znaleziono rozwiazanie"<<endl;
+    }
+    else if(znacznik_zmian == MAX_BRAK_POPRAW){
+        cerr<<"STOP 2 - dlugi okres braku poprawy"<<endl;
+    }
+    else if(iteracje == MAX_ITERACJI){
+        cerr<<"STOP 3 - maksymalna liczba iteracji"<<endl;
+    }
+    else{
+        cerr<<"STOP 4 - zabroniono wszystko"<<endl;
+    }
+}
+
+
+
+
+void Trasa::algorithm_2(int ile_wykluczac){
+
+    int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
+    if(acc==0){
+        cerr<<"STOP 6 - CHCIWY UZYTKOWNIK"<<endl;
+        return;
+    }
+    calc_distance(); //mozna dac pushback acc
+    calc_attractiveness();
+    calc_profile();
+    acc= calc_funkcja_celu(); //WYMUSZONA KOLEJNOSC WYWOLANIA, F.C. NA KONCU
+    cout<<"acc= "<<acc<<endl;
+    this->path_all.push_back(this->path_best);
+
+    QVector<int> Marks; //tablica oceny wszystkich potencjalnych wykluczeń
+    QVector< QVector<int> > Potencials; //zbior tras do włączenia potencjalnie do trasy
+
+    int iteracje=0;
+    int znacznik_zmian=0;
+
+
+//*** MAIN LOOP ***//
+//Główna pętla algorytmu
+    while( acc!= 0 && iteracje<MAX_ITERACJI && znacznik_zmian<MAX_BRAK_POPRAW){
+        iteracje++; //TU BO NIE ZAWSZE DOCHODZI DO KONCA
+
+        //zlozonosc obliczeniowa *bum*:
+        //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
+        Marks.clear();
+        for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
+            Marks.push_back(this->calc_funkcja_celu(i, i+ile_wykluczac));
+        }
+
+//cout<<"8 ";
+        int wyklucz;
+
+            wyklucz= minimumMarks(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
+
+        if(Long_Term.contains(path_best[wyklucz])){
+            cerr<<"wykluczamy cos co jest zabronione";
+            break;
+        }
+//cout<<"9 ";
+        if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
+            cerr<<"STOP 5 - wykluczone wszystkie"<<endl;
+            break;
+        }
+//cout<<"10a ";
+
+        QVector<int> Wykluczenie; //zbudowanie vektora wykluczenia wysylanego do metody otoczenie
+        for(int i=0; i<=ile_wykluczac;i++){
+            Wykluczenie.push_back(this->path_best[wyklucz+i]);
+        }
+//cout<<"10b ";
+
+        Potencials = otoczenie(Wykluczenie, 2, ile_wykluczac); //wszystkie potencjalne zamienniki dla naszego wykluczenia
+        Wykluczenie.clear();
+
+        if(Potencials.size()==0){ //-warunek na brak otoczenia krawedzi
+            Long_Term.push_back(path_best[wyklucz]);
+            cerr<< endl<<path_best[wyklucz]<< " :taboo - brak otoczenia (0)"<<endl;
+            continue;
+        }
+//cout<<"11 ";
+        QVector<int> Potencials_Marks; //ocena wszystkich zamienników pod względem polepszenia f. celu
+//wartość bezwzględna( ile brakuje + ile da wykluczenie - ile da zamiennik wykluczenia)
+        for(int i=0; i< Potencials.size(); i++){
+            Potencials_Marks.push_back(abs(acc + Marks[wyklucz]- this->calc_funkcja_celu(Potencials[i])));
+        }
+//cout<<"12 ";
+        int best_index = minimum(Potencials_Marks); //wybieramy tą która najbardziej zblizyla nam to ile brakuje do zera
+
+        //do wyrzucenia:
+//        if(best_index==Potencials.size()){
+//            Long_Term.push_back(path_best[wyklucz]);
+//            //Marks[wyklucz]=1000000;
+//        cerr<< endl<< path_best[wyklucz]<< " :taboo - zly dobor otoczenia(1)"<<endl;
+//            continue;
+//        }
+
+//cout<<"12a ";
+        Potencials_Marks.clear();
+
+//AKTUALIZACJA NOWEJ WARTOSCI AKTUALNEJ
+        acc -= calc_funkcja_celu(Potencials[best_index]);
+//cout<<"12b ";
+        acc=acc + Marks[wyklucz];
+    cout<<"acc= acc -"<<calc_funkcja_celu(Potencials[best_index])<<"+"<<Marks[wyklucz]<<"="<<acc <<endl;
+
+//WARUNEK DODANIA - BADANIE POLEPSZENIA FUNKCJI
+//cout<<"12c ";
+        if(iteracje!=1 &&  funkcja_celu.back() <= acc){
+            //JESLI BRAK POPRAWY
+            Long_Term.push_back(path_best[wyklucz]);
+cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
+            znacznik_zmian++;
+            //NARAZIE BRAK BADANIA DLUGIEGO BRAKU POPRAW
+//            if(f_distance.back()*acc >0){ //JESLI NIE OSCYLUJEMY WOKOL
+//                acc=f_distance.back();
+//                continue;
+//            }
+//cout<<"13 ";
+        }
+        else{
+            //JESLI POPRAWA
+            znacznik_zmian=0;
+        }
+//cout<<path_best[wyklucz]<<" ";
+//cout<<"14 ";
+
+
+
+// BLOK DO ZMIANY ROZWIAZANIA
+        if(ile_wykluczac == 1){//WARUNEK NA LICZBĘ WYKLUCZANYCH KRAWEDZI
+            for(int i=1; i!=Potencials[best_index].size()-1; i++){
+                path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
+//cout<<"15 ";
+            }
+        }
+        else if(ile_wykluczac==2){//WARUNEK NA LICZBĘ WYKLUCZANYCH KRAWEDZI
+            for(int i=0; i!=Potencials[best_index].size()-1; i++){//INDEKSACJA PO ILOSCI WSTAWIANYCH NOWYCH DANYCH
+//cout<<"16a ";
+                if(i==0 && Potencials[best_index].size()==2){ //JESLI WYCINAMY WIERZCHOLEK
+//cout<<"16b1 ";
+                    path_best.erase(path_best.begin()+wyklucz+1);
+    //cout<<"16b ";
+                }
+                else if(i==1){//JESLI ZAMIENIAMY WIERZCHOLEK
+    //cout<<"16c1 ";
+                    path_best[wyklucz+1]=Potencials[best_index][i];
+    //cout<<"16c ";
+                }
+                else if(i==2){//JESLI DOSTAWIAMY WIERZCHOLEK
+    //cout<<"16d1 ";
+                    path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
+    //cout<<"16d ";
+                }
+    //cout<<"17 ";
+            }
+    //cout<<"17a "   ;
+        }
+    //DO WYRZUCENIA
+//        if(acc!=(wanted_distance - calc_distance(path_best))){
+//            cerr<< "COS JEST OSTRO NIE TAK"<<endl;
+//            cerr<<"acc "<<acc<<" wylicozne= "<<wanted_distance<<"-"<<calc_distance(path_best)<<"="<<wanted_distance-calc_distance(path_best)<<endl;
+//        }
+//cout<<"18 ";
+
+
+
+
+//cout<<"22 ";
+        //Long_Term.push_back(path_best[wyklucz]); - SLUZYLO DO WYKLUCZENIA ZAWSZE PO ROZPATRZENIU
+        Potencials.clear();
+//AKTUALIZACJA ROZWIAZANIA I WEKTOROW ROZWIAZAN
+        this->funkcja_celu.push_back(acc);
+        this->path_all.push_back(this->path_best);
+        calc_attractiveness();
+        calc_profile();
+        calc_distance();
+//        if(znacznik_zmian == 1) //OPCJONALNE, CZYSCIMY JESLI BEDZIEMY SKRACAC OD TEJ PORY CZASEM
+//            Long_Term.clear();
+    }
+//cout<<"23a ";
+    int minimo=minimum(this->funkcja_celu);
+//cout<<"23b ";
+    f_distance.push_back(f_distance[minimo]);
+//cout<<"23c ";
+    f_profile.push_back(f_profile[minimo]);
+//cout<<"23d ";
+    f_attractiveness.push_back((f_attractiveness[minimo]));
+//cout<<"23e ";
+    funkcja_celu.push_back(funkcja_celu[minimo]);
+    path_best=path_all[minimo];
+    path_all.push_back(path_best);
 //cout<<"24 ";
     if(acc==0){
         cerr<<"STOP 1 - znaleziono rozwiazanie"<<endl;
