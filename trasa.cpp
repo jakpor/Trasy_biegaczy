@@ -809,7 +809,7 @@ void Trasa::algorithm_2(int ile_wykluczac){
     calc_attractiveness();
     calc_profile();
     acc= calc_funkcja_celu(); //WYMUSZONA KOLEJNOSC WYWOLANIA, F.C. NA KONCU
-    cout<<"acc= "<<acc<<endl;
+
     this->path_all.push_back(this->path_best);
 
     QVector< QVector<int> > Potencials; //zbior tras do włączenia potencjalnie do trasy
@@ -831,13 +831,16 @@ void Trasa::algorithm_2(int ile_wykluczac){
         }
 
             wyklucz= rand() % (path_best.size()-ile_wykluczac -Long_Term.size());
+            cout<<endl<<(path_best.size()-ile_wykluczac -Long_Term.size())<<" ";
+            cout<<wyklucz;
             int i_w=0;
-            for(int j=wyklucz; j>0; i_w++){
+            for(int j=wyklucz+1; j>0; i_w++){
                     if(!Long_Term.contains(path_best[i_w])){
                     --j;
                 }
             }
-            wyklucz=i_w;
+            wyklucz=i_w-1;
+            cout<<" "<<wyklucz<<endl;
 
             if(Long_Term.contains(path_best[wyklucz])){
                 cerr<<"wykluczamy cos co jest zabronione!"<<endl;
