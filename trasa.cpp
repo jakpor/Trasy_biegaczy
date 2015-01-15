@@ -64,26 +64,24 @@ Trasa::Trasa(Trasa & trasa){
     f_attractiveness = QVector<int>(trasa.f_attractiveness);
     funkcja_celu = QVector<int>(trasa.funkcja_celu);
     path_best = QVector <int> (trasa.path_best);
-    //uwaga - nie wiem, czy to jest inteligentne!
-    //ja też nie ;)
     path_all = QVector < QVector < int > >(trasa.path_all);
 
 }
 
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+//WYLICZENIE ATRAKCYJNOSCI ODCINKA - SZACOWANIE PRZED DŁUGOŚĆ TRASY OPTYMALNEJ
 int Trasa::calc_attractiveness(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
         wynik+=Graf.macierz_betonu[odcinek[i]][odcinek[i+1]];
     }
     wynik=wynik*100;
-    //wynik= wynik / (odcinek.size()-1);
+
     wynik = wynik / (path_best.size()-1); //przyblizenie globalnego wplywu tej krawedzi
-    return wynik;
+    return wynik; //WYNIK WYRAŻONY W PROCENTACH
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+//WYLICZENIE ATRAKCYJNOSCI AKTUALNEJ TRASY OPTYMALNEJ I AKTUALIZACJA WEKTORA ROZWIAZAŃ
 int Trasa::calc_attractiveness(){
     int wynik = 0;
     for(int i=0; i< path_best.size()-1; i++){
@@ -91,28 +89,28 @@ int Trasa::calc_attractiveness(){
     }
     wynik=wynik*100;
     wynik= wynik / (path_best.size()-1);
-    wynik= this->wanted_attractiveness - wynik;
+    wynik= this->wanted_attractiveness - wynik; //różnica procentów od zadanej wartości
     this->f_attractiveness.push_back( wynik);
     return wynik;
 
 }
 
-//zwraca 0 jesli indeks startowy lub koncowy invalid
+//WYLICZENIE ATRAKCYJNOSCI ODCINKA BĘDĄCEGO FRAGMENTEM TRASY AKTUALNEJ- SZACOWANIE PRZED DŁUGOŚĆ TRASY AKTUALNEJ
 int Trasa::calc_attractiveness(int s, int e){
     int wynik = 0;
 
-    if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
+    if(e <= s || s<0 || e>this->path_best.size())  // sprawdzenie poprawnosci
+        return wynik;
 
     for(int i=s; i< e; i++){
         wynik+=Graf.macierz_betonu[path_best[i]][path_best[i+1]];
     }
     wynik=wynik*100;
-    //wynik= wynik / (e-s);
     wynik = wynik / (path_best.size()-1);
     return wynik;
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+//WYLICZENIE FUNKCJI KARY ZA PRZEKROCZENIE WARTOSCI ZADANEJ DLA ODCINKA
 int Trasa::calc_profile(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
@@ -122,11 +120,10 @@ int Trasa::calc_profile(QVector<int> odcinek){
         }
     }
 
-    return wynik;
+    return wynik; //suma nadmiaru wysokości, które zostały przekroczone
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-
+//WYLICZENIE FUNKCJI KARY ZA PRZEKROCZENIE WARTOSCI ZADANEJ DLA TRASY OPTYMALNEJ I AKTUALIZACJA WEKTORA ROZWIAZAN
 int Trasa::calc_profile(){
     int wynik = 0;
     for(int i=0; i< path_best.size()-1; i++){
@@ -134,20 +131,19 @@ int Trasa::calc_profile(){
             wynik+=this->wanted_profile;
             wynik-=Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]];
         }
-
     }
-    //wynik = this->wanted_profile - wynik;
     this->f_profile.push_back( wynik);
     return wynik;
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
 
-//zwraca 0 jesli indeks startowy lub koncowy invalid
+
+//WYLICZENIE FUNKCJI KARY ZA PRZEKROCZENIE WARTOSCI ZADANEJ DLA ODCINKA BĘDĄCEGO FRAGMENTEM TRASY AKTUALNEJ
 int Trasa::calc_profile(int s, int e){
     int wynik = 0;
 
-    if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
+    if(e <= s || s<0 || e>this->path_best.size()) // sprawdzenie poprawnosci
+        return wynik;
 
     for(int i=s; i< e; i++){
         if(Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]]>wanted_profile){
@@ -158,21 +154,19 @@ int Trasa::calc_profile(int s, int e){
     return wynik;
 }
 
+//WYLICZENIE DŁUGOŚCI ODCINKA
 int Trasa::calc_distance(QVector<int> odcinek){
 
     int wynik = 0;
 
     for(int i=0; i< odcinek.size()-1; i++){
-
         wynik+=Graf.macierz_przyleglosci[odcinek[i]][odcinek[i+1]];
-
     }
 
     return wynik;
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-
+//WYLICZENIE UCHYBU DŁUGOŚCI TRASY AKTUALNEJ OD ZADANEJ ODLEGŁOŚCI I DODANIE WYNIKU DO WEKTORA ROZWIĄZAŃ
 int Trasa::calc_distance(){
     int wynik = 0;
     for(int i=0; i< this->path_best.size()-1; i++){
@@ -183,9 +177,7 @@ int Trasa::calc_distance(){
     return wynik;
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-
-//zwraca 0 jesli indeks startowy lub koncowy invalid
+//WYLICZENIE DŁUGOŚCI ODCINKA BĘDĄCEGO FRAGMENTEM TRASY AKTUALNEJ
 int Trasa::calc_distance(int s, int e){
     int wynik = 0;
 
@@ -197,6 +189,7 @@ int Trasa::calc_distance(int s, int e){
     return wynik;
 }
 
+//FUNKCJA CELU WYLICZONA DLA ODCINKA - SUMA WARTOŚCI BEZWZGLĘDNYCH WARTOŚCI ZWIĄZANYCH ZE SKŁADOWYMI
 int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     int wynik = 0;
     wynik= this->w_attractiveness*SKAL_ATTRACTIVENESS* abs(calc_attractiveness(odcinek))
@@ -205,6 +198,7 @@ int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     return wynik;
 }
 
+//FUNKCJA CELU WYLICZONA DLA FRAGMENTU TRASY AKTUALNEJ- SUMA WARTOŚCI BEZWZGLĘDNYCH WARTOŚCI ZWIĄZANYCH ZE SKŁADOWYMI
 int Trasa::calc_funkcja_celu(int s, int e){
     int wynik = 0;
     if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
@@ -214,9 +208,8 @@ int Trasa::calc_funkcja_celu(int s, int e){
     return wynik;
 }
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-//wywoluje wszystkie do policzenia i pushuje je do rozwiązań
-//brak zabezpieczenia przed niezsumowaniem się w_(...)
+
+//FINALNA FUNKCJA CELU SUMUJĄCA WARTOŚĆ BEZWZGLĘDNĄ SKŁADOWYCH PRZEMNOŻONYCH PRZEZ ZADANY MNOŻNIK (ZAOKRĄGLENIE DO CAŁKOWITYCH)
 int Trasa::calc_funkcja_celu(){
     int wynik = 0;
     wynik   = this->w_attractiveness * SKAL_ATTRACTIVENESS* abs(this->f_attractiveness.back())
@@ -226,7 +219,7 @@ int Trasa::calc_funkcja_celu(){
     return wynik;
 }
 
-
+//USTAWIENIE PARAMETRÓW ALGORYTMU - MNOŻNIKI DO FUNKCJI CELU
 void Trasa::set_parameters(int p_distance, int p_attractiveness, int p_profile){
     this->w_distance=(float)p_distance/100.0;
     this->w_attractiveness=(float)p_attractiveness/100.0;
@@ -234,49 +227,50 @@ void Trasa::set_parameters(int p_distance, int p_attractiveness, int p_profile){
 
 }
 
+//USTAWIENIE WIERZCHOŁKÓW KRAŃCOWYCH
 void Trasa::set_edges(int start, int end){
     this->wierzcholek_poczatkowy=start;
     this->wierzcholek_koncowy = end;
 }
 
-
+//USTAWIENIE WARTOŚCI ZADANYCH
 void Trasa::set_wanted(int dist, int att, int prof){
     this->wanted_attractiveness=att;
     this->wanted_distance=dist;
     this->wanted_profile=prof;
 }
 
-
+//ALGORYTM DIJKSTRY BAZUJĄCY NA ODLEGŁOŚCIACH
 int Trasa::dijkstra(kryterium type){
-    unsigned int** Matrix;
+
     if(this->wierzcholek_poczatkowy<0 || this->wierzcholek_koncowy >= Graf.liczba_wierzcholkow || this->wierzcholek_poczatkowy==this->wierzcholek_koncowy)
-        return 0;
-//to nie dziala!!
-    switch(type){
-        case distances:
-            Matrix = Graf.macierz_przyleglosci;
-            break;
+        return 0; //SPRAWDZENIE POPRAWNOŚCI WIERZCHOŁKÓW
 
-        case attractiveness:
-            Matrix = (unsigned int **)Graf.macierz_betonu;
-            break;
+//    unsigned int** Matrix;
+//    switch(type){
+//        case distances:
+//            Matrix = Graf.macierz_przyleglosci;
+//            break;
 
-        case profile:
-            Matrix =(unsigned int **)Graf.macierz_wysokosci;
-            break;
+//        case attractiveness:
+//            Matrix = (unsigned int **)Graf.macierz_betonu;
+//            break;
 
-    }
+//        case profile:
+//            Matrix =(unsigned int **)Graf.macierz_wysokosci;
+//            break;
+
+//    }
 
 
-    unsigned int * T;
-    unsigned int * P;
-    int * Previous;
+    unsigned int * T; //wektor wartości tymczasowych
+    unsigned int * P; //wektor wartości ustalonych
+    int * Previous;   //wektor ustalenie poprzednika dla danego wierzchołka
     T = new unsigned int [Graf.liczba_wierzcholkow];
     P = new unsigned int [Graf.liczba_wierzcholkow];
     Previous = new int [Graf.liczba_wierzcholkow];
 
     for(int i=0; i < Graf.liczba_wierzcholkow; i++){
-        //T[i]=Matrix[wierzcholek_poczatkowy][i];
         T[i]=0;
         P[i]=0;
         Previous[i]=0;
@@ -287,47 +281,37 @@ int Trasa::dijkstra(kryterium type){
     int current;
     current = this->wierzcholek_poczatkowy;
 
-//    followers = nastepniki(wierzcholek_poczatkowy, Matrix, graf.liczba_wierzcholkow);
-//    for (int i=0;i<followers.size();i++){
-//        if(followers[i]==wierzcholek_koncowy)
-//            return P[wierzcholek_koncowy];
-//    }
-
-   // T[current]= INF;
-
     while(current!= this->wierzcholek_koncowy){
         followers = nastepniki(current);
         for (int i=0; i<followers.size(); i++){
             if(T[followers[i]]==0){
                 Previous[followers[i]]=current;
-                T[followers[i]]=T[current]+Matrix[current][followers[i]];
+                T[followers[i]]=T[current]+Graf.macierz_przyleglosci[current][followers[i]];
             }
             else{
                 int old=T[followers[i]];
-                T[followers[i]]=min(T[followers[i]], T[current]+Matrix[current][followers[i]]);
+                T[followers[i]]=min(T[followers[i]], T[current]+Graf.macierz_przyleglosci[current][followers[i]]);
                 if(old!=T[followers[i]])
                     Previous[followers[i]]=current;
             }
         }
         current=minimum(T, P, Graf.liczba_wierzcholkow);
         P[current]=T[current];
-        //cout<< P[current];
-        //T[current]= INF;
+        followers.clear();
     }
 
     QVector<int> result = build_result(Previous,this->wierzcholek_poczatkowy,this->wierzcholek_koncowy);
     this->path_best = result;
-
+    result.clear();
 
     int wynik =P[current];
     delete T;
     delete P;
-    //this->f_distance.push_back(wynik);
     return wynik;
 
 }
 
-
+//ZBUDOWANIE ROZWIĄZANIA DO DIJKSTRY
 QVector<int> Trasa::build_result(int * history, int start, int end){
     QVector<int> result;
     int i=end;
@@ -341,7 +325,7 @@ QVector<int> Trasa::build_result(int * history, int start, int end){
 }
 
 
-
+//MINIMUM DLA DIJKSTRY
 int Trasa::minimum(unsigned int * temp, unsigned int * perm,int size){
     unsigned int min = 1000000;
     int i_min;
@@ -357,6 +341,7 @@ int Trasa::minimum(unsigned int * temp, unsigned int * perm,int size){
 
 }
 
+//MINIMUM UNIWERSALNE
 int Trasa::minimum(QVector<int> temp){
 
     int min = temp.front();
@@ -365,16 +350,17 @@ int Trasa::minimum(QVector<int> temp){
 
    for(int i=0; i<temp.size(); i++){
 
-           if(abs(temp[i]) <= min){
-               min=abs(temp[i]);
-               i_min=i;
-           }
+       if(abs(temp[i]) <= min){
+           min=abs(temp[i]);
+           i_min=i;
+       }
    }
 
    return i_min;
 
 }
 
+//MINIMUM DO OCENY WYKLUCZEN
 int Trasa::minimumMarks(QVector<int> temp){
 
     int min = 1000000;
@@ -389,10 +375,10 @@ int Trasa::minimumMarks(QVector<int> temp){
        }
        else{
 
-               if(abs(temp[i])<min){
-                   min=abs(temp[i]);
-                   i_min=i;
-               }
+           if(abs(temp[i])<min){
+               min=abs(temp[i]);
+               i_min=i;
+           }
        }
    }
 
@@ -404,6 +390,8 @@ int Trasa::minimumMarks(QVector<int> temp){
 
 }
 
+
+//WYZNACZANIE NASTĘPNIKÓW WIERZCHOŁKA W GRAFIE
 QVector<int> Trasa::nastepniki(int x){
     QVector<int> wynik;
 
@@ -414,7 +402,7 @@ QVector<int> Trasa::nastepniki(int x){
     return(wynik);
 }
 
-int Trasa::maksimum(QVector<int> temp){
+int Trasa::maksimumMarks(QVector<int> temp){
 
     int max = 0;
 
@@ -424,47 +412,49 @@ int Trasa::maksimum(QVector<int> temp){
    for(int i=0; i<temp.size(); i++){
 
        if(Long_Term.contains(path_best[i])){
-                          flag++;
-           }
-       else{
-       if(temp[i]>max){
-           max=temp[i];
-           i_max=i;
-
+               flag++;
        }
-   }
+       else if(temp[i]>max){
+               max=temp[i];
+               i_max=i;
+       }
+
    }
 
    if(flag == temp.size() || max==0){
-       return flag;
+       return flag; //jeśli wszystkie były na liście zabronień
    }
-   return i_max;
+   return i_max;    //zwraca indeks minimalnego elementu
 
 }
 
 
-//dziala dla 1 lub 2 wykluczanych krawedzi, zwraca otoczenie <= rozmiarowi
+//ALGORYTM DO WYZNACZANIA OTOCZENIA WYKLUCZANYCH KRAWĘDZI, ROZMIAR OTOCZENIA DECYDUJE O TYM JAK SZEROKO "SIĘ ROZGLĄDAMY"
+//OTOCZENIE JEST LISTĄ WIERZCHOŁKÓW KTÓRE MOGA ZASTĄPIĆ TE PODANE DO ALGORYTMU, PRZY ZACHOWANIU CIĄGŁOŚCI ROZWIĄZANIA
 QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi){
 
-    QVector<int> n_first =nastepniki(wykluczenie.front());
-    QVector<int> n_last = nastepniki(wykluczenie.back());
+    QVector<int> n_first =nastepniki(wykluczenie.front()); //NASTĘPNIKI PIERWSZEGO ELEMENTU
+    QVector<int> n_last = nastepniki(wykluczenie.back());  //NASTĘPNIKI OSTATNIEGO ELEMENTU
     QVector< QVector<int> >wynik;
     QVector<int> line;
 
 
-    if(l_krawedzi<3){
+    if(l_krawedzi<3){   //ograniczenie na liczbę krawędzi wykluczanych
 
-            QVector<int> kand_1;
+            QVector<int> kand_1; //wierzchołki będące wspólnymi następnikami końcowej i początkowej krawędzi
             set_intersection (n_first.begin(), n_first.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
 
-            if(l_krawedzi == 2)
+            if(l_krawedzi == 2){
+
+                    //wstawienie alternatywnych tras składających się z 2-ch wierzchołków
                 if(n_last.contains(wykluczenie.front())){
                     line.push_back(wykluczenie.front());
                     line.push_back(wykluczenie.back());
                     wynik.push_back(line);
                     line.clear();
                 }
-
+            }
+                    //wstawienie alternatywnych tras składających się z 3-ch wierzchołków
             for(int i=0 ; i < kand_1.size(); ++i) {
                 if(this->path_best.contains(kand_1[i]) == false){
                     line.push_back(wykluczenie.front());
@@ -476,18 +466,18 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
 
             }
 
+
             kand_1.clear();
+            if(rozmiar == 1) return wynik; //jesli rozmiar był równy 1
 
-            rozmiar--;
-            if(rozmiar == 0) return wynik;
-
-            QVector<int> kand_2;
+                //wstawienie alternatywnych tras składających się z 4-ch wierzchołków
+            QVector<int> kand_2;          
             for(int i=0 ; i<n_first.size(); ++i){
-                kand_2=nastepniki(n_first[i]);
+                 kand_2=nastepniki(n_first[i]);
                  set_intersection (kand_2.begin(), kand_2.end(), n_last.begin(), n_last.end(), std::back_inserter(kand_1));
+                 //kand_1 jest teraz wspólnymi następnikami i-tego następnika wierzchołka początkowego i wierzchołka końcowego
 
                  for(int j=0 ; j < kand_1.size(); ++j) {
-//ten warunek nie zadziala z kand2 trzeba zmienic
                      if(this->path_best.contains(kand_1[j]) == false && this->path_best.contains(n_first[i]) == false){
 
                          line.push_back(wykluczenie.front());
@@ -496,7 +486,6 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
                          line.push_back(wykluczenie.back());
                          wynik.push_back(line);
                          line.clear();
-//cout<<"znalazlo cos ";
                      }
 
                  }
@@ -504,16 +493,17 @@ QVector< QVector<int> > Trasa::otoczenie (QVector<int> wykluczenie, int rozmiar,
                  kand_1.clear();
                  kand_2.clear();
             }
-            rozmiar--;
-            if(rozmiar==0) return wynik;
+
+            if(rozmiar==2) return wynik;
 
 
 
     }
 
-        return wynik;
+    return wynik;
 }
 
+//FUNKCJA UŻYWANA DO WYŚWIETLANIA HISTORII TRAS
 void Trasa::aktualizuj_historie_tras(){
 
     try{
@@ -587,152 +577,144 @@ void Trasa::aktualizuj_historie_tras(){
 //    cerr<< endl;
 }
 
+
+//PIERWSZA WERSJA ALGORYTMU BAZUJĄCA NA SAMYCH ODLEGŁOŚCIACH
 void Trasa::algorithm_1(int ile_wykluczac){
-cout<<"5 ";
+
     int acc =this->dijkstra(distances); // jesli zwraca zero to brak rozwiazan lub unvalid edges
     if(acc==0) return;
     acc= this->wanted_distance - acc;
-    //
+
 
     QVector<int> Marks; //tablica oceny wszystkich potencjalnych wykluczeń
     QVector< QVector<int> > Potencials; //zbior tras do włączenia potencjalnie do trasy
-cout<<"6 ";
-    this->f_distance.push_back(acc); //aktualizacja listy rozwiązań
+
+    //aktualizacja listy rozwiązań
+    this->f_distance.push_back(acc);
     this->path_all.push_back(this->path_best);
     calc_attractiveness();
     calc_profile();
     calc_funkcja_celu();
 
-    if(acc<0)
+    if(acc<0){
+        kryterium_stopu="STOP 6 - chciwy użytkownik. ";
         return;
-    //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
+    }
 
     int iteracje=0;
     int znacznik_zmian=0;
-cout<<"7 ";
 
-//Główna pętla algorytmu
+//GŁÓWNA PĘTLA ALGORYTMU
     while( acc!= 0 && iteracje<MAX_ITERACJI && znacznik_zmian<MAX_BRAK_POPRAW){
-        //zlozonosc obliczeniowa *bum*
-        Marks.clear();
 
+        Marks.clear();
+        //stworzenie tablicy wartości dla poszczegolnych wykluczen potencjalnych
         for(int i=0; i<this->path_best.size()-ile_wykluczac; i++){
             Marks.push_back(this->calc_distance(i, i+ile_wykluczac));
         }
 
          iteracje++;
 
-//cout<<"8 ";
         int wyklucz;
+        //KRYTERIUM WYKLUCZEŃ ZALEŻNE  OD AKTUALNEJ WARTOŚCI FUNKCJI CELU
         if(acc<0){
             wyklucz=maksimum(Marks);
         }
         else{
             wyklucz= minimumMarks(Marks); //wybranie najlepszego wykluczenia - najgorsze polepszenie f. celu
         }
+
         if(Long_Term.contains(path_best[wyklucz])){
-            cerr<<"wykluczamy cos co jest zabronione";
-            continue;
-        }
-//cout<<"9 ";
-        if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
-            cerr<<"STOP 5 - wykluczone wszystkie"<<endl;
+            kryterium_stopu="STOP 4 - coś poszło nie tak. ";
             break;
         }
-//cout<<"10a ";
+
+        if(wyklucz==Marks.size()){ //warunek na brak nastepnikow
+            kryterium_stopu="STOP 5 - wykluczone wszystkie. ";
+            break;
+        }
+
 
         QVector<int> Wykluczenie; //zbudowanie vektora wykluczenia wysylanego do metody otoczenie
         for(int i=0; i<=ile_wykluczac;i++){
-
             Wykluczenie.push_back(this->path_best[wyklucz+i]);
         }
-//cout<<"10b ";
+
 
         Potencials = otoczenie(Wykluczenie, 2, ile_wykluczac); //wszystkie potencjalne zamienniki dla naszego wykluczenia
         Wykluczenie.clear();
 
         if(Potencials.size()==0){ //-warunek na brak otoczenia krawedzi
             Long_Term.push_back(path_best[wyklucz]);
-            //Marks[wyklucz]=1000000; //zabronienie dlugoterminowe na wykluczanie tej krawedzi.
             cerr<< endl<<path_best[wyklucz]<< " :taboo - brak otoczenia (0)"<<endl;
             continue;
         }
-//cout<<"11 ";
+
         QVector<int> Potencials_Marks; //ocena wszystkich zamienników pod względem polepszenia f. celu
-//wartość bezwzględna( ile brakuje + ile da wykluczenie - ile da zamiennik wykluczenia)
+            //wartość bezwzględna( ile brakuje + ile da wykluczenie - ile da zamiennik wykluczenia)
         for(int i=0; i< Potencials.size(); i++){
             Potencials_Marks.push_back(abs(acc + Marks[wyklucz]- this->calc_distance(Potencials[i])));
         }
-//cout<<"12 ";
-        int best_index = minimum(Potencials_Marks); //wybieramy tą która najbardziej zblizyla nam to ile brakuje do zera
+
+        int best_index = minimum(Potencials_Marks); //wybieramy tą która najbardziej zblizy nam f. c. do zera
 
         if(best_index==Potencials.size()){
             Long_Term.push_back(path_best[wyklucz]);
-            //Marks[wyklucz]=1000000;
-        cerr<< endl<< path_best[wyklucz]<< " :taboo - zly dobor otoczenia(1)"<<endl;
+            cerr<< endl<< path_best[wyklucz]<< " :taboo - zly dobor otoczenia(1)"<<endl;
             continue;
         }
-//cout<<"12a ";
-//cout<<endl<<Potencials.size()<<" "<<best_index<<" "<<Potencials_Marks.size()<<endl;
-        acc -= calc_distance(Potencials[best_index]);
         Potencials_Marks.clear();
-//cout<<"12b ";
+
+        //zmieniamy aktualną wartość f. c.
+        acc -= calc_distance(Potencials[best_index]);
         acc=acc + Marks[wyklucz];
 
-//zmianiamy aktualną wartość tego ile brakuje
-//warunek dodania
-//cout<<"12c ";
+//warunek dodania rozwiązania
         if(iteracje!=1 &&  abs(f_distance.back()) <= abs(acc)){
             Long_Term.push_back(path_best[wyklucz]);
-            //Marks[wyklucz]=1000000;
-cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
+            cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
             znacznik_zmian++;
             if(f_distance.back()*acc >0){
                 acc=f_distance.back();
                 continue;
             }
-//cout<<"13 ";
         }
-        else{
+        else{       //jeśli poprawa
             znacznik_zmian=0;
         }
-//cout<<path_best[wyklucz]<<" ";
-//cout<<"14 ";
 
 
-
-//blok do wstawiania krawedzi nowych
+//blok do wstawiania nowych krawedzi
         if(ile_wykluczac == 1){
         for(int i=1; i!=Potencials[best_index].size()-1; i++){
 
             path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
-//cout<<"15 ";
+
             //Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-ile_wykluczac, wyklucz+i);
             //Marks.insert(Marks.begin()+wyklucz+i,this->calc_distance(wyklucz+i, wyklucz+i+ile_wykluczac));
         }
     }
     else if(ile_wykluczac==2){
         for(int i=0; i!=Potencials[best_index].size()-1; i++){
-//cout<<"16a ";
+
             if(i==0 && Potencials[best_index].size()==2){
-//cout<<"16b1 ";
+
                 path_best.erase(path_best.begin()+wyklucz+1);
                 //Marks.erase(Marks.begin()+wyklucz+1);
                 //Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
-//cout<<"16b ";
             }
             else if(i==1){
-//cout<<"16c1 ";
+
                 path_best[wyklucz+1]=Potencials[best_index][i];
 
                 //Marks[wyklucz]=this->calc_distance(wyklucz, wyklucz+ile_wykluczac);
 //if((wyklucz+1)<Marks.size()){
                 //Marks[wyklucz+1]=this->calc_distance(wyklucz+1, wyklucz+1+ile_wykluczac);
 //}
-//cout<<"16c ";
+
         }
             else if(i==2){
-//cout<<"16d1 ";
+
                 path_best.insert(path_best.begin()+wyklucz+i,Potencials[best_index][i]);
 
 //                Marks[wyklucz+i-1]=this->calc_distance(wyklucz+i-1, wyklucz+i-1 +ile_wykluczac);
@@ -742,17 +724,15 @@ cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
 //else{
 //    Marks.push_back(this->calc_distance(wyklucz+i-1, wyklucz+i-1+ile_wykluczac));
 //}
-//cout<<"16d ";
+
             }
-//cout<<"17 ";
         }
-//cout<<"17a "   ;
     }
         if(acc!=(wanted_distance - calc_distance(path_best))){
             cerr<< "COS JEST OSTRO NIE TAK"<<endl;
             cerr<<"acc "<<acc<<" wylicozne= "<<wanted_distance<<"-"<<calc_distance(path_best)<<"="<<wanted_distance-calc_distance(path_best)<<endl;
         }
-//cout<<"18 ";
+
        // if(f_distance.back()>=abs(acc)){
             this->f_distance.push_back(acc);
             this->path_all.push_back(this->path_best);
