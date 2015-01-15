@@ -116,7 +116,10 @@ int Trasa::calc_attractiveness(int s, int e){
 int Trasa::calc_profile(QVector<int> odcinek){
     int wynik = 0;
     for(int i=0; i< odcinek.size()-1; i++){
-        wynik+=Graf.macierz_wysokosci[odcinek[i]][odcinek[i+1]];
+        if(Graf.macierz_wysokosci[odcinek[i]][odcinek[i+1]]>wanted_profile){
+            wynik+=this->wanted_profile;
+            wynik-=Graf.macierz_wysokosci[odcinek[i]][odcinek[i+1]];
+        }
     }
 
     return wynik;
@@ -127,9 +130,13 @@ int Trasa::calc_profile(QVector<int> odcinek){
 int Trasa::calc_profile(){
     int wynik = 0;
     for(int i=0; i< path_best.size()-1; i++){
-        wynik+=Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]];
+        if(Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]]>wanted_profile){
+            wynik+=this->wanted_profile;
+            wynik-=Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]];
+        }
+
     }
-    wynik = this->wanted_profile - wynik;
+    //wynik = this->wanted_profile - wynik;
     this->f_profile.push_back( wynik);
     return wynik;
 }
@@ -143,7 +150,10 @@ int Trasa::calc_profile(int s, int e){
     if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
 
     for(int i=s; i< e; i++){
-        wynik+=Graf.macierz_wysokosci[path_best[i]][path_best[i+1]];
+        if(Graf.macierz_wysokosci[this->path_best[i]][this->path_best[i+1]]>wanted_profile){
+            wynik+=this->wanted_profile;
+            wynik-=Graf.macierz_wysokosci[path_best[i]][path_best[i+1]];
+        }
     }
     return wynik;
 }
@@ -153,6 +163,7 @@ int Trasa::calc_distance(QVector<int> odcinek){
     int wynik = 0;
 
     for(int i=0; i< odcinek.size()-1; i++){
+
         wynik+=Graf.macierz_przyleglosci[odcinek[i]][odcinek[i+1]];
 
     }
@@ -188,18 +199,18 @@ int Trasa::calc_distance(int s, int e){
 
 int Trasa::calc_funkcja_celu(QVector<int> odcinek){
     int wynik = 0;
-    wynik= this->w_attractiveness*abs(calc_attractiveness(odcinek))
+    wynik= this->w_attractiveness*SKAL_ATTRACTIVENESS* abs(calc_attractiveness(odcinek))
             + this->w_distance*abs(calc_distance(odcinek))
-            + w_profile*abs(calc_profile(odcinek));
+            + w_profile*SKAL_PROFILE* abs(calc_profile(odcinek));
     return wynik;
 }
 
 int Trasa::calc_funkcja_celu(int s, int e){
     int wynik = 0;
     if(e <= s || s<0 || e>this->path_best.size()) return wynik; // sprawdzenie poprawnosci
-    wynik= this->w_attractiveness*abs(calc_attractiveness(s,e))
+    wynik= this->w_attractiveness*SKAL_ATTRACTIVENESS* abs(calc_attractiveness(s,e))
             + this->w_distance*abs(calc_distance(s,e))
-            + w_profile*abs(calc_profile(s,e));
+            + w_profile*SKAL_PROFILE* abs(calc_profile(s,e));
     return wynik;
 }
 
@@ -208,9 +219,9 @@ int Trasa::calc_funkcja_celu(int s, int e){
 //brak zabezpieczenia przed niezsumowaniem się w_(...)
 int Trasa::calc_funkcja_celu(){
     int wynik = 0;
-    wynik   = this->w_attractiveness * abs(this->f_attractiveness.back())
+    wynik   = this->w_attractiveness * SKAL_ATTRACTIVENESS* abs(this->f_attractiveness.back())
             + this->w_distance * abs(this->f_distance.back())
-            + w_profile * abs(this->f_profile.back());
+            + w_profile * SKAL_PROFILE* abs(this->f_profile.back());
     this->funkcja_celu.push_back(wynik);
     return wynik;
 }
@@ -975,7 +986,7 @@ cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
         }
         else {
             //JESLI POPRAWA
-            znacznik_zmian=0;
+            //znacznik_zmian=0;
         }
     }
 //cout<<"23a ";

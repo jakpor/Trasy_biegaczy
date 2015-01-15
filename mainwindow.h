@@ -52,6 +52,18 @@ private slots:
 
     void on_historyButton_clicked();
 
+    void on_pBetowoscSlider_valueChanged(int value);
+
+    void on_pBetonowoscBox_valueChanged(int arg1);
+
+    void on_pWysokoscSlider_valueChanged(int value);
+
+    void on_pWysokoscBox_valueChanged(int arg1);
+
+    void on_pOdlegloscSlider_valueChanged(int value);
+
+    void on_pOdlegloscBox_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     GraphView graphview;

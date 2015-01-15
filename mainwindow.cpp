@@ -388,3 +388,102 @@ void MainWindow::on_historyButton_clicked()
    pathview.trasa.aktualizuj_historie_tras();
    pathview.repaint();
 }
+
+void MainWindow::on_pBetowoscSlider_valueChanged(int value)
+{
+    ui->pBetonowoscBox->setValue(value);
+    if(value< 100 - ui->pWysokoscBox->value()){
+        ui->pOdlegloscBox->setValue(100-value-ui->pWysokoscBox->value());
+        ui->pOdlegloscSlider->setValue(ui->pOdlegloscBox->value());
+    }
+    else{
+        ui->pOdlegloscBox->setValue(0);
+        ui->pOdlegloscSlider->setValue(ui->pOdlegloscBox->value());
+        ui->pWysokoscBox->setValue(100-value);
+        ui->pWysokoscSlider->setValue(ui->pWysokoscBox->value());
+    }
+}
+
+
+void MainWindow::on_pBetonowoscBox_valueChanged(int arg1)
+{
+    ui->pBetowoscSlider->setValue(arg1);
+    if(arg1< 100 - ui->pWysokoscBox->value()){
+        ui->pOdlegloscBox->setValue(100-arg1-ui->pWysokoscBox->value());
+        ui->pOdlegloscSlider->setValue(ui->pOdlegloscBox->value());
+    }
+    else{
+        ui->pOdlegloscBox->setValue(0);
+        ui->pOdlegloscSlider->setValue(ui->pOdlegloscBox->value());
+        ui->pWysokoscBox->setValue(100-arg1);
+        ui->pWysokoscSlider->setValue(ui->pWysokoscBox->value());
+    }
+}
+
+
+
+void MainWindow::on_pWysokoscSlider_valueChanged(int value)
+{
+    ui->pWysokoscBox->setValue(value);
+    if(value< 100 - ui->pOdlegloscBox->value()){
+        ui->pBetonowoscBox->setValue(100-value-ui->pOdlegloscBox->value());
+        ui->pBetowoscSlider->setValue(ui->pBetonowoscBox->value());
+        }
+    else{
+        ui->pBetonowoscBox->setValue(0);
+        ui->pBetowoscSlider->setValue(ui->pBetonowoscBox->value());
+        ui->pOdlegloscBox->setValue(100-value);
+        ui->pOdlegloscSlider->setValue(ui->pOdlegloscBox->value());
+    }
+}
+
+
+
+void MainWindow::on_pWysokoscBox_valueChanged(int arg1)
+{
+    ui->pWysokoscSlider->setValue(arg1);
+    if(arg1< 100 - ui->pOdlegloscBox->value()){
+        ui->pBetonowoscBox->setValue(100-arg1-ui->pOdlegloscBox->value());
+        ui->pBetowoscSlider->setValue(ui->pBetonowoscBox->value());
+        }
+    else{
+        ui->pBetonowoscBox->setValue(0);
+        ui->pBetowoscSlider->setValue(ui->pBetonowoscBox->value());
+        ui->pOdlegloscBox->setValue(100-arg1);
+        ui->pOdlegloscSlider->setValue(ui->pOdlegloscBox->value());
+    }
+}
+
+
+
+void MainWindow::on_pOdlegloscSlider_valueChanged(int value)
+{
+    ui->pOdlegloscBox->setValue(value);
+    if(value< 100 - ui->pBetonowoscBox->value()){
+        ui->pWysokoscBox->setValue(100-value-ui->pBetonowoscBox->value());
+        ui->pWysokoscSlider->setValue(ui->pWysokoscBox->value());
+        }
+    else{
+        ui->pWysokoscBox->setValue(0);
+        ui->pWysokoscSlider->setValue(ui->pWysokoscBox->value());
+        ui->pBetonowoscBox->setValue(100-value);
+        ui->pBetowoscSlider->setValue(ui->pBetonowoscBox->value());
+    }
+}
+
+
+
+void MainWindow::on_pOdlegloscBox_valueChanged(int arg1)
+{
+    ui->pOdlegloscSlider->setValue(arg1);
+    if(arg1< 100 - ui->pBetonowoscBox->value()){
+        ui->pWysokoscBox->setValue(100-arg1-ui->pBetonowoscBox->value());
+        ui->pWysokoscSlider->setValue(ui->pWysokoscBox->value());
+        }
+    else{
+        ui->pWysokoscBox->setValue(0);
+        ui->pWysokoscSlider->setValue(ui->pWysokoscBox->value());
+        ui->pBetonowoscBox->setValue(100-arg1);
+        ui->pBetowoscSlider->setValue(ui->pBetonowoscBox->value());
+    }
+}

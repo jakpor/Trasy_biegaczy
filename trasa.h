@@ -5,6 +5,9 @@
 //#include <vector>
 
 #define INF 0
+#define SKAL_PROFILE 400
+#define SKAL_ATTRACTIVENESS 35
+
 enum kryterium{distances=1, attractiveness=2, profile=3};
 /************ Clasa rozwiązania***********/
 class Trasa{
