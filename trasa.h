@@ -5,35 +5,39 @@
 //#include <vector>
 
 #define INF 0
+// zmienne skalujące składowe funkcji celu tak by miały podobny priorytet
 #define SKAL_PROFILE 400
 #define SKAL_ATTRACTIVENESS 35
 
 enum kryterium{distances=1, attractiveness=2, profile=3};
 /************ Clasa rozwiązania***********/
 class Trasa{
-public:
+private:
     /************ Pola ************/
     Graph Graf;
-    //lista wynik;
-    // zbior krawędzi dołączonych do rozwiązania
-    int wierzcholek_poczatkowy; //czy będzie to zrobione w tej postaci??
-    int wierzcholek_koncowy;
 
-    //aktualnie najlepsza trasa
-    QVector <int> path_best;
-    //cała pamięć tras
-    QVector < QVector < int > > path_all;
-    QVector <int> Long_Term;
+
+    QVector <int> Long_Term; //wektor wykluczeń
 
     // Mnożniki poszczegolnych parametrów
     float w_distance;
     float w_attractiveness;
     float w_profile;
 
+public:
+
+    int wierzcholek_poczatkowy;
+    int wierzcholek_koncowy;
+
+    //wartości zadane
     int wanted_distance;
     int wanted_attractiveness;
     int wanted_profile;
 
+
+
+    QVector <int> path_best;     //aktualna trasa
+    QVector < QVector < int > > path_all;    //cała pamięć tras
     // ocena trasy wg poszczególnych kryteriów - ostatnia wartość
     QVector <int> f_distance;
     QVector <int> f_attractiveness ;
@@ -42,15 +46,13 @@ public:
 
     //potrzebuję tego do kolorowania najczęściej używanych tras
     QVector <int *> historia_tras;
+
+    // parametry przeprowadzanego algorytmu
     int MAX_ITERACJI;
     int MAX_BRAK_POPRAW;
     QString kryterium_stopu;
+    int iteracje;
 
-    // ocena wg kryteriów zbiorowych
-    //vector<??> wykluczenia // krótko, średnio i długoterminowe
-
-    // enum umożliwiający słowne wybieranie ocenianego
-    // kryterium w metodach
 
     /************ Metody ************/
     Trasa();
@@ -61,71 +63,49 @@ public:
     void copy_graf(Graph graf_in);
     void clear_result();
 
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-    int calc_funkcja_celu(QVector<int> odcinek);
-    int calc_distance(QVector<int> odcinek);
-    int calc_attractiveness(QVector<int> odcinek);
-    int calc_profile(QVector<int> odcinek);
-//calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
+//aktualizacja funkcji celu i poszczególnych składowych na podstawie aktualnego path_best
     int calc_funkcja_celu();
     int calc_distance();
     int calc_attractiveness();
     int calc_profile();
-    //calc_<name> dobre dla liczenia po raz pierwszy f() lub dla odcinka f(odcinek)
-        int calc_funkcja_celu(int s, int e);
-        int calc_distance(int s, int e);
-        int calc_attractiveness(int s, int e);
-        int calc_profile(int s, int e);
 
+//oszacowanie wartości funkcji celu i poszczególnych składowych dla odcinka
+    int calc_funkcja_celu(QVector<int> odcinek);
+    int calc_distance(QVector<int> odcinek);
+    int calc_attractiveness(QVector<int> odcinek);
+    int calc_profile(QVector<int> odcinek);
+
+//oszacowanie wartości funkcji celu i poszczególnych składowych dla fragmentu wektora path_best
+    int calc_funkcja_celu(int s, int e);
+    int calc_distance(int s, int e);
+    int calc_attractiveness(int s, int e);
+    int calc_profile(int s, int e);
+
+//ustawianie parametrów algorytmu przed uruchomieniem
     void set_parameters(int p_distance, int p_attractiveness, int p_profile);
     void set_edges(int start, int end);
     void set_wanted(int dist, int att, int prof);
-    //odpalaj po wykonaniu całego algorytmu, ale przed wizualizacją
+//aktualizacja historii tras do wyświetlenia po wykonaniu
     void aktualizuj_historie_tras();
 
-    // tworzenie pustego rozwiązania
-        //trasa(wierzcholek);
-    // tworzenie rozwiązania przechodzącego przez dany wierzchołek
-        //trasa(trasa);
-    // nie wiem czy będzie potrzebna, można stworzyć coś o podobnej konstrukcji
-    // do wykorzystania przy implementacji wykluczeń
-        //lista/trasa rozwizanie_poczatkowe(){
-    //generowanie rozwiązania począktkowego przy założeniu losowego rozwiązania
-        //wierzcholek= rand();
-        //trasa::trasa(wiercholek)
-
-    // inna wersja rozważa wywołanie tej funkcji z argumentem mówiącym
-    //czy generujemy randomową trasę, czy trasę minimalną
-
-    int dijkstra(kryterium type);
-    // uzywana w kontruktorze
-     QVector<int> nastepniki(int x);
-     int minimum(unsigned int * temp,unsigned int * perm, int size);
-     int minimum(QVector<int> temp);
-     int minimumMarks(QVector<int> temp);
-     int maksimum(QVector<int> temp);
-     QVector<int> build_result(int * history, int start, int end);
-         //wyznaczenie nastepnikow wierzcholka x, n -rozmiar macierzy A
-
-
     /****** Metody algorytmu *******/
-     void algorithm_1(int ile_wykluczac);
-     void algorithm_2(int ile_wykluczac);
-        //lista/trasa skroc(kryterium, wykluczenie);
-        //lista/trasa wydluz(kryterium, wkluczenie);
-        //wykluczenie/ void ocena_trasy(kryterium);
-    // zmienia tablice wykluczeń lub zwraca wykluczenie, lub wywołuje
-    // bezposrednio metody skroc, wydluz
-QVector< QVector<int> > otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi);
-    // wyznacza otoczenie rozwiązania, w kierunku którego chcemy
-    //podążać i wybrać z niego rozwiązanie
-        //bool kryterium_stopu( argumenty do kryt stopu);
-    // do ustalenia dzialanie tej metody
-        //wykluczenie wybor_wykluczenia(kryterium, ...); // ...
+
+     int dijkstra(kryterium type);                      //uzywana do generacji rozwiązania początkowego
+     int minimum(unsigned int * temp,unsigned int * perm, int size); //minimum dla dijkstry
+     QVector<int> build_result(int * history, int start, int end);   // budowanie rozwiązania algorytmu dijkstry
+
+     QVector<int> nastepniki(int x);                    //wyznaczenie nastepnikow wierzcholka x
+     int minimum(QVector<int> temp);                                 // minimum uniwersalne
+     int minimumMarks(QVector<int> temp);                            // minimum dla oceny wyluczeń
+     int maksimumMarks(QVector<int> temp);                           // maksimum dla oceny wyluczeń
+     QVector< QVector<int> > otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi); //otoczenie zabranianego fragmentu
+
+    // poszczególne wersja algorytmu
+     void algorithm_1(int ile_wykluczac);   // wyspecjalizowana do poczukiwania konkretnej odległości w trasie
+     void algorithm_2(int ile_wykluczac);   //
+     void algorithm_3(int ile_wykluczac);   //
+
 };
-
-
-
 
 #endif // TRASA
 

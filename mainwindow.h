@@ -47,9 +47,6 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void on_start_textChanged(const QString &arg1);
-    void on_end_textChanged(const QString &arg1);
-
     void on_historyButton_clicked();
 
     void on_pBetowoscSlider_valueChanged(int value);

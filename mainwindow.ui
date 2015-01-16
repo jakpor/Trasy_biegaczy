@@ -540,7 +540,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>30</y>
+        <y>10</y>
         <width>271</width>
         <height>241</height>
        </rect>
@@ -696,7 +696,7 @@
       <property name="geometry">
        <rect>
         <x>320</x>
-        <y>30</y>
+        <y>10</y>
         <width>441</width>
         <height>151</height>
        </rect>
@@ -913,15 +913,15 @@
       <property name="geometry">
        <rect>
         <x>320</x>
-        <y>210</y>
+        <y>170</y>
         <width>441</width>
-        <height>151</height>
+        <height>131</height>
        </rect>
       </property>
       <property name="title">
        <string>Priorytety parametrów</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -1103,7 +1103,7 @@
       <property name="geometry">
        <rect>
         <x>560</x>
-        <y>380</y>
+        <y>420</y>
         <width>161</width>
         <height>23</height>
        </rect>
@@ -1142,9 +1142,9 @@
       <property name="geometry">
        <rect>
         <x>320</x>
-        <y>420</y>
+        <y>460</y>
         <width>421</width>
-        <height>151</height>
+        <height>101</height>
        </rect>
       </property>
       <property name="title">
@@ -1215,31 +1215,158 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLineEdit" name="stop">
+     <widget class="QGroupBox" name="groupBox_13">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>440</y>
-        <width>241</width>
-        <height>20</height>
+        <x>320</x>
+        <y>310</y>
+        <width>441</width>
+        <height>101</height>
        </rect>
       </property>
-      <property name="text">
-       <string/>
+      <property name="title">
+       <string>Wybór wersji algorytmu</string>
       </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>401</width>
+         <height>65</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="horizontalSpacing">
+         <number>6</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="alg1">
+          <property name="text">
+           <string>algorytm 1</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>- bazuje tylko na odległościach</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="alg2">
+          <property name="text">
+           <string>algorytm 2</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_22">
+          <property name="text">
+           <string>- dopuszcza pogarszanie się rozwiązań</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QRadioButton" name="alg3">
+          <property name="text">
+           <string>allgorytm 3</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_23">
+          <property name="text">
+           <string>- zawsze wychodzi od dotychczasowej wartości minimalnej</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
-     <widget class="QLabel" name="label_41">
+     <widget class="QGroupBox" name="groupBox_14">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>410</y>
-        <width>161</width>
-        <height>20</height>
+        <x>10</x>
+        <y>380</y>
+        <width>301</width>
+        <height>181</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Warunek stopu który zadziałał:</string>
+      <property name="title">
+       <string>Komunikaty algorytmu</string>
       </property>
+      <widget class="QLineEdit" name="stop">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>241</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_41">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>161</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Warunek stopu który zadziałał:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="stop_i">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>241</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_44">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>70</y>
+         <width>161</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Liczba iteracji algorytmu:</string>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_4">
@@ -1450,4 +1577,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

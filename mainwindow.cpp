@@ -328,7 +328,15 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.MAX_ITERACJI=ui->iteracje->value();
         pathview.trasa.MAX_BRAK_POPRAW=ui->czekanie->value();
 
-        pathview.trasa.algorithm_2(2);
+        if(ui->alg1->isChecked()){
+            pathview.trasa.algorithm_1(2);
+        }
+        else if(ui->alg2->isChecked()){
+            pathview.trasa.algorithm_2(2);
+        }
+        else if(ui->alg3->isChecked()){
+             pathview.trasa.algorithm_3(2);
+        }
 
         //wypisz najlepszą trasę
 //        cout<<"Koncowa trasa to: ";
@@ -346,7 +354,8 @@ void MainWindow::on_liczButton_clicked(){
                     }
             cout<<endl;
         }
-//Tu trzeba zmienić wyznaczanie wartosci na aktualne wartości
+
+
         r=pathview.trasa.f_distance.back();
         ui->result->setText(QString::number(r));
         r=pathview.trasa.f_profile.back();
@@ -357,6 +366,7 @@ void MainWindow::on_liczButton_clicked(){
         ui->funckja_celu->setText(QString::number(r));
 
         ui->stop->setText(pathview.trasa.kryterium_stopu);
+        ui->stop_i->setText(QString::number(pathview.trasa.iteracje));
 
         //po wykonaniu algorytmu aktualizuje historie
        // pathview.trasa.aktualizuj_historie_tras();
@@ -371,16 +381,6 @@ void MainWindow::on_liczButton_clicked(){
         //po odkomentowaniu automatycznie będzie klikało nam na przycisk z historią - nie wyrzucajmy przycisku :)
         //ui->historyButton->click();
     }
-
-void MainWindow::on_start_textChanged(const QString &arg1)
-{
-    //pathview.trasa.clear_result();
-}
-
-void MainWindow::on_end_textChanged(const QString &arg1)
-{
-    //pathview.trasa.clear_result();
-}
 
 void MainWindow::on_historyButton_clicked()
 {
