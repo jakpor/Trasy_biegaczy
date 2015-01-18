@@ -39,7 +39,7 @@ void PathView::paintEvent(QPaintEvent *event)
     /** historia tras **/
     pen.setStyle(Qt::SolidLine);
     pen.setColor(Qt::green);
-    pen.setWidth(8);
+    pen.setWidth(7);
     painter.setPen(pen);
     int kolor = 0;
     for(int i = 1; i<(trasa.historia_tras.size()); i++){
@@ -58,7 +58,7 @@ void PathView::paintEvent(QPaintEvent *event)
     /** aktualna trasa **/
     pen.setStyle(Qt::SolidLine);
     pen.setColor(Qt::red);
-    pen.setWidth(3);
+    pen.setWidth(4);
     painter.setPen(pen);
     for(int i = 0; i<(trasa.path_best.size()-1); i++){
         //używam funkcji at, bo jest szybsza i read only
@@ -80,12 +80,33 @@ void PathView::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::black);
     painter.setBrush(Qt::green);
     painter.setPen( pen );
+    if(graph.liczba_wierzcholkow<200){
         for(int i = 0; i<(graph.liczba_wierzcholkow); i++){
             //zielone - minimum, czerwone - maksimum
-            painter.setBrush(QColor::fromHsv(((120/(graph.min_wysokosc-graph.max_wysokosc))*graph.lista_wysokosci[i]-(120/(graph.min_wysokosc-graph.max_wysokosc)*graph.max_wysokosc)),255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+            if((graph.min_wysokosc-graph.max_wysokosc)!=0){
+                kolor = ((120/(graph.min_wysokosc-graph.max_wysokosc))*graph.lista_wysokosci[i]-(120/(graph.min_wysokosc-graph.max_wysokosc)*graph.max_wysokosc));
+            }
+            else{
+                kolor = 120;
+            }
+            painter.setBrush(QColor::fromHsv(kolor,255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
             painter.drawEllipse(graph.lista_wierzcholkow[i],r,r);
             painter.drawText(QPoint(graph.lista_wierzcholkow[i].x()-r/2, graph.lista_wierzcholkow[i].y()+r/2),QString::number(i)); //cyferki
         }
+    }
+    else{
+        for(int i = 0; i<(graph.liczba_wierzcholkow); i++){
+            //zielone - minimum, czerwone - maksimum
+            if((graph.min_wysokosc-graph.max_wysokosc)!=0){
+                kolor = ((120/(graph.min_wysokosc-graph.max_wysokosc))*graph.lista_wysokosci[i]-(120/(graph.min_wysokosc-graph.max_wysokosc)*graph.max_wysokosc));
+            }
+            else{
+                kolor = 120;
+            }
+            painter.setBrush(QColor::fromHsv(kolor,255, 255, 255)); //H, S, V, A (przezroczystość), H - 0-360, SVA - 0-255
+            painter.drawEllipse(graph.lista_wierzcholkow[i],r,r);
+        }
+    }
 
     /** Początek i koniec **/
         pen.setStyle(Qt::SolidLine);

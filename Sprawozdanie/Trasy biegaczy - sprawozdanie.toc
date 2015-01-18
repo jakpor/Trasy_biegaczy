@@ -1,18 +1,33 @@
 \select@language {polish}
-\contentsline {section}{\numberline {1}Abstract}{2}{section.1}
-\contentsline {section}{\numberline {2}Opis problemu}{2}{section.2}
-\contentsline {section}{\numberline {3}Parametry modelu}{2}{section.3}
-\contentsline {subsection}{\numberline {3.1}Uproszczenia i uog\IeC {\'o}lnienia}{2}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Parametry i zale\IeC {\.z}no\IeC {\'s}ci}{2}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}Posta\IeC {\'c} rozwi\IeC {\k a}zania}{2}{subsection.3.3}
-\contentsline {subsection}{\numberline {3.4}Funkcja celu}{2}{subsection.3.4}
-\contentsline {subsection}{\numberline {3.5}Ograniczenia}{3}{subsection.3.5}
-\contentsline {section}{\numberline {4}Implementacja algorytmu}{3}{section.4}
-\contentsline {subsection}{\numberline {4.1}Posta\IeC {\'c} danych}{3}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Struktury danych}{4}{subsection.4.2}
-\contentsline {subsubsection}{\numberline {4.2.1}Klasa graph}{4}{subsubsection.4.2.1}
-\contentsline {subsection}{\numberline {4.3}Interface u\IeC {\.z}ytkownika}{4}{subsection.4.3}
-\contentsline {section}{\numberline {5}Testowanie algorytmu}{5}{section.5}
-\contentsline {subsection}{\numberline {5.1}Test 1}{5}{subsection.5.1}
-\contentsline {section}{\numberline {6}Analiza efektywno\IeC {\'s}ci}{5}{section.6}
-\contentsline {section}{\numberline {7}Podsumowanie}{5}{section.7}
+\contentsline {section}{\numberline {1}Opis problemu}{2}{section.1}
+\contentsline {section}{\numberline {2}Parametry modelu}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Funkcja celu}{2}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Uproszczenia i uog\IeC {\'o}lnienia}{2}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Parametry i zale\IeC {\.z}no\IeC {\'s}ci}{2}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Posta\IeC {\'c} rozwi\IeC {\k a}zania}{3}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Ograniczenia}{3}{subsection.2.5}
+\contentsline {section}{\numberline {3}Algorytm Tabu Search}{3}{section.3}
+\contentsline {subsection}{\numberline {3.1}Schemat dzia\IeC {\l }ania}{3}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Lista Tabu}{3}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Kryterium aspiracji}{3}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Warunku stopu}{3}{subsection.3.4}
+\contentsline {section}{\numberline {4}Implementacja algorytmu}{4}{section.4}
+\contentsline {subsection}{\numberline {4.1}Posta\IeC {\'c} danych}{4}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Struktury danych}{5}{subsection.4.2}
+\contentsline {subsubsection}{\numberline {4.2.1}Klasa graph}{5}{subsubsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2}Klasa trasa}{6}{subsubsection.4.2.2}
+\contentsline {subsection}{\numberline {4.3}Interface u\IeC {\.z}ytkownika}{6}{subsection.4.3}
+\contentsline {subsubsection}{\numberline {4.3.1}Generowanie grafu}{6}{subsubsection.4.3.1}
+\contentsline {subsubsection}{\numberline {4.3.2}Wizualizacja grafu}{6}{subsubsection.4.3.2}
+\contentsline {subsubsection}{\numberline {4.3.3}Szukanie trasy}{7}{subsubsection.4.3.3}
+\contentsline {subsubsection}{\numberline {4.3.4}Wizualizacja trasy}{7}{subsubsection.4.3.4}
+\contentsline {subsubsection}{\numberline {4.3.5}Dane dodatkowe dotycz\IeC {\k a}ce algorytmu}{7}{subsubsection.4.3.5}
+\contentsline {section}{\numberline {5}Testowanie algorytmu}{9}{section.5}
+\contentsline {subsection}{\numberline {5.1}Test 1 -- Badanie znajdywania rozwi\IeC {\k a}zania algorytmu dla ma\IeC {\l }ych problem\IeC {\'o}w obliczeniowych}{9}{subsection.5.1}
+\contentsline {subsubsection}{\numberline {5.1.1}Wersja 1}{10}{subsubsection.5.1.1}
+\contentsline {subsubsection}{\numberline {5.1.2}Wersja 2}{10}{subsubsection.5.1.2}
+\contentsline {subsubsection}{\numberline {5.1.3}Wersja 3}{10}{subsubsection.5.1.3}
+\contentsline {subsection}{\numberline {5.2}Test 2 -- badanie dzia\IeC {\l }ania algorytmu dla nieistniej\IeC {\k a}cego rozwi\IeC {\k a}zania optymalnego}{11}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Test 3 -- badanie dzia\IeC {\l }ania algorytmu dla du\IeC {\.z}ej instancji problemu}{11}{subsection.5.3}
+\contentsline {section}{\numberline {6}Analiza efektywno\IeC {\'s}ci}{11}{section.6}
+\contentsline {section}{\numberline {7}Podsumowanie}{11}{section.7}

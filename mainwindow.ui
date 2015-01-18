@@ -30,7 +30,7 @@
      <number>0</number>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_1">
      <attribute name="title">
@@ -934,7 +934,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_17">
           <property name="text">
-           <string>Jak istotna odległość</string>
+           <string>Jak istotna odległość?</string>
           </property>
          </widget>
         </item>
@@ -991,7 +991,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_18">
           <property name="text">
-           <string>Jak istotna nawierzchnia</string>
+           <string>Jak istotna nawierzchnia?</string>
           </property>
          </widget>
         </item>
@@ -1045,7 +1045,7 @@
         <item row="2" column="0">
          <widget class="QLabel" name="label_19">
           <property name="text">
-           <string>Jak istotna zmiana wysokości</string>
+           <string>Jak istotna zmiana wysokości?</string>
           </property>
          </widget>
         </item>
@@ -1227,7 +1227,7 @@
       <property name="title">
        <string>Wybór wersji algorytmu</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1280,7 +1280,7 @@
         <item row="2" column="0">
          <widget class="QRadioButton" name="alg3">
           <property name="text">
-           <string>allgorytm 3</string>
+           <string>algorytm 3</string>
           </property>
           <attribute name="buttonGroup">
            <string notr="true">buttonGroup</string>
@@ -1393,7 +1393,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>20</y>
+        <y>30</y>
         <width>391</width>
         <height>271</height>
        </rect>
@@ -1402,8 +1402,8 @@
      <widget class="QLabel" name="label_10">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>0</y>
+        <x>60</x>
+        <y>10</y>
         <width>310</width>
         <height>21</height>
        </rect>
@@ -1416,7 +1416,7 @@
       <property name="geometry">
        <rect>
         <x>410</x>
-        <y>20</y>
+        <y>30</y>
         <width>381</width>
         <height>271</height>
        </rect>
@@ -1425,8 +1425,8 @@
      <widget class="QLabel" name="label_11">
       <property name="geometry">
        <rect>
-        <x>469</x>
-        <y>0</y>
+        <x>470</x>
+        <y>10</y>
         <width>311</width>
         <height>20</height>
        </rect>
@@ -1439,7 +1439,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>320</y>
+        <y>330</y>
         <width>391</width>
         <height>271</height>
        </rect>
@@ -1448,8 +1448,8 @@
      <widget class="QLabel" name="label_12">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>300</y>
+        <x>40</x>
+        <y>310</y>
         <width>333</width>
         <height>13</height>
        </rect>
@@ -1462,7 +1462,7 @@
       <property name="geometry">
        <rect>
         <x>410</x>
-        <y>320</y>
+        <y>330</y>
         <width>381</width>
         <height>271</height>
        </rect>
@@ -1472,7 +1472,7 @@
       <property name="geometry">
        <rect>
         <x>450</x>
-        <y>300</y>
+        <y>310</y>
         <width>333</width>
         <height>13</height>
        </rect>

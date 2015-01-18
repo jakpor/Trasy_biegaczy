@@ -61,30 +61,17 @@
 \tableofcontents
 \newpage
 
-\section{Abstract}
-Sprawozdanie piszemy w formie bezosobowej: wykonano, zrobiono, obliczono
-
-
-
 \section{Opis problemu}
-Podczas planowania trasy biegowej często nie chcemy dobiec do danego punktu najkrótszą możliwą drogą, lecz drogą o określonej długości. Jednocześnie jeżeli teren po którym biegamy jest pagórkowaty możemy unikać zmian wysokości, bądź wręcz przeciwnie ich oczekiwać. Równocześnie wiedząc o szkodliwości biegania po betonie możemy chcieć zminimalizować ilość dróg betonowych na naszej trasie.
+Zadnie projektowania trasy biegowej to zadanie poszukiwania trasy do biegu w mieście. Trasa taka powinna łączyć ze sobą 2 punkty na mapie i jednocześnie uwzględniać preferencje biegacza odnośnie tej trasy. W problemie przyjęliśmy, że kryteriami oceny trasy jest jej długość, procentowa ilość odcinków betonowych na trasie oraz różnica wysokości podczas biegu.
+
+
+%\section{Opis problemu}
+%Podczas planowania trasy biegowej często nie chcemy dobiec do danego punktu najkrótszą możliwą drogą, lecz drogą o określonej długości. Jednocześnie jeżeli teren po którym biegamy jest pagórkowaty możemy unikać zmian wysokości, bądź wręcz przeciwnie ich oczekiwać. Równocześnie wiedząc o szkodliwości biegania po betonie możemy chcieć zminimalizować ilość dróg betonowych na naszej trasie.
 
 \section{Parametry modelu}
-Celem algorytmu jest znalezienie optymalnej trasy o długości najbardziej zbliżonej do zadanej przez użytkownika z uwzględnieniem parametru wysokości oraz ilości betonu na trasie biegu.
-
-\subsection{Uproszczenia i uogólnienia}
-W trakcie implementacji algorytmu przyjęto założenie, że badany graf jest grafem planarnym, który dobrze opisuje układ dróg w mieście. Algorytm przybliża długości dróg do linii prostych, nie uwzględniając zakrętów na trasie.
-Równocześnie przyjęto, że atrakcyjność danej trasy zależy wyłącznie od różnicy wysokości na trasie oraz od ilości dróg asfaltowych na trasie.
-
-\subsection{Parametry i zależności}
-Głównymi parametrami trasy jest mapa krawędzi, po których może przebiegać trasa. Zawiera ona jednocześnie informacje o wysokości w każdym węźle grafu oraz o rodzaju nawierzchni.
-
-Do parametrów algorytmu zaliczamy również zadaną przez użytkownika odległość orza preferencje własne dotyczące trasy.
-
-\subsection{Postać rozwiązania}
-Rozwiązaniem naszego problemu jest uporządkowana lista krawędzi grafu, która osiąga minimalną wartość funkcji celu.
+Mapa miasta jest reprezentowana jako graf, na którym wierzchołki to skrzyżowania dróg, a krawędzie są odcinkami trasy. Celem algorytmu jest znalezienie minimum globalnego funkcji celu wyrażonej ogólnym wzorem:
 \subsection{Funkcja celu}
-Minimalizowano funkcję celu problemu poszukiwania optymalnej trasy biegowej, która wygląda następująco:
+
 \begin{equation}
 	f(d,h,b) = 
 	w_1 \left|\overline{d} - \sum\limits_{i=1}^{n} d_{i} \right| + 
@@ -100,15 +87,55 @@ $\overline{h}$ -- zadana wartość różnicy wysokości na każdej krawędzi\\
 $\overline{b}$ -- zadana ilość dróg o nawierzchni betonowej w \% \\
 $w_1, w_2, w_3$ -- wagi dobierane przez użytkownika
 
+
+\subsection{Uproszczenia i uogólnienia}
+W trakcie implementacji algorytmu przyjęto założenie, że badany graf jest grafem planarnym, który dobrze opisuje układ dróg w mieście. Algorytm przybliża długości dróg do linii prostych, nie uwzględniając zakrętów na trasie.
+Równocześnie przyjęto, że atrakcyjność danej trasy zależy wyłącznie od różnicy wysokości na trasie oraz od ilości dróg asfaltowych na trasie.
+
+\subsection{Parametry i zależności}
+Głównymi parametrami trasy jest mapa krawędzi, po których może przebiegać trasa. Zawiera ona informacje o odległościach pomiędzy sąsiednimi wierzchołkami, wysokości w każdym węźle grafu oraz o rodzaju nawierzchni.
+
+Do parametrów algorytmu zaliczamy również zadaną przez użytkownika odległość, preferencje własne dotyczące trasy oraz wagi każdego z parametrów.
+
+\subsection{Postać rozwiązania}
+Rozwiązaniem naszego problemu jest uporządkowana lista krawędzi grafu, która osiąga minimalną wartość funkcji celu.
+
+
 \subsection{Ograniczenia}
+Podczas implementacji algorytmu przyjęliśmy kilka niezbędnych ograniczeń
 \begin{enumerate}
 \item[a)] Biegacz nie przebiega dwukrotnie po tej samej drodze.
-\item[b)] Maksymalna długość trasy biegu wynosi 1000000 jednostek (metrów). Jest to ograniczenie obliczeniowe algorytmu
-\item[c)] 
+\item[b)] Maksymalna długość trasy biegu wynosi 1000000 jednostek (metrów). Jest to ograniczenie obliczeniowe algorytmu.
+\item[c)] Maksymalna ilość iteracji algorytmu nie może przekroczyć 1000.
+\item[d)] 
+\end{enumerate}
+
+
+\section{Algorytm Tabu Search}
+Algorytm Tabuu Search, nazywany również algorytmem z zabronieniami jest algorytmem poszukiwania rozwiązania przybliżonego, który pozwala na ominięcie minimów lokalnych poprzez zastosowanie Listy Tabu (LT).
+\subsection{Schemat działania}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=150mm]{./ilustracje/taboo.png}
+	\caption{Schemat blokowy algorytmu Tabu Search}
+\end{figure}
+\subsection{Lista Tabu}
+Lista zabronionych ruchów - długoterminowa (uwalniana tylko przez kryterium aspiracji) i któtkoterminowa (uwalniana zarówno przez kryterium aspiracji jak i przez czas).
+
+\subsection{Kryterium aspiracji}
+Pozwala przy spełnieniu pewnych warunków na odrzucenie zabronienia i wykonanie ruchu.
+
+\subsection{Warunku stopu}
+\begin{enumerate}
+\item KZ1:
+\item KZ2:
+\item KZ3:
+\item KZ4: Algorytm nie znajduje w sąsiedztwie żadnych rozwiązań polepszających funkcję celu, które nie zostały już wcześniej sprawdzone.
+\item KZ5:
 \end{enumerate}
 
 \section{Implementacja algorytmu}
-Algorytm Taboo Search
+Algorytm został zaprogramowany w środowisku QtCreator w języku C++. Środowisko to pozwala na szybkie obliczenia (wymagane przy dużym rozmiarze problemu) oraz na łatwą wizualizacje wygenerowanych wyników.
 \subsection{Postać danych}
 Dane w trakcie wykonywania algorytmu są przechowywane w kilku macierzach przyległości. Program w celu rozpoczęcia pracy potrzebuje 7 plików wejściowych z kolejnymi strukturami danych:
 \begin{enumerate}
@@ -160,39 +187,100 @@ Macierz kwadratowa przeskalowanych odległości między wierzchołkami
 \subsection{Struktury danych}
 \subsubsection{Klasa graph}
 Klasa graph opisuje w pełni wszystkie połączenia i wierzchołki w badanym grafie.
+\subsubsection{Klasa trasa}
+Klasa trasa wraz z zaimplementowanymi metodami realizuje w całości algorytm Taboo Search.
 
 \subsection{Interface użytkownika}
-Podczas pracy programu użytkownik ma pełną kontrolę nad przebiegiem algorytmu. W pierwszym oknie możliwe jest wczytanie znanej mapy z pliku lub wygenerowanie nowej mapy zgodnie z przyjętymi parametrami.
+Podczas pracy programu użytkownik ma pełną kontrolę nad wyborem parametrów algorytmu. 
+
+\subsubsection{Generowanie grafu}
+Program pozwala użytkownikowi na wygenerowanie dowolnej mapy i automatyczny zapis jej do plików, jak i również wczytanie mapy z plików. Użytkownik nie musi samodzielnie wprowadzać danych dotyczących każdego wierzchołka, lecz może skorzystać z gotowych funkcji generujących mapy o zadanych właściwościach -- na przykład miasto w dolinie, czy prostopadła siatka dróg betonowych.
+
 \begin{figure}[!h]
 	\centering
-	\includegraphics[height=110mm]{./ilustracje/screen1.png}
-	\caption{Zakładka pozwalająca na edycję mapy.}
+	\includegraphics[height=120mm]{./ilustracje/screen1.png}
+	\caption{Zakładka pozwalająca na generowanie mapy}
 \end{figure}
 
-Następnie po wygenerowaniu lub wczytaniu mapy możemy dokonać jej podglądu.
-Drogi pokryte betonem zaznaczono linią przerywaną, a ścieżki bardzo atrakcyjne dla biegacza linią ciągłą.
-Kolory wierzchołków oznaczają względną wysokość danego wierzchołka. Wierzchołki zielone są niżej, a wierzchołki czerwone są wyżej na mapie.
+\subsubsection{Wizualizacja grafu}
+Wygenerowany lub wczytany graf zostaje automatycznie wizualizowany w następnej zakładce. Drogi pokryte betonem zaznaczono linią przerywaną, a ścieżki bardziej atrakcyjne dla biegacza linią ciągłą.
+Kolory wierzchołków oznaczają względną wysokość danego wierzchołka. Wierzchołki zielone są niżej, a wierzchołki czerwone wyżej na mapie.
 \begin{figure}[!h]
 	\centering
-	\includegraphics[height=110mm]{./ilustracje/screen2.png}
-	\caption{Zakładka pozwalająca podgląd mapy.}
+	\includegraphics[height=80mm]{./ilustracje/screen2.png}
+	\caption{Wizualizacja przykładowego grafu}
 \end{figure}
 
-Kolejną zakładką jest wybór docelowych opcji trasy. Możemy tu wybrać jaka ma być długość trasy, ile na trasie ma być krawędzi betonowych oraz jak bardzo pochyłą chcemy naszą trasę. Następnie po kliknięciu na przycisk ,,Wygeneruj najlepszą trasę!'' program generuje trasę, którą możemy zobaczyć na zakładce 4.
+\subsubsection{Szukanie trasy}
+Kolejna zakładka pozwala na wybór opcji poszukiwanej trasy. Możemy tu wybrać jaka ma być długość trasy, ile na trasie ma być krawędzi betonowych oraz jak duże pochyłości są jeszcze akceptowalne. Dodatkowo możliwy jest wybór różnych wersji algorytmu. Następnie po kliknięciu na przycisk ,,Wygeneruj najlepszą trasę!'' program generuje trasę najlepiej odpowiadającą wybranym parametrom.
 \begin{figure}[!h]
 	\centering
 	\includegraphics[height=110mm]{./ilustracje/screen3.png}
-	\caption{Zakładka pozwalająca na wybór parametrów do algorytmu.}
+	\caption{Wybór parametrów trasy}
 \end{figure}
-W zakładce ,,Wizualizacja trasy'' możemy zobaczyć na czerwono zaznaczoną trasę optymalną obliczona przez algorytm. W odcieniach szarości zaznaczone są krawędzie, po których algorytm ,,chodził''. Im ciemniejsza krawędź tym częściej algorytm znajdował się na niej.
+
+\subsubsection{Wizualizacja trasy}
+W zakładce ,,Wizualizacja trasy'' możemy zobaczyć na czerwono zaznaczoną trasę optymalną obliczona przez algorytm. Po kliknięciu na przycisk ,, Pokaż historię trasy'' program zwizualizuje w odcieniach szarości krawędzie, po których algorytm ,,chodził''. Im ciemniejsza krawędź tym częściej algorytm znajdował się na niej. Pozwala to na łatwe podejrzenie działania algorytmu.
 \begin{figure}[!h]
 	\centering
-	\includegraphics[height=110mm]{./ilustracje/screen3.png}
+	\includegraphics[height=80mm]{./ilustracje/screen4.png}
 	\caption{Zakładka ,,Wizualizacja trasy'' wraz z wyświetlonym przykładowym rozwiązaniem i historią przebiegu.}
+\end{figure}
+\subsubsection{Dane dodatkowe dotyczące algorytmu}
+Ostatnia zakładka programu to ,,Wykresy''. Po wykonaniu algorytmu program generuje wykresy zależności każdej ze składowych funkcji celu oraz samej funkcji celu od numeru iteracji.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=80mm]{./ilustracje/screen5.png}
+	\caption{Przykładowe wykresy wygenerowane po realizacji algorytmu}
 \end{figure}
 
 \section{Testowanie algorytmu}
-\subsection{Test 1}
+\subsection{Test 1 -- Badanie znajdywania rozwiązania algorytmu dla małych problemów obliczeniowych}
+Test 1 polega na badaniu zachowania algorytmu podczas wyszukiwania drogi o długości 392 między odcinkami 53 i 57 na grafie planarnym o rozmiarze 10x10 ze wszystkimi możliwymi połączeniami. Droga minimalna między wierzchołkami istnieje i jej przykładowa realizacja jest przedstawiona na rysunku \ref{test1_0}.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=70mm]{./ilustracje/test10.png}
+	\caption{Przykładowa realizacja trasy optymalnej od długości 392 }
+	\label{test1_0}
+\end{figure}
+W celu utrudnienia zadania optymalizacji w teście wykluczono wpływ betonu na wyszukiwanie, a różnica wysokości powinna być jak najmniejsza.
+\subsubsection{Wersja 1}
+
+\subsubsection{Wersja 2}
+Algorytm w wersji 2 posiada element losowości, lecz jednym z jego rozwiązań jest rozwiązanie przedstawione na rysunku \ref{test1_2}.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=20mm]{./ilustracje/test12.png}
+	\caption{Wynik algorytmu w wersji 2 wraz z zaznaczonym przebiegiem algorytmu}
+	\label{test1_2}
+\end{figure}
+Algorytm osiągnął wynik po 7 iteracjach i zatrzymał się poprzez nie znalezienie w sąsiedztwie lepszych rozwiązań. Wykresy obrazujące rozwiązanie algorytmu przedstawione są na rysunku \ref{test1_graf2}.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[height=70mm]{./ilustracje/test12graf.png}
+	\caption{Wynik algorytmu w wersji 2 wraz z zaznaczonym przebiegiem algorytmu}
+	\label{test1_graf2}
+\end{figure}
+
+\subsubsection{Wersja 3}
+Algorytm w wersji 3 posiada element losowości, lecz jednym z jego rozwiązań jest rozwiązanie przedstawione na rysunku \ref{test1_3}.
+\begin{figure}[!h]
+	\centering
+	5\includegraphics[height=20mm]{./ilustracje/test12.png}
+	\caption{Wynik algorytmu w wersji 2 wraz z zaznaczonym przebiegiem algorytmu}
+	\label{test1_3}
+\end{figure}
+Algorytm osiągnął wynik po 7 iteracjach i zatrzymał się poprzez nie znalezienie w sąsiedztwie lepszych rozwiązań. Wykresy obrazujące rozwiązanie algorytmu przedstawione są na rysunku \ref{test1_graf3}.
+\begin{figure}[!h]
+	\centering
+	%\includegraphics[height=70mm]{./ilustracje/test12graf.png}
+	\caption{Wynik algorytmu w wersji 2 wraz z zaznaczonym przebiegiem algorytmu}
+	\label{test1_graf3}
+\end{figure}
+
+\subsection{Test 2 -- badanie działania algorytmu dla nieistniejącego rozwiązania optymalnego}
+
+\subsection{Test 3 -- badanie działania algorytmu dla dużej instancji problemu}
 
 \section{Analiza efektywności}
 \section{Podsumowanie}
