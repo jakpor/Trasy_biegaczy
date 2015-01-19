@@ -1071,25 +1071,25 @@ void Trasa::algorithm_3(int ile_wykluczac){
                cerr<<endl<<path_best[wyklucz-1]<<": untabooed"<<endl;
             }
 //BLOK BADAJĄCY CHARAKTER ZMIAN I DECYDUJĄCY O LOSIE ROZWIĄZANIA
-                if(iteracje!=1 &&  funkcja_celu[funkcja_celu.size()-2] <= acc){             //JESLI BRAK POPRAWY
-                    Long_Term.push_back(path_best[wyklucz]);
-                    cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
-                    znacznik_zmian++;
+        if(iteracje!=1 &&  funkcja_celu[funkcja_celu.size()-2] <= acc){             //JESLI BRAK POPRAWY
+            Long_Term.push_back(path_best[wyklucz]);
+            cerr<< path_best[wyklucz] << " :taboo - brak poprawy (2)"<<endl;
+            znacznik_zmian++;
 
-                    //USUNIĘCIE ROZWIĄZANIA KTÓRE SIĘ ODDALA
-                    path_all.pop_back();
-                    f_distance.pop_back();
-                    funkcja_celu.pop_back();
-                    f_attractiveness.pop_back();
-                    f_profile.pop_back();
-                    path_best=path_all.back();
-                    acc=funkcja_celu.back();
+            //USUNIĘCIE ROZWIĄZANIA KTÓRE SIĘ ODDALA
+            path_all.pop_back();
+            f_distance.pop_back();
+            funkcja_celu.pop_back();
+            f_attractiveness.pop_back();
+            f_profile.pop_back();
+            path_best=path_all.back();
+            acc=funkcja_celu.back();
 
-                }
-                else {
-                    //JESLI POPRAWA
-                    znacznik_zmian=0;
-                }
+        }
+        else {
+            //JESLI POPRAWA
+            znacznik_zmian=0;
+        }
 
     }
 //KONIEC PĘTLI GŁÓWNEJ
