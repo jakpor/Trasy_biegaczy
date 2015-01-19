@@ -6,8 +6,8 @@
 
 #define INF 0
 // zmienne skalujące składowe funkcji celu tak by miały podobny priorytet
-#define SKAL_PROFILE 400
-#define SKAL_ATTRACTIVENESS 35
+#define SKAL_PROFILE 35         //400
+#define SKAL_ATTRACTIVENESS 30 //35
 
 enum kryterium{distances=1, attractiveness=2, profile=3};
 /************ Clasa rozwiązania***********/
@@ -98,7 +98,8 @@ public:
      int minimum(QVector<int> temp);                                 // minimum uniwersalne
      int minimumMarks(QVector<int> temp);                            // minimum dla oceny wyluczeń
      int maksimumMarks(QVector<int> temp);                           // maksimum dla oceny wyluczeń
-     QVector< QVector<int> > otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi); //otoczenie zabranianego fragmentu
+     QVector< QVector<int> > otoczenie (QVector<int> wykluczenie, int rozmiar, int l_krawedzi);
+     //otoczenie zabranianego fragmentu
 
     // poszczególne wersja algorytmu
      void algorithm_1(int ile_wykluczac);   // wyspecjalizowana do poczukiwania konkretnej odległości w trasie

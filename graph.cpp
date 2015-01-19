@@ -464,11 +464,11 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         //krawedzie prostokata
         for (int i=1 ; i<h; i++){
             wspolrzedneX[i][0] = wspolrzedneX[i-1][0];       // X zostaje taki sam
-            wspolrzedneY[i][0] = wspolrzedneY[i-1][0] + rand() % roznorodnosc +1;    //do Y sie cos dodaje
+            wspolrzedneY[i][0] = wspolrzedneY[i-1][0] + rand() % roznorodnosc +50;    //do Y sie cos dodaje
         }
         for (int j=1 ; j<w; j++){
             wspolrzedneY[0][j] = wspolrzedneY[0][j-1]; //Y bez zmian
-            wspolrzedneX[0][j] = wspolrzedneX[0][j-1] + rand() % roznorodnosc +1; // X rosnie
+            wspolrzedneX[0][j] = wspolrzedneX[0][j-1] + rand() % roznorodnosc +50; // X rosnie
         }
         //skalowanie
         for (int i=1 ; i<h; i++){
@@ -687,13 +687,19 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
     /** lista wysokości wierzcholkow + macierz **/
 
     this->lista_wysokosci = new int[this->liczba_wierzcholkow];
-
+    int wys=0;
     switch(profil){
     case 1: //góra = x^2 + y^2 + x(0)^2 + y(0)^2
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
-                this->lista_wysokosci[u] = -(i-(h)/2)*(i-(h)/2)-(j-(w)/2)*(j-(w)/2) + h*h/4 + w*w/4;
+                wys=-(i-(h)/2)*(i-(h)/2)-(j-(w)/2)*(j-(w)/2) + h*h/4 + w*w/4;
+                if(wys>100)
+                    wys=100;
+                else if(wys<0)
+                    wys=0;
+
+                this->lista_wysokosci[u] = wys;
                 u++; //u to po prostu iterator
             }
         }
@@ -702,27 +708,38 @@ void Graph::create_graph(string outFileName, int h, int w, int marginesX, int ma
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
-                this->lista_wysokosci[u] = (i-(h)/2)*(i-(h)/2)+(j-(w)/2)*(j-(w)/2);
+                wys= (i-(h)/2)*(i-(h)/2)+(j-(w)/2)*(j-(w)/2);
+                if(wys>100)
+                    wys=100;
+                else if(wys<-100)
+                    wys=-100;
+
+                this->lista_wysokosci[u] = wys;
                 u++; //u to po prostu iterator
             }
         }
         break;
-    case 3: //przelęcz
+    case 0: //przelęcz
         u = 0;
         for (int i=0 ; i<h; i++){
             for(int j =0; j<w; j++){
-                this->lista_wysokosci[u] = -1*(i-h/2)*(j-w/2);
+                wys=-1*(i-h/2)*(j-w/2);
+                if(wys>100)
+                    wys=100;
+                else if(wys<0)
+                    wys=0;
+                this->lista_wysokosci[u] =wys ;
                 u++; //u to po prostu iterator
             }
         }
         break;
-    case 4: //płasko - zupełnie płasko, że aż 0
+    case 3: //płasko - zupełnie płasko, że aż 0
         for(int i=0; i<(this->liczba_wierzcholkow); i++){
             this->lista_wysokosci[i] = 0;
             //cerr<<this->lista_wysokosci[i]<<endl;
         }
         break;
-    case 0: //losowo
+    case 4: //losowo
     default: //losowo też
         for(int i=0; i<(this->liczba_wierzcholkow); i++){
             this->lista_wysokosci[i] = rand()%100;

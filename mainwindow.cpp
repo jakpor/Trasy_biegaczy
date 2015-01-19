@@ -81,7 +81,7 @@ void MainWindow::on_createGraphButton_clicked()
     int profil=ui->heightProfileBox->currentIndex(); //0-losowo, 1- góra, 2-dolina, 3 - przełęcz
 
     graphview.gr.create_graph(ui->filenameOutEdit->text().toStdString(),ui->heightBox->value(),ui->widthBox->value(),50,20,800,600,
-                   ui->cubeBox->isChecked(),100,ui->pionowoBox->isChecked(),
+                   ui->cubeBox->isChecked(),50,ui->pionowoBox->isChecked(),
                    ui->poziomoBox->isChecked(),ui->skos1Box->isChecked(),ui->skos2Box->isChecked(),betonowosc, profil, ui->losowoscBox->isChecked());
 
     pathview.graph = graphview.gr.copy_graph(); //wersja do rysowania trasy
@@ -200,7 +200,7 @@ void MainWindow::setupplot1(QCustomPlot *customPlot){
     QPen pen( Qt::green, 1 );
     customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
-    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->xAxis->setLabel("Numer zmiany");
     customPlot->yAxis->setLabel("Funkcja celu");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, pathview.trasa.funkcja_celu.size());
@@ -237,7 +237,7 @@ void MainWindow::setupplot2(QCustomPlot *customPlot){
     QPen pen( Qt::green, 1 );
     customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
-    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->xAxis->setLabel("Numer zmiany");
     customPlot->yAxis->setLabel("Długość trasy");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, pathview.trasa.f_distance.size());
@@ -272,7 +272,7 @@ void MainWindow::setupplot3(QCustomPlot *customPlot){
     QPen pen( Qt::green, 1 );
     customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
-    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->xAxis->setLabel("Numer zmiany");
     customPlot->yAxis->setLabel("Ilość betonu");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, pathview.trasa.f_attractiveness.size());
@@ -308,10 +308,14 @@ void MainWindow::setupplot4(QCustomPlot *customPlot){
     QPen pen( Qt::green, 1 );
     customPlot->graph(1)->setPen(pen);
     // give the axes some labels:
-    customPlot->xAxis->setLabel("Iteracje");
+    customPlot->xAxis->setLabel("Numer zmiany");
     customPlot->yAxis->setLabel("Zgodność z profilem");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, pathview.trasa.f_profile.size());
+    if(min==max){
+        min = min-1;
+        max = max+1;
+    }
     customPlot->yAxis->setRange(min-0.1*(max-min), max+ 0.1*(max-min));
     customPlot->replot();
 }
@@ -328,14 +332,15 @@ void MainWindow::on_liczButton_clicked(){
         pathview.trasa.MAX_ITERACJI=ui->iteracje->value();
         pathview.trasa.MAX_BRAK_POPRAW=ui->czekanie->value();
 
+        int rozmiar_wykluczenia = ui->wykluczenieBox->value();
         if(ui->alg1->isChecked()){
-            pathview.trasa.algorithm_1(2);
+            pathview.trasa.algorithm_1(rozmiar_wykluczenia);
         }
         else if(ui->alg2->isChecked()){
-            pathview.trasa.algorithm_2(2);
+            pathview.trasa.algorithm_2(rozmiar_wykluczenia);
         }
         else if(ui->alg3->isChecked()){
-             pathview.trasa.algorithm_3(2);
+             pathview.trasa.algorithm_3(rozmiar_wykluczenia);
         }
 
         //wypisz najlepszą trasę

@@ -30,7 +30,7 @@
      <number>0</number>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_1">
      <attribute name="title">
@@ -140,7 +140,7 @@
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>31</number>
+         <number>50</number>
         </property>
         <property name="pageStep">
          <number>2</number>
@@ -168,7 +168,7 @@
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>31</number>
+         <number>50</number>
         </property>
         <property name="pageStep">
          <number>2</number>
@@ -207,7 +207,7 @@
         </property>
         <item>
          <property name="text">
-          <string>Losowo</string>
+          <string>Miasto na przełęczy</string>
          </property>
         </item>
         <item>
@@ -222,12 +222,12 @@
         </item>
         <item>
          <property name="text">
-          <string>Miasto na przełęczy</string>
+          <string>Płasko</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Płasko</string>
+          <string>Losowo</string>
          </property>
         </item>
        </widget>
@@ -811,7 +811,7 @@
         </rect>
        </property>
        <property name="minimum">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>100</number>
@@ -1144,7 +1144,7 @@
         <x>320</x>
         <y>460</y>
         <width>421</width>
-        <height>101</height>
+        <height>121</height>
        </rect>
       </property>
       <property name="title">
@@ -1212,6 +1212,41 @@
        </property>
        <property name="text">
         <string>Iteracje na czekanie na poprawę:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_45">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>90</y>
+         <width>171</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Rozmiar wykluczenia:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="wykluczenieBox">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>90</y>
+         <width>91</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::NoContextMenu</enum>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>2</number>
+       </property>
+       <property name="value">
+        <number>2</number>
        </property>
       </widget>
      </widget>
@@ -1402,14 +1437,14 @@
      <widget class="QLabel" name="label_10">
       <property name="geometry">
        <rect>
-        <x>60</x>
+        <x>119</x>
         <y>10</y>
-        <width>310</width>
+        <width>251</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Zależność uogólnionej funkcji celu od kolejnych iteracji algorytmu</string>
+       <string>Kolejne zmiany uogólnionej funkcji celu</string>
       </property>
      </widget>
      <widget class="QCustomPlot" name="plotWidget_2" native="true">
@@ -1425,14 +1460,14 @@
      <widget class="QLabel" name="label_11">
       <property name="geometry">
        <rect>
-        <x>470</x>
+        <x>550</x>
         <y>10</y>
-        <width>311</width>
+        <width>231</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Zależność odległości od kolejnych iteracji algorytmu</string>
+       <string>Kolejne zmiany odległości</string>
       </property>
      </widget>
      <widget class="QCustomPlot" name="plotWidget_3" native="true">
@@ -1448,14 +1483,14 @@
      <widget class="QLabel" name="label_12">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>132</x>
         <y>310</y>
-        <width>333</width>
-        <height>13</height>
+        <width>241</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Zależność atrakcyjności (betonowości) od kolejnych iteracji algorytmu</string>
+       <string>Kolejne zmiany atrakcyjności trasy</string>
       </property>
      </widget>
      <widget class="QCustomPlot" name="plotWidget_4" native="true">
@@ -1471,14 +1506,14 @@
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>472</x>
         <y>310</y>
-        <width>333</width>
-        <height>13</height>
+        <width>311</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Zależność zgodności z profilem od kolejnych iteracji algorytmu</string>
+       <string>Kolejne zmiany zgodności z trasy z zadanym przewyższeniem</string>
       </property>
      </widget>
     </widget>

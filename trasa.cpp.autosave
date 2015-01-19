@@ -1093,6 +1093,7 @@ void Trasa::algorithm_3(int ile_wykluczac){
                Long_Term.remove( Long_Term.indexOf(path_best[wyklucz-1]));
                cerr<<endl<<path_best[wyklucz-1]<<": untabooed"<<endl;
             }
+        
 //BLOK BADAJĄCY CHARAKTER ZMIAN I DECYDUJĄCY O LOSIE ROZWIĄZANIA
         if(iteracje!=1 &&  funkcja_celu[funkcja_celu.size()-2] <= acc){             //JESLI BRAK POPRAWY
             Long_Term.push_back(path_best[wyklucz]);
